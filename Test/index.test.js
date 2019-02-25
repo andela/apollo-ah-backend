@@ -6,4 +6,3 @@ describe('Array', function() {
     });
   });
 });
-
