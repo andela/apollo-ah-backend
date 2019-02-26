@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
-const dbConfig = require('../config/database');
-const { env } = require('../helpers/utils');
+import Sequelize from 'sequelize';
+import dbConfig from '../config/database';
+import { env } from '../helpers/utils';
 
 /** @type {string} */
 const environment = env('NODE_ENV');

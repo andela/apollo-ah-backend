@@ -1,4 +1,4 @@
-const { env } = require('../helpers/utils');
+import { env } from '../helpers/utils';
 
 /**
  * Sequelize config options
