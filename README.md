@@ -8,6 +8,7 @@ by leveraging the modern web.
 ---
 
 [![Build Status](https://travis-ci.org/andela/apollo-ah-backend.svg?branch=staging)](https://travis-ci.org/andela/apollo-ah-backend)
+[![Coverage Status](https://coveralls.io/repos/github/andela/apollo-ah-backend/badge.svg?branch=staging)](https://coveralls.io/github/andela/apollo-ah-backend)
 
 ## API Spec
 The preferred JSON object to be returned by the API should be structured as follows:
