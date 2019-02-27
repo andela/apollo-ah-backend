@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andela/apollo-ah-backend.svg?branch=staging)](https://travis-ci.org/andela/apollo-ah-backend) [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com) [![Coverage Status](https://coveralls.io/repos/github/andela/apollo-ah-backend/badge.svg?branch=staging)](https://coveralls.io/github/andela/apollo-ah-backend) 
+
 Authors Haven - A Social platform for the creative at heart.
 =======
 

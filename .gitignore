@@ -34,3 +34,8 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+# Lock file
+package-lock.json
+
+# Coverage directory used by nyc for coverage reporting
+.nyc_output
