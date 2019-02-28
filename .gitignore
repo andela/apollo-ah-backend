@@ -36,6 +36,7 @@ node_modules
 
 # Lock file
 package-lock.json
+yarn.lock
 
 # Coverage directory used by nyc for coverage reporting
 .nyc_output
