@@ -1,0 +1,9 @@
+require('@babel/register');
+const dotenv = require('dotenv');
+
+const env = process.env.NODE_ENV || 'development';
+
+// load .env file for development environment
+if (env === 'development') dotenv.config();
+
+module.exports = require('../config/database').default

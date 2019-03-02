@@ -8,6 +8,7 @@ const fs = require("fs"),
     cors = require("cors"),
     passport = require("passport"),
     errorhandler = require("errorhandler"),
+    swaggerJSDoc = require("swagger-jsdoc"),
     mongoose = require("mongoose");
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -39,9 +40,9 @@ if (!isProduction) {
 }
 
 if (isProduction) {
-    mongoose.connect(process.env.MONGODB_URI);
+    mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 } else {
-    mongoose.connect("mongodb://localhost/conduit");
+    mongoose.connect("mongodb://localhost:27017/ah", { useNewUrlParser: true });
     mongoose.set("debug", true);
 }
 
@@ -49,8 +50,34 @@ require("./models/User");
 
 app.use(require("./routes"));
 
+const swaggerDefinition = {
+    info: {
+        title: "Author's Haven API",
+        version: '1.0.0',
+        description: "Documenting Author's Haven API",
+    },
+    host: 'localhost:3000',
+    basePath: '/',
+};
+
+const options = {
+    // import swaggerDefinitions
+    definition: swaggerDefinition,
+    // path to the API docs
+    apis: ['./routes/*.js', './routes/api/*.js'],
+};
+const swaggerSpec = swaggerJSDoc(options);
+
+
+app.get('/', (req, res) => res.status(200).send({ message: 'Welcome to the API' }));
+
+app.get('/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
+
 /// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     const err = new Error("Not Found");
     err.status = 404;
     next(err);
@@ -61,7 +88,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (!isProduction) {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         console.log(err.stack);
 
         res.status(err.status || 500);
@@ -77,7 +104,7 @@ if (!isProduction) {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.json({
         errors: {
@@ -87,7 +114,8 @@ app.use(function(err, req, res, next) {
     });
 });
 
+
 // finally, let's start our server...
-const server = app.listen(process.env.PORT || 3000, function() {
+const server = app.listen(process.env.PORT || 3000, function () {
     console.log("Listening on port " + server.address().port);
 });
