@@ -1,6 +1,9 @@
 language: node_js
+
 node_js: 
   - node
+
+cache: npm
 
 script:
   - npm run coverage
@@ -11,13 +14,6 @@ before_install:
 env:
   global:
     - NODE_ENV=test
-    - DB_DATABASE=authorshaven
-    - DB_USERNAME=authorshaven
-    - DB_PASSWORD=secret
-
-cache: 
-  directories: 
-    - "node_modules"
 
 after_success:
   - ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info  
@@ -32,3 +28,13 @@ before_script:
 
 notifications:
   email: false
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: iXCd16jR5WF25XMDNDhDx8b2JC+UIl/l3dtqN2kV/a1PSYjgFQB0VfcMih+mvAdOlVyeVMK2wckmDmc4xoxeqP2Ki9o6P5kz/Wdqgfohv4gIQZnfvAa0VmFTob4ckCRlJF/cF/x8DPiKrdpTreNI3g2VjUIdCtX6zXnHakwpswhYC4yKRy5KfrCKAFLqp2H6LtQJIlx8t//yXqQQA1Lpo1pEj2HIteuUq+nYfeBdHYWlTgczz++7048YbCPZiOyjEcLd1RGYyU2ddMiSbSD9fidiqBTJMpdIpwXztnqL2JMwPiFH0WfisDgo6wFMi6iA3sud4/eqY72nb09BWmDQvwxbG0baGF/svwFfGv99OeH8O4UgsOFYgFSdp/Ksg3Xqbr/7IszIWxcL5+oRiQibtS2hZ9fzhM6iIz3RekAF2/m9XS0Q4QzEL9Z5Jp6hNH0SUe7w7ui1yF1iubjlh0QNvXmChe7O5prO0vAMq+PFI+DxJmBu5l2r3It/X8H9kKja4DrRWMHR2ImFM72kqh9BOYmtR4nQeAllddNu095k8BOg2Md5p7T4A4kvAztjLyNr4iFNfc1g4umegOSZyFwhfk9rt54VS4jLr9MwMC5BX0e9jInXcvjGP89e106S8OCF1xoVv7LgHbNg+OX0ktn3p39SyrikFavwyeP9DJTvPPo=
+  app:
+    staging: apollo-ah-backend-staging
+    master: apollo-ah-backend
+  run:
+    - "npm run migrate"
