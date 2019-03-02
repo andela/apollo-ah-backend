@@ -15,7 +15,8 @@
     "migrate:refresh": "npm run migrate:reset && npm run migrate",
     "migrate:reset": "sequelize db:migrate:undo:all",
     "migrate:undo": "npm run sequelize -- db:migrate:undo",
-    "seed": "sequelize db:seed:all --seeders-path database/seeders"
+    "seed": "sequelize db:seed:all --seeders-path database/seeders",
+    "start:dev": "babel-node index.js"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
