@@ -73,7 +73,10 @@ const options = {
 };
 const swaggerSpec = swaggerJSDoc(options);
 
-app.get('/', (req, res) => res.status(200).send({ message: 'Welcome to the API' }));
+app.get('/', (req, res) => {
+  res.status(200).send({ message: 'Welcome to the API' });
+  logger.log('hello world');
+});
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
