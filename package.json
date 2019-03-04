@@ -4,9 +4,10 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
+    "build": "babel src -d dist",
     "test": "mocha",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov || coveralls",
-    "start": "nodemon --exec babel-node index.js",
+    "start": "nodemon --exec babel-node src/index.js",
     "sequelize": "sequelize",
     "db:create": "sequelize db:create --env",
     "make:migration": "sequelize migration:create --name",
@@ -15,8 +16,8 @@
     "migrate:refresh": "npm run migrate:reset && npm run migrate",
     "migrate:reset": "sequelize db:migrate:undo:all",
     "migrate:undo": "npm run sequelize -- db:migrate:undo",
-    "seed": "sequelize db:seed:all --seeders-path database/seeders",
-    "start:dev": "babel-node index.js"
+    "seed": "sequelize db:seed:all --seeders-path src/database/seeders",
+    "start:dev": "babel-node src/index.js"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
