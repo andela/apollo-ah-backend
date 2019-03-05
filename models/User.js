@@ -1,57 +1,51 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const crypto = require('crypto');
-const {secret} = require("../config");
+import Sequelize from 'sequelize';
+import bcrypt from 'bcryptjs';
 
-const UserSchema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      lowercase: true,
-      unique: true,
-      required: [true, "can't be blank"],
-      match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
-      index: true
-    },
+/**
+ * A model class representing user resource
+ *
+ * @param {Sequelize} sequelize - Sequelize object
+ * @param {Sequelize.DataTypes} DataTypes - A convinient object holding data types
+ * @return {Sequelize.Model} - User model
+ */
+const User = (sequelize, DataTypes) => {
+  /** @type {Sequelize.Model} */
+  const UserSchema = sequelize.define('user', {
     email: {
-      type: String,
-      lowercase: true,
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
-      required: [true, "can't be blank"],
-      match: [/\S+@\S+\.\S+/, 'is invalid'],
-      index: true
+      validate: {
+        isEmail: { msg: 'Must be a valid email address' },
+      },
     },
-    bio: String,
-    image: String,
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
-    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    hash: String,
-    salt: String
-  },
-  { timestamps: true }
-);
+    password: {
+      type: DataTypes.STRING,
+      set(val) {
+        this.setDataValue('password', bcrypt.hashSync(val, 10));
+      }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW,
+      onUpdate: sequelize.NOW,
+    },
+  });
 
-UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
-
-UserSchema.methods.validPassword = function (password) {
-  const hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
-    .toString('hex');
-  return this.hash === hash;
-};
-
-UserSchema.methods.setPassword = function (password) {
-  this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
-    .toString('hex');
-};
-
-UserSchema.methods.toAuthJSON = function () {
-  return {
-    username: this.username,
-    email: this.email
+  /**
+   * User relationship
+   *
+   * @param {Sequelize.Model} models - Sequelize model
+   * @returns {void}
+   */
+  UserSchema.associate = (models) => {
+    // UserSchema.hasOne(models.Profile);
   };
+  return UserSchema;
 };
 
-mongoose.model('User', UserSchema);
+export default User;

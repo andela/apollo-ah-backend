@@ -16,7 +16,7 @@ if (config.use_env_variable) {
 
 /** @type {Object.<string, Model>} */
 const models = {
-  // init models here ex. User: sequelize.import('./user.js'),
+  User: sequelize.import('./user.js'),
 };
 
 Object.keys(models).forEach((key) => {
