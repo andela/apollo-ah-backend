@@ -5,18 +5,17 @@ import cors from 'cors';
 import errorhandler from 'errorhandler';
 import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import methodOveride from 'method-override';
 import logger from './helpers/logger';
 
+// Routes
+import routes from './routes';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const PORT = process.env.PORT || 3000;
 // Create global app object
 const app = express();
 
 // Normal express config defaults
-dotenv.config();
 logger.config();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,20 +39,8 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-
-/* Mongoose related code. To be refactored
-
-if (isProduction) {
-  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
-} else {
-  mongoose.connect('mongodb://localhost:27017/ah', { useNewUrlParser: true });
-  mongoose.set('debug', true);
-}
-
-require('./models/User');
-
+// routes endpoint
 app.use(routes);
-*/
 
 const swaggerDefinition = {
   info: {
@@ -91,8 +78,6 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// / error handlers
-
 // development error handler
 // will print stacktrace
 if (!isProduction) {
@@ -118,8 +103,5 @@ app.use((err, req, res) => {
     }
   });
 });
-
-// finally, let's start our server...
-app.listen(PORT);
 
 export default app;
