@@ -43,7 +43,5 @@ export default {
    * @param {Sequelize} sequelize - Sequelize object.
    * @return {void}
    */
-  down: (queryInterface, sequelize) => (
-    queryInterface.dropTable('users')
-  ),
+  down: (queryInterface, sequelize) => queryInterface.dropTable('Users')
 };

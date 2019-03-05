@@ -7,9 +7,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import methodOveride from 'method-override';
 import logger from './helpers/logger';
-
-// Routes
-import apiRoutes from './routes';
+import routes from './routes';
 
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
@@ -61,8 +59,7 @@ app.get('/', (req, res) => {
   res.status(200).send({ message: 'Welcome to the API' });
 });
 
-// routes endpoint
-app.use('/api/v1', apiRoutes);
+app.use('/api/v1', routes);
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
