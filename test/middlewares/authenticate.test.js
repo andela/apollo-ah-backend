@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import sinon from 'sinon';
 import chai from 'chai';
 import authenticate from '../../middlewares/authenticate';
