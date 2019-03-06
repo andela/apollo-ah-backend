@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 export default {
   /**
    * Run the migration
