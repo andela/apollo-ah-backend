@@ -21,7 +21,7 @@ function authenticate(request, response, next) {
 
   const token = bearer.split(' ')[1];
 
-  return jwt.verify(token, env('APP_KEY'), async (err, decoded) => {
+  return jwt.verify(token, env('APP_KEY'), (err, decoded) => {
     if (err || !decoded) return next(createError(401, 'Authentication failure: Invalid access token.'));
 
     const { user } = decoded;
