@@ -8,7 +8,9 @@ import bcrypt from 'bcryptjs';
  * @return {Sequelize.Model} - User model
  */
 const User = (sequelize, DataTypes) => {
-  /** @type {Sequelize.Model} */
+  /**
+   * @type {Sequelize.Model}
+   */
   const UserSchema = sequelize.define('user', {
     email: {
       type: DataTypes.STRING,
@@ -44,6 +46,17 @@ const User = (sequelize, DataTypes) => {
   UserSchema.associate = (models) => {
     // UserSchema.hasOne(models.Profile);
   };
+
+  /**
+   * Validate user password
+   *
+   * @param {Object} user - User instance
+   * @param {string} password - Password to validate
+   * @returns {boolean} Truthy upon successful validation
+   */
+  UserSchema.comparePassword = (user, password) => (
+    bcrypt.compareSync(password, user.password)
+  );
   return UserSchema;
 };
 

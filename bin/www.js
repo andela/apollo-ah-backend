@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import server from '../index';
 import { env } from '../helpers/utils';
 import logger from '../helpers/logger';
