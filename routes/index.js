@@ -19,6 +19,6 @@ const router = express.Router();
  *         type: string
  */
 router.use('/users', users);
-router.use('/profile', profileRouter);
+router.use(profileRouter);
 
 export default router;

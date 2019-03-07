@@ -1,6 +1,13 @@
 import models from '../models';
+import constants from '../helpers/constants';
 
 const { Profile } = models;
+
+const {
+  CREATED,
+  INTERNAL_SERVER_ERROR,
+} = constants.statusCode;
+
 /** profile controller class */
 
 class ProfileController {
@@ -15,70 +22,42 @@ class ProfileController {
   */
 
   static async create(req, res) {
-    const {
-      firstname,
-      lastname,
-      username,
-      gender,
-      bio,
-      phone,
-      address,
-      image,
-    } = req.body;
-
     /**id should be gotten from the token */
-    const id = 1;
+    const id = 2;
 
     try {
-      const profile = await Profile.findOne({
+      const [ profile, success ]= await Profile.findOrCreate({
         where: {
-          user_id: id
-        }
+          user_id: id,
+        },
+        defaults: req.body
       });
-      if (profile) {
-        return res.status(201).json({
-          message: 'Your profile has been created already, but you can always update it'
+
+      if (success) {
+        return res.status(CREATED).json({
+          success: true,
+          message: 'Profile created successfully',
+          profile,
         })
-      }
+      };
 
-      console.log('-------------------------->');
-      // const [ profile, success ]= await Profile.findOrCreate({
-      //   where: {
-      //     userhahaha: id,
-      //   },
-      //   defaults: req.body
-      // });
+      await Profile.update(
+        req.body,
+        {
+          where: {
+            user_id: id,
+          }
+        });
 
-      // return success
-      //   ? res.status(201).json({
-      //     message: 'Profile created successfully',
-      //     profile,
-      //   })
-      //   : await Profile.update({
-      //     firstname,
-      //     lastname,
-      //     username,
-      //     gender,
-      //     bio,
-      //     phone,
-      //     address,
-      //     image,
-      //   },
-      //     {
-      //       where: {
-      //         userhhahah: id,
-      //       }
-      //     })
-      //     ? res.status(201).json({
-      //       message: 'Profile updated successfully',
-      //     })
-      //     : res.status(401).json({
-      //       message: 'You are unauthorized to edit a profile that is not yours',
-      //       profile,
-      //     })
+        return res.status(CREATED).json({
+          success: true,
+          message: 'Profile updated successfully',
+          profile,
+        })
     } catch (error) {
       console.log(error)
-      res.status(500).json({
+      res.status(INTERNAL_SERVER_ERROR).json({
+        success: false,
         message: 'Profile update failed, try again later!',
         errors: error.message,
       });
