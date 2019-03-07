@@ -1,5 +1,7 @@
 import express from 'express';
 import UsersController from '../controllers/users';
+import { handleRegistration } from '../middlewares/handle-validation';
+import Validator from '../middlewares/validator';
 
 const router = express.Router();
 
@@ -40,7 +42,10 @@ const router = express.Router();
  *         schema:
  *           $ref: '#/definitions/User'
  */
-router.post('/', UsersController.register);
+router.post('/',
+  Validator.validateRegistration(),
+  handleRegistration,
+  UsersController.register);
 
 /**
  * @swagger

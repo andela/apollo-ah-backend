@@ -1,6 +1,8 @@
 import createError from 'http-errors';
 import models from '../models';
 import { generateToken } from '../helpers/utils';
+import Response from '../helpers/response.helper';
+import { STATUS } from '../helpers/constants';
 
 const { User } = models;
 
@@ -27,13 +29,29 @@ class UsersController {
     try {
       const user = await User.create(body);
       const token = await generateToken({ user });
-
-      return response
-        .status(201)
-        .json({ token, id: user.id });
+      return Response.send(response, STATUS.CREATED, { token, id: user.id });
     } catch (error) {
       return next(error);
     }
+  }
+
+  /**
+ * Get a user where the column(param) equals the specified value
+ *
+ * @static
+ * @param {string} param The column to search against (e.g email, id, username)
+ * @param {*} value The actual value to test for
+ * @returns {object} The user object
+ * @memberof UsersController
+ */
+  static async getUser(param, value) {
+    let user;
+    try {
+      user = await User.findOne({ where: { [param]: value } });
+    } catch (error) {
+      logger.log(error);
+    }
+    return user;
   }
 
   /**
