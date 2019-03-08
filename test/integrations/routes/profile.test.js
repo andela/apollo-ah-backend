@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 const profile = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
-  phone: faker.phone.phoneNumber(),
+  phone: '+23438776199',
   bio: faker.random.words(),
   address: faker.address.streetAddress(),
   gender: 'M',
@@ -153,6 +153,22 @@ describe('API end point for User profile', () => {
         expect(res.body).to.have.property('errors');
         expect(Object.keys(res.body.errors)).to.include.members(['image']);
         expect(res.body.errors.image).to.be.equals('image URL is not valid');
+        done();
+      });
+  });
+
+  it('it should throw an error if phone number is invalid', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/profile')
+      .send({ ...profile, phone: '0292922' })
+      .set('Authorization', token)
+      .end((err, res) => {
+        expect(res.status).eql(400);
+        expect(res.body).to.have.property('errors');
+        expect(Object.keys(res.body.errors)).to.include.members(['phone', 'phoneLength']);
+        expect(res.body.errors.phone).to.be.equals('Phone number should have a country code and not contain alphabets e.g +234');
+        expect(res.body.errors.phoneLength).to.be.equals('Phone number length should adhere to international standard');
         done();
       });
   });

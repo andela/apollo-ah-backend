@@ -16,6 +16,7 @@ const validateCreateProfile = (req, res, next) => {
     firstname, lastname, username, gender, bio, phone, address, image,
   } = req.body;
   const urlRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
+  const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
   firstname = firstname ? firstname.toLowerCase().toString().replace(/\s+/g, '') : firstname;
   lastname = lastname ? lastname.toLowerCase().toString().replace(/\s+/g, '') : lastname;
   username = username ? username.toLowerCase().toString().replace(/\s+/g, '') : username;
@@ -34,6 +35,8 @@ const validateCreateProfile = (req, res, next) => {
   if (gender !== 'M' && gender !== 'F') errors.genderType = 'Gender must either be M or F';
   if (!bio) errors.bio = 'Please provide a brief description about yourself';
   if (bio.length > 255) errors.bio = 'Bio has reached it\'s maximum limit';
+  if (phone && !phoneRegex.test(phone)) errors.phone = 'Phone number should have a country code and not contain alphabets e.g +234';
+  if (phone && !phoneRegex.test(phone)) errors.phoneLength = 'Phone number length should adhere to international standard';
   if (image && !urlRegex.test(image)) errors.image = 'image URL is not valid';
 
   if (Object.getOwnPropertyNames(errors).length) {

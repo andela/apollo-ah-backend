@@ -29,7 +29,6 @@ const profileRouter = express.Router();
  */
 
 
-// profileRouter.use('*', middlewares.verifyToken);
 profileRouter.post('/profile',
   middlewares.authenticate,
   middlewares.validateCreateProfile,
