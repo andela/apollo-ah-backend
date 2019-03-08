@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator/check';
-import { STATUS, MESSAGE, expressFormater } from '../helpers/constants';
+import { STATUS, MESSAGE, expressValidatorFormater } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
 /**
    * Validates the registration parameters
@@ -10,7 +10,7 @@ import Response from '../helpers/responseHelper';
    * @returns {void}
    */
 export const handleRegistration = (request, response, next) => {
-  const errors = validationResult(request).formatWith(expressFormater);
+  const errors = validationResult(request).formatWith(expressValidatorFormater);
   if (!errors.isEmpty()) {
     return Response.send(
       response,

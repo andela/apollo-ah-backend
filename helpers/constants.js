@@ -35,7 +35,13 @@ export const FIELD = {
   EMAIL: 'email',
 };
 
-export const expressFormater = ({
+/**
+ * Callback function to format express validator object keys to use a more generic format.
+ * To be used with express-validators validationResult function
+ * @param {object} The expected object for express validator.
+ * @returns {object} The desired format returned as an object
+ */
+export const expressValidatorFormater = ({
   param, msg
 }) => ({
   field: param,
