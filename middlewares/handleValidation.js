@@ -1,6 +1,6 @@
 import { validationResult } from 'express-validator/check';
 import { STATUS, MESSAGE, expressFormater } from '../helpers/constants';
-import Response from '../helpers/response.helper';
+import Response from '../helpers/responseHelper';
 /**
    * Validates the registration parameters
    *

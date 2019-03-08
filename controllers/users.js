@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import models from '../models';
 import { generateToken } from '../helpers/utils';
-import Response from '../helpers/response.helper';
+import Response from '../helpers/responseHelper';
 import { STATUS } from '../helpers/constants';
 
 const { User } = models;
