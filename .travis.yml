@@ -10,7 +10,10 @@ env:
     - NODE_ENV=test
 
 after_success:
-  - npm run test
+  - npm run coverage
+
+before_install:
+  - npm i 
 
 services:
   - postgresql
