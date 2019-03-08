@@ -1,8 +1,11 @@
 import createError from 'http-errors';
+import jwt from 'jsonwebtoken';
 import models from '../models';
-import { generateToken } from '../helpers/utils';
+import { env, generateToken } from '../helpers/utils';
+import Mail from '../helpers/sendMail';
 import Response from '../helpers/responseHelper';
-import { STATUS } from '../helpers/constants';
+import { STATUS, MESSAGE } from '../helpers/constants';
+import logger from '../helpers/logger';
 
 const { User } = models;
 
@@ -29,8 +32,23 @@ class UsersController {
     try {
       const user = await User.create(body);
       const token = await generateToken({ user });
+      // generate confirm token
+      const confirmToken = await generateToken({ email: user.email });
+      // generate confirm link
+      const confrimLink = `${env('API_DOMAIN')}api/v1/users/confirm_account?token=${confirmToken}`;
+      // send the user a mail
+      const data = {
+        email: user.email,
+        subject: 'Account confirmation',
+        mailContext: {
+          link: confrimLink
+        },
+        template: 'signup'
+      };
+      await Mail.sendMail(data);
       return Response.send(response, STATUS.CREATED, { token, id: user.id });
     } catch (error) {
+      logger.error(error);
       return next(error);
     }
   }
@@ -87,6 +105,36 @@ class UsersController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  /**
+   * This function confirms a user
+   * @static
+   * @param {Request} request - Request object
+   * @param {Response} response - Response object
+   * @param {function} next - Express next function
+   * @returns {void}
+   */
+  static async confirmUser(request, response, next) {
+    // get token from the request url
+    const emailToken = request.query.token;
+    // get email from token
+    jwt.verify(emailToken, env('APP_KEY'), (err, decoded) => {
+      if (err || !decoded) return next(createError(401, 'This link is invalid'));
+      request.email = decoded.email;
+    });
+    // get the user with the token mail from DB
+    const user = await User.findOne({ where: { email: request.email } });
+    if (!user) {
+      return Response.send(response, STATUS.NOT_FOUND, null, 'The confirm link is wrong, account not found', false);
+    }
+    // confirm a user account
+    const updateData = await User.update({ isConfirmed: true },
+      { where: { email: request.email } });
+    if (!updateData) {
+      return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occurred while updating your account', false);
+    }
+    return Response.send(response, STATUS.OK, null, MESSAGE.ACCOUNT_CONFIRM);
   }
 }
 

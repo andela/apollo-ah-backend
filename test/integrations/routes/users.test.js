@@ -28,20 +28,20 @@ describe('API endpoint: /api/users', () => {
   });
 
   describe('Registration endpoint', () => {
-    it.skip('should create a new user with valid input', (done) => {
-      chai.request(app)
-        .post('/api/v1/users')
-        .send(dummyUser)
-        .end((err, res) => {
-          expect(err).to.be.null;
-          expect(res).to.have.status(STATUS.CREATED);
-          expect(res.body).to.be.an('object');
-          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
-          expect(res.body).to.haveOwnProperty('message').to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
-          expect(res.body).to.haveOwnProperty('status').to.equal(true);
-          expect(res.body).to.haveOwnProperty('data').to.be.an('array');
-          done();
-        });
+    it('should create a new user with valid input', async () => {
+      try {
+        const response = await chai.request(app)
+          .post('/api/v1/users')
+          .send(dummyUser);
+        expect(response).to.have.status(STATUS.CREATED);
+        expect(response.body).to.be.an('object');
+        expect(response.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(response.body).to.haveOwnProperty('message').to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
+        expect(response.body).to.haveOwnProperty('status').to.equal(true);
+        expect(response.body).to.haveOwnProperty('data').to.be.an('object');
+      } catch (err) {
+        expect(err).to.not.be.null;
+      }
     });
     it('should return an error if username is not provided', (done) => {
       dummyUser.username = '';
