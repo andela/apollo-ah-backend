@@ -2,7 +2,10 @@ import createError from 'http-errors';
 import jwt from 'jsonwebtoken';
 import models from '../models';
 import { env, generateToken } from '../helpers/utils';
-import sendMail from '../helpers/sendMail';
+import Mail from '../helpers/sendMail';
+import Response from '../helpers/responseHelper';
+import { STATUS, MESSAGE } from '../helpers/constants';
+import logger from '../helpers/logger';
 
 const { User } = models;
 
@@ -32,23 +35,41 @@ class UsersController {
       // generate confirm token
       const confirmToken = await generateToken({ email: user.email });
       // generate confirm link
-      const confrimLink = `${env('API_DOMAIN')}confirm_account/${confirmToken}`;
+      const confrimLink = `${env('API_DOMAIN')}api/v1/users/confirm_account?token=${confirmToken}`;
       // send the user a mail
       const data = {
         email: user.email,
-        subject: 'Account confirmation',
+        subject: 'Account confirmationX',
         mailContext: {
           link: confrimLink
         },
         template: 'signup'
       };
-      await sendMail(data);
-      return response
-        .status(201)
-        .json({ token, id: user.id });
+      await Mail.sendMail(data);
+      return Response.send(response, STATUS.CREATED, { token, id: user.id });
     } catch (error) {
+      logger.error(error);
       return next(error);
     }
+  }
+
+  /**
+ * Get a user where the column(param) equals the specified value
+ *
+ * @static
+ * @param {string} param The column to search against (e.g email, id, username)
+ * @param {*} value The actual value to test for
+ * @returns {object} The user object
+ * @memberof UsersController
+ */
+  static async getUser(param, value) {
+    let user;
+    try {
+      user = await User.findOne({ where: { [param]: value } });
+    } catch (error) {
+      logger.log(error);
+    }
+    return user;
   }
 
   /**
@@ -99,21 +120,21 @@ class UsersController {
     const emailToken = request.query.token;
     // get email from token
     jwt.verify(emailToken, env('APP_KEY'), (err, decoded) => {
-      if (err || !decoded) return next(createError(401, ' Invalid url.'));
+      if (err || !decoded) return next(createError(401, 'This link is invalid'));
       request.email = decoded.email;
     });
     // get the user with the token mail from DB
     const user = await User.findOne({ where: { email: request.email } });
     if (!user) {
-      return response.status(404).json({ status: 404, message: 'This link is wrong' });
+      return Response.send(response, STATUS.NOT_FOUND, null, 'The confirm link is wrong, account not found', false);
     }
     // confirm a user account
     const updateData = await User.update({ isConfirmed: true },
       { where: { email: request.email } });
     if (!updateData) {
-      return response.status(404).json({ status: 404, message: 'An error occured' });
+      return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occurred while updating your account', false);
     }
-    return response.status(200).json({ status: 200, message: 'Your account has been confirmed' });
+    return Response.send(response, STATUS.OK, null, MESSAGE.ACCOUNT_CONFIRM);
   }
 }
 
