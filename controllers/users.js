@@ -129,8 +129,9 @@ class UsersController {
       return Response.send(response, STATUS.NOT_FOUND, null, 'The confirm link is wrong, account not found', false);
     }
     // confirm a user account
-    const updateData = await User.update({ isConfirmed: true },
-      { where: { email: request.email } });
+    const updateData = await User.update(
+      { isConfirmed: true }, { where: { email: request.email } }
+    );
     if (!updateData) {
       return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occurred while updating your account', false);
     }
