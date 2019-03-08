@@ -1,66 +1,54 @@
-export default {
-  statusCode: {
-    CONTINUE: 100,
-    SWITCHING_PROTOCOLS: 101,
-    PROCESSING: 102,
-    EARLY_HINTS: 103,
-    OK: 200,
-    CREATED: 201,
-    ACCEPTED: 202,
-    NON_AUTH_INFO: 203,
-    NO_CONTENT: 204,
-    RESET_CONTENT: 205,
-    PARTIAL_CONTENT: 206,
-    MULTI_STATUS: 207,
-    ALREADY_REPORTED: 208,
-    IM_USED: 226,
-    MULTI_CHOICES: 300,
-    MOVED_PERMANENTLY: 301,
-    FOUND: 302,
-    SEE_OTHER: 303,
-    NOT_MODIFIED: 304,
-    USE_PROXY: 305,
-    SWITCH_PROXY: 306,
-    TEMP_REDIRECT: 307,
-    PERMANENT_REDIRECT: 308,
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    PAYMENT_REQUIRED: 402,
-    FORBIDDEN: 403,
-    NOT_FOUND: 404,
-    METH_NOT_ALLOWED: 405,
-    NOT_ACCEPTABLE: 406,
-    PROXY_AUTH_REQUIRED: 407,
-    REQUEST_TIMEOUT: 408,
-    CONFLICT: 409,
-    GONE: 410,
-    LENGTH_REQUIRED: 411,
-    PRECONDITION_FAILED: 412,
-    LARGE_PAYLOAD: 413,
-    URI_TOO_LONG: 414,
-    UNSUPPORTED_MEDIA_TYPE: 415,
-    RANGE_NOT_SATISFIABLE: 416,
-    EXPECTATION_FAILED: 417,
-    TEAPOT: 418,
-    MISREDIRECTED_REQUEST: 421,
-    UNPROCESSABLE_ENTITY: 422,
-    LOCKED: 423,
-    FAILED_DEPENDENCY: 424,
-    UPGRADE_REQUIRED: 426,
-    PRECONDITION_REQUIRED: 428,
-    TOO_MANY_REQUESTS: 429,
-    REQ_HEADER_TOO_LARGE: 431,
-    UNVAILABLE_FOR_LEGAL_REASONS: 451,
-    INTERNAL_SERVER_ERROR: 500,
-    NOT_IMPLEMENTED: 501,
-    BAD_GATEWAY: 502,
-    SERVICE_UNAVAILABLE: 503,
-    GATEWAY_TIMEOUT: 504,
-    UNSUPPORTED_HTTP_VERSION: 505,
-    VARIANT_ALSO_NEGOTIATES: 506,
-    UNSUFFICIENT_STORAGE: 507,
-    LOOP_DETECTED: 508,
-    NOT_EXTENDED: 510,
-    NET_AUTH_REQUIRED: 511
-  }
+export const STATUS = {
+  OK: 200, // Request OK, indicates a successful request
+  CREATED: 201, // Resource Created, request is ok and new resource created. Use with POST requests
+  NO_CONTENT: 204, // No Content, request is successful but returned a response without a body.
+  BAD_REQUEST: 400, // Bad requests, requests parameter is missing
+  UNATHORIZED: 401, // Unauthorized requests, request requires authentication but it isn't provided
+  FORBIDDEN: 403, // Valid request, but the user doesn't have permissions to perform the action
+  NOT_FOUND: 404, // Not found, when a resource can't be found to fulfill the request
+  UNPROCESSED: 422, // Unprocssable entity, requests parameters contains invalid fields
+  SERVER_ERROR: 500,
+};
+
+export const MESSAGE = {
+  SERVER_ERROR: 'An internal error has occured. This is not your fault. We are working to fix this problem. Please try again later.',
+
+  REGISTRATION_ERROR: 'Registration failed',
+  REGISTRATION_SUCCESSFUL: 'Registraion successful',
+
+  PASSWORD_TOO_SHORT: 'Your password must be at least 8 characters. Please try again.',
+  PASSWORD_NOT_ALPHANUMERIC: 'Password should contain both letters and numbers',
+  PASSWORD_EMPTY: 'Password is required',
+
+  EMAIL_EMPTY: 'Email is required',
+  EMAIL_INVALID: 'Provide a valid email address',
+  EMAIL_EXISTS: 'The email address already exists. If you are registered, proceed to login instead',
+
+  USERNAME_EMPTY: 'Username is required',
+  USERNAME_EXITS: 'The username is already taken, try another one',
+};
+
+export const FIELD = {
+  USERNAME: 'username',
+  PASSWORD: 'password',
+  EMAIL: 'email',
+};
+
+/**
+ * Callback function to format express validator object keys to use a more generic format.
+ * To be used with express-validators validationResult function
+ * @param {object} The expected object for express validator.
+ * @returns {object} The desired format returned as an object
+ */
+export const expressValidatorFormater = ({
+  param, msg
+}) => ({
+  field: param,
+  message: msg,
+});
+
+export const DUMMY_USER = {
+  email: 'fake_email_for_testing@authorshaven.test',
+  password: 'secret123456789',
+  username: 'dummy',
 };

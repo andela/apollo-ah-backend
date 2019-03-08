@@ -1,2 +1,2 @@
-import './users.test';
 import './profile.test';
+import './users.test';

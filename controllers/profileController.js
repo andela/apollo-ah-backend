@@ -1,13 +1,13 @@
 import models from '../models';
-import constants from '../helpers/constants';
+import constants, { STATUS } from '../helpers/constants';
 
 const { Profile } = models;
 
 const {
   CREATED,
-  INTERNAL_SERVER_ERROR,
+  SERVER_ERROR,
   UNAUTHORIZED,
-} = constants.statusCode;
+} = STATUS;
 
 /** profile controller class */
 /**
@@ -82,7 +82,7 @@ class ProfileController {
           message: 'You have to be signed up to create a profile',
         });
       }
-      res.status(INTERNAL_SERVER_ERROR).json({
+      res.status(SERVER_ERROR).json({
         success: false,
         message: 'Profile update failed, try again later!',
         errors: error.message,

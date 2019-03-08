@@ -31,18 +31,18 @@ describe('API end point for User profile', () => {
       .send(profile)
       .set('Authorization', token)
       .end((err, res) => {
+        console.log(res);
         expect(res.status).eql(201);
         expect(res.body).to.have.property('message');
         expect(res.body.profile).to.be.an('object');
         expect(Object.keys(res.body.profile)).to.include.members([
           'firstname',
           'lastname',
-          'phone',
-          'bio',
-          'address',
-          'gender',
-          'user_id',
           'username',
+          'gender',
+          'bio',
+          'phone',
+          'address',
           'image',
         ]);
         expect(res.body.profile.id).to.not.be.a('string');

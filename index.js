@@ -14,9 +14,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 const app = express();
 
 // Normal express config defaults
+
 logger.config();
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOveride());
 app.use(express.static(`${__dirname}/public`));
