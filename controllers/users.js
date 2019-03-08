@@ -1,6 +1,7 @@
 import createError from 'http-errors';
 import models from '../models';
-import { generateToken } from '../helpers/utils';
+import { env, generateToken } from '../helpers/utils';
+import sendMail from '../helpers/sendMail';
 
 const { User } = models;
 
@@ -27,7 +28,20 @@ class UsersController {
     try {
       const user = await User.create(body);
       const token = await generateToken({ user });
-
+      // generate confirm token
+      const confirmToken = await generateToken({ email: user.email });
+      // generate confirm link
+      const confrimLink = `${env('API_DOMAIN')}confirm_account/${confirmToken}`;
+      // send the user a mail
+      const data = {
+        email: user.email,
+        subject: 'Account confirmation',
+        mailContext: {
+          link: confrimLink
+        },
+        template: 'signup'
+      };
+      await sendMail(data);
       return response
         .status(201)
         .json({ token, id: user.id });

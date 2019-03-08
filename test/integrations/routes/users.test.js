@@ -27,17 +27,13 @@ describe('API endpoint: /api/users', () => {
   });
 
   describe('POST /api/v1/users', () => {
-    it('should create a new user (register endpoint)', (done) => {
-      chai.request(app)
+    it('should create a new user (register endpoint)', async () => {
+      const response = await chai.request(app)
         .post('/api/v1/users')
-        .send(dummyUser)
-        .end((err, res) => {
-          expect(err).to.be.null;
-          expect(res).to.have.status(201);
-          expect(res.body).to.haveOwnProperty('token');
-          expect(res.body).to.haveOwnProperty('id');
-          done();
-        });
+        .send(dummyUser);
+      expect(response).to.have.status(201);
+      expect(response.body).to.haveOwnProperty('token');
+      expect(response.body).to.haveOwnProperty('id');
     });
   });
 
