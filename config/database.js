@@ -33,7 +33,7 @@ export default {
   test: {
     username: env('DB_USERNAME', 'postgres'),
     password: env('DB_PASSWORD', ''),
-    database: env('TEST_DATABASE', ''),
+    database: env('DB_DATABASE', ''),
     host: env('DB_HOST', '127.0.0.1'),
     dialect: env('DB_CONNECTION', 'postgres'),
     ...options,

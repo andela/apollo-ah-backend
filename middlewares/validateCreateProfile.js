@@ -1,15 +1,16 @@
 /**
  * This is a validation for creating a profile
  * @constant
- * 
+ *
  * @param {String} req request object
  * @param {Object} res response object
  * @param {Object} err error object
- * 
+ *
  * @returns {Object}
  *
  * @exports validateCreateProfile
  */
+
 const validateCreateProfile = (req, res, next) => {
   let {
     firstname, lastname, username, gender, bio, phone, address, image,
@@ -28,11 +29,11 @@ const validateCreateProfile = (req, res, next) => {
 
   if (!firstname) errors.firstname = 'Firstname is required';
   if (!lastname) errors.lastname = 'Lastname is required';
-  if (!username) errors.lastname = 'username field cannot be emnpty';
+  if (!username) errors.username = 'username field cannot be emnpty';
   if (!gender) errors.gender = 'Gender is required';
   if (gender !== 'M' && gender !== 'F') errors.genderType = 'Gender must either be M or F';
   if (!bio) errors.bio = 'Please provide a brief description about yourself';
-  if (bio.length > 255) errors.lastname = 'Bio has reached it\'s maximum limit';
+  if (bio.length > 255) errors.bio = 'Bio has reached it\'s maximum limit';
   if (image && !urlRegex.test(image)) errors.image = 'image URL is not valid';
 
   if (Object.getOwnPropertyNames(errors).length) {

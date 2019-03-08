@@ -32,9 +32,7 @@ const Profile = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     }
-  }, {
-    // underscored: true
-  });
+  }, {});
 
   ProfileSchema.associate = (models) => {
     ProfileSchema.belongsTo(models.User, {

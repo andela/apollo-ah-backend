@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import Bluebird from 'bluebird';
 import faker from 'faker';
 import app from '../../../index';
 import models from '../../../models';
@@ -14,18 +13,6 @@ const dummyUser = {
 };
 
 describe('API endpoint: /api/users', () => {
-  before(() => {
-    // synchronize and create tables
-    models.sequelize.sync();
-  });
-
-  beforeEach(() => {
-    // drop tables
-    Bluebird.all([
-      models.User.destroy({ truncate: true }),
-    ]);
-  });
-
   describe('POST /api/v1/users', () => {
     it('should create a new user (register endpoint)', (done) => {
       chai.request(app)
@@ -44,7 +31,6 @@ describe('API endpoint: /api/users', () => {
   describe('POST /api/v1/users/login', () => {
     it('should authenticate a new user', async () => {
       const user = await models.User.create(dummyUser);
-
       chai.request(app)
         .post('/api/v1/users/login')
         .send({
