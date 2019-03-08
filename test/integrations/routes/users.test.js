@@ -66,8 +66,6 @@ describe('API endpoint: /api/users', () => {
     });
     it('should return an error if password field is empty', (done) => {
       dummyUser.password = '';
-      // mockUser = { ...dummyUser };
-      // mockUser.password = '';
       chai.request(app)
         .post('/api/v1/users')
         .send(dummyUser)
@@ -87,8 +85,6 @@ describe('API endpoint: /api/users', () => {
     });
     it('should return an error if password is less than 8 characters', (done) => {
       dummyUser.password = 'short';
-      // mockUser = { ...dummyUser };
-      // mockUser.password = 'short';
       chai.request(app)
         .post('/api/v1/users')
         .send(dummyUser)
@@ -108,8 +104,6 @@ describe('API endpoint: /api/users', () => {
     });
     it('should return an error if password is not alphanumeric', (done) => {
       dummyUser.password = 'only alphabets without numbers';
-      // mockUser = { ...dummyUser };
-      // mockUser.password = 'only alphabets without numbers';
       chai.request(app)
         .post('/api/v1/users')
         .send(dummyUser)
@@ -170,14 +164,14 @@ describe('API endpoint: /api/users', () => {
     it('should authenticate a new user', (done) => {
       dummyUser.email = faker.internet.email();
       models.User.create(dummyUser)
-        .then((user) => {
-          return chai.request(app)
+        .then(user => (
+          chai.request(app)
             .post('/api/v1/users/login')
             .send({
               email: user.email,
               password: DUMMY_USER.password
-            });
-        })
+            })
+        ))
         .then((res) => {
           expect(res).to.have.status(200);
           expect(res.body).to.haveOwnProperty('token');
