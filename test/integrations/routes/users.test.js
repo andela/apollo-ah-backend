@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import faker from 'faker';
 import app from '../../../index';
 import models from '../../../models';
 import {

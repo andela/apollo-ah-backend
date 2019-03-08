@@ -1,3 +1,4 @@
+import { urlRegex, phoneRegex } from '../helpers/regex';
 /**
  * This is a validation for creating a profile
  * @constant
@@ -13,17 +14,15 @@
 
 const validateCreateProfile = (req, res, next) => {
   let {
-    firstname, lastname, username, gender, bio, phone, address, image,
+    firstname, lastname, username, gender, bio, phone, image,
   } = req.body;
-  const urlRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
-  const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+
   firstname = firstname ? firstname.toLowerCase().toString().replace(/\s+/g, '') : firstname;
   lastname = lastname ? lastname.toLowerCase().toString().replace(/\s+/g, '') : lastname;
   username = username ? username.toLowerCase().toString().replace(/\s+/g, '') : username;
   gender = gender ? gender.toUpperCase().toString().replace(/\s+/g, '') : gender;
   bio = bio ? bio.toLowerCase().toString().replace(/\s+/g, ' ') : bio;
   phone = phone ? phone.toLowerCase().toString().replace(/\s+/g, '') : phone;
-  address = address ? address.toLowerCase().toString().replace(/\s+/g, ' ') : address;
   image = image ? image.toLowerCase().toString().replace(/\s+/g, '') : image;
 
   const errors = {};

@@ -29,9 +29,11 @@ const profileRouter = express.Router();
  */
 
 
-profileRouter.post('/profile',
+profileRouter.post(
+  '/profile',
   middlewares.authenticate,
   middlewares.validateCreateProfile,
-  profileController.create);
+  profileController.create
+);
 
 export default profileRouter;

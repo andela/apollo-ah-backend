@@ -1,5 +1,6 @@
 import models from '../models';
-import constants, { STATUS } from '../helpers/constants';
+import { STATUS } from '../helpers/constants';
+import Response from '../helpers/responseHelper';
 
 const { Profile } = models;
 
@@ -54,11 +55,7 @@ class ProfileController {
       });
 
       if (success) {
-        return res.status(CREATED).json({
-          success: true,
-          message: 'Profile created successfully',
-          profile,
-        });
+        return Response.send(res, CREATED, profile, 'Profile created successfully', true);
       }
 
       await Profile.update(
@@ -70,23 +67,12 @@ class ProfileController {
         }
       );
 
-      return res.status(CREATED).json({
-        success: true,
-        message: 'Profile updated successfully',
-        profile: requestForm,
-      });
+      return Response.send(res, CREATED, requestForm, 'Profile updated successfully', true);
     } catch (error) {
       if (error.message === 'insert or update on table "profiles" violates foreign key constraint "profiles_user_id_fkey"') {
-        return res.status(UNAUTHORIZED).json({
-          success: false,
-          message: 'You have to be signed up to create a profile',
-        });
+        return Response.send(res, UNAUTHORIZED, [], 'You have to be signed up to create a profile', false);
       }
-      res.status(SERVER_ERROR).json({
-        success: false,
-        message: 'Profile update failed, try again later!',
-        errors: error.message,
-      });
+      return Response.send(res, SERVER_ERROR, error.message, 'Profile update failed, try again later!', false);
     }
   }
 }

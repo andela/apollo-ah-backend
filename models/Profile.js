@@ -10,7 +10,7 @@ const Profile = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const ProfileSchema = sequelize.define('profiles', {
+  const ProfileSchema = sequelize.define('profile', {
     firstname: {
       type: DataTypes.STRING,
       allowNull: false,

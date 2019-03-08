@@ -22,20 +22,20 @@ const profile = {
 
 const token = `Bearer ${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
 
-describe('API end point for User profile', () => {
+describe('Testing user profile feature', () => {
   after(() => models.Profile.destroy({ truncate: true }));
-  it('it should create profile with correct details', (done) => {
+  it('should create profile when details are correct', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
       .send(profile)
       .set('Authorization', token)
       .end((err, res) => {
-        console.log(res);
-        expect(res.status).eql(201);
+        expect(res).to.have.status(201);
         expect(res.body).to.have.property('message');
-        expect(res.body.profile).to.be.an('object');
-        expect(Object.keys(res.body.profile)).to.include.members([
+        expect(res.body.data).to.be.an('object');
+        expect(res.body.status).to.be.equals(true);
+        expect(Object.keys(res.body.data)).to.include.members([
           'firstname',
           'lastname',
           'username',
@@ -45,14 +45,14 @@ describe('API end point for User profile', () => {
           'address',
           'image',
         ]);
-        expect(res.body.profile.id).to.not.be.a('string');
-        expect(res.body.profile.user_id).to.not.be.a('string');
+        expect(res.body.data.id).to.not.be.a('string');
+        expect(res.body.data.user_id).to.not.be.a('string');
         expect(res.body.message).to.be.equals('Profile created successfully');
         done();
       });
   });
 
-  it('it should throw an error if firstname is not supplied', (done) => {
+  it('should return an error if firstname is not provided', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -67,7 +67,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if lastname is not supplied', (done) => {
+  it('should return an error if lastname is not provided', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -82,7 +82,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if username is not supplied', (done) => {
+  it('should return error if username is not provided', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -97,7 +97,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if gender is not supplied', (done) => {
+  it('should throw an error if gender is not provided', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -112,7 +112,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if gender type is not M or F', (done) => {
+  it('should throw an error if gender type is not M or F', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -127,7 +127,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if bio is not provided', (done) => {
+  it('should throw an error if bio is not provided', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -142,7 +142,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if image url is invalid', (done) => {
+  it('should throw an error if image url is invalid', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')
@@ -157,7 +157,7 @@ describe('API end point for User profile', () => {
       });
   });
 
-  it('it should throw an error if phone number is invalid', (done) => {
+  it('should throw an error if phone number is invalid', (done) => {
     chai
       .request(app)
       .post('/api/v1/profile')

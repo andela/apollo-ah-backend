@@ -11,7 +11,7 @@ const User = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const UserSchema = sequelize.define('users', {
+  const UserSchema = sequelize.define('user', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
