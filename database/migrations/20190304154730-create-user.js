@@ -18,6 +18,10 @@ export default {
       email: {
         type: sequelize.STRING,
       },
+      isConfirmed: {
+        type: sequelize.BOOLEAN,
+        defaultValue: false
+      },
       password: {
         type: sequelize.STRING,
       },
