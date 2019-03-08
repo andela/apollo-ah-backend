@@ -67,7 +67,7 @@ app.use('/api/v1', apiRoutes);
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  return res.send(swaggerSpec);
 });
 
 
@@ -75,7 +75,8 @@ app.get('/swagger.json', (req, res) => {
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  console.log('oops', err)
+  // next(err);
 });
 
 // development error handler
