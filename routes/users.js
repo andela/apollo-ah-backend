@@ -70,4 +70,7 @@ router.post('/', UsersController.register);
  */
 router.post('/login', UsersController.login);
 
+
+router.get('/confirm_account', UsersController.confirmUser);
+
 export default router;

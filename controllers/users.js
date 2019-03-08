@@ -1,4 +1,5 @@
 import createError from 'http-errors';
+import jwt from 'jsonwebtoken';
 import models from '../models';
 import { env, generateToken } from '../helpers/utils';
 import sendMail from '../helpers/sendMail';
@@ -83,6 +84,36 @@ class UsersController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  /**
+   * This function confirms a user
+   * @static
+   * @param {Request} request - Request object
+   * @param {Response} response - Response object
+   * @param {function} next - Express next function
+   * @returns {void}
+   */
+  static async confirmUser(request, response, next) {
+    // get token from the request url
+    const emailToken = request.query.token;
+    // get email from token
+    jwt.verify(emailToken, env('APP_KEY'), (err, decoded) => {
+      if (err || !decoded) return next(createError(401, ' Invalid url.'));
+      request.email = decoded.email;
+    });
+    // get the user with the token mail from DB
+    const user = await User.findOne({ where: { email: request.email } });
+    if (!user) {
+      return response.status(404).json({ status: 404, message: 'This link is wrong' });
+    }
+    // confirm a user account
+    const updateData = await User.update({ isConfirmed: true },
+      { where: { email: request.email } });
+    if (!updateData) {
+      return response.status(404).json({ status: 404, message: 'An error occured' });
+    }
+    return response.status(200).json({ status: 200, message: 'Your account has been confirmed' });
   }
 }
 
