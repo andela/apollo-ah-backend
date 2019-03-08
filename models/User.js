@@ -26,6 +26,10 @@ const User = (sequelize, DataTypes) => {
         this.setDataValue('password', bcrypt.hashSync(val, 10));
       }
     },
+    isConfirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW,

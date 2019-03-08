@@ -12,6 +12,9 @@ env:
 after_success:
   - npm run coverage
 
+before_install:
+  - npm i 
+
 services:
   - postgresql
 
