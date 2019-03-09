@@ -28,7 +28,10 @@ export const MESSAGE = {
   USERNAME_EXITS: 'The username is already taken, try another one',
 
   ACCOUNT_CONFIRM: 'Your account has been successfully confirmed',
-  AUTH_SUCCESSFUL: 'You are successfully authenticated'
+  AUTH_SUCCESSFUL: 'You are successfully authenticated',
+
+  WELCOME_MESSAGE: 'Welcome to AuthorsHaven API',
+  ROUTE_NOT_FOUND: 'Provided route is invalid.',
 };
 
 export const FIELD = {

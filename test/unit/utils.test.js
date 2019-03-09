@@ -3,8 +3,6 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { validateConfigVariable } from '../../helpers/utils';
 
-// const should = chai.should();
-
 describe('Helpers: Utils', () => {
   describe('validateConfigVariable()', () => {
     it('should validate unset ENV config variable', (done) => {

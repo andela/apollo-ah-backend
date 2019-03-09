@@ -2,11 +2,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import cors from 'cors';
-import errorhandler from 'errorhandler';
 import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import methodOveride from 'method-override';
+import createError from 'http-errors';
 import logger from './helpers/logger';
+import { MESSAGE } from './helpers/constants';
+import exceptionHandler from './middlewares/exceptionHandler';
 
 // Routes
 import apiRoutes from './routes';
@@ -14,8 +16,6 @@ import apiRoutes from './routes';
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
 const app = express();
-
-// Normal express config defaults
 
 logger.config();
 app.use(cors());
@@ -36,10 +36,6 @@ app.use(
   })
 );
 
-if (!isProduction) {
-  app.use(errorhandler());
-}
-
 const swaggerDefinition = {
   info: {
     title: "Author's Haven API",
@@ -59,7 +55,7 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 app.get('/', (req, res) => {
-  res.status(200).send({ message: 'Welcome to the API' });
+  res.status(200).json({ message: MESSAGE.WELCOME_MESSAGE });
 });
 
 // routes endpoint
@@ -71,37 +67,11 @@ app.get('/swagger.json', (req, res) => {
 });
 
 
-// / catch 404 and forward to error handler
+// catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  next(createError(404, MESSAGE.ROUTE_NOT_FOUND));
 });
 
-// development error handler
-// will print stacktrace
-if (!isProduction) {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-    res.json({
-      errors: {
-        message: err.message,
-        error: err
-      }
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: {}
-    }
-  });
-});
+app.use(exceptionHandler);
 
 export default app;
