@@ -17,10 +17,6 @@ chai.use(chaiHttp);
 let dummyUser;
 
 describe('API endpoint: /api/users', () => {
-  before(() => {
-    // synchronize and create tables
-    models.sequelize.sync();
-  });
   beforeEach(() => {
     // reset the dummy user data
     dummyUser = { ...DUMMY_USER };
