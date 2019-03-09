@@ -27,7 +27,8 @@ export const MESSAGE = {
   USERNAME_EMPTY: 'Username is required',
   USERNAME_EXITS: 'The username is already taken, try another one',
 
-  ACCOUNT_CONFIRM: 'Your account has been successfully confirmed'
+  ACCOUNT_CONFIRM: 'Your account has been successfully confirmed',
+  AUTH_SUCCESSFUL: 'You are successfully authenticated'
 };
 
 export const FIELD = {

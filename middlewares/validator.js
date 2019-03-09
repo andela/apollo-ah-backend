@@ -1,6 +1,6 @@
 import { body } from 'express-validator/check';
 import { MESSAGE, FIELD } from '../helpers/constants';
-import UsersController from '../controllers/users';
+import UsersController from '../controllers/usersController';
 
 /**
  * Used with express validator to validate input paramters

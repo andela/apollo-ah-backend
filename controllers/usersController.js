@@ -46,7 +46,12 @@ class UsersController {
         template: 'signup'
       };
       await Mail.sendMail(data);
-      return Response.send(response, STATUS.CREATED, { token, id: user.id });
+      return Response.send(
+        response,
+        STATUS.CREATED,
+        { token, id: user.id },
+        MESSAGE.REGISTRATION_SUCCESSFUL
+      );
     } catch (error) {
       logger.error(error);
       return next(error);
@@ -98,8 +103,14 @@ class UsersController {
       const payload = JSON.stringify(user.dataValues);
       const token = await generateToken(payload);
 
+      // respond with token
       const data = { token, id: user.id };
-      return Response.send(response, STATUS.OK, data);
+      return Response.send(
+        response,
+        STATUS.OK,
+        data,
+        MESSAGE.AUTH_SUCCESSFUL
+      );
     } catch (error) {
       return next(error);
     }

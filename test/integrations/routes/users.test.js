@@ -3,6 +3,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import Bluebird from 'bluebird';
 import faker from 'faker';
+import sinon from 'sinon';
 import app from '../../../index';
 import models from '../../../models';
 import {
@@ -10,6 +11,7 @@ import {
   STATUS, MESSAGE,
   FIELD
 } from '../../../helpers/constants';
+import Mail from '../../../helpers/sendMail';
 
 chai.use(chaiHttp);
 let dummyUser;
@@ -22,27 +24,33 @@ describe('API endpoint: /api/users', () => {
   beforeEach(() => {
     // reset the dummy user data
     dummyUser = { ...DUMMY_USER };
-    // drop tables
+    // clear database table
     Bluebird.all([
       models.User.destroy({ truncate: true }),
     ]);
   });
 
   describe('Registration endpoint', () => {
-    it('should create a new user with valid input', async () => {
-      try {
-        const response = await chai.request(app)
-          .post('/api/v1/users')
-          .send(dummyUser);
-        expect(response).to.have.status(STATUS.CREATED);
-        expect(response.body).to.be.an('object');
-        expect(response.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
-        expect(response.body).to.haveOwnProperty('message').to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
-        expect(response.body).to.haveOwnProperty('status').to.equal(true);
-        expect(response.body).to.haveOwnProperty('data').to.be.an('object');
-      } catch (err) {
-        expect(err).to.not.be.null;
-      }
+    it('should create a new user with valid input', (done) => {
+      // Stub mailer for test environment
+      // Why stub? Calling external services, especially in a microservice stack,
+      // can result in a ping-pong affect with HTTP requests and responses.
+      const sendMailStub = sinon.stub(Mail, 'sendMail').withArgs(() => {});
+      sendMailStub.yields(null);
+
+      chai.request(app)
+        .post('/api/v1/users')
+        .send(dummyUser)
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.CREATED);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+          expect(res.body).to.haveOwnProperty('message').to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
+          expect(res.body).to.haveOwnProperty('status').to.equal(true);
+          expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+          done();
+        });
     });
     it('should return an error if username is not provided', (done) => {
       dummyUser.username = '';
