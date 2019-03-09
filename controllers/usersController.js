@@ -98,10 +98,8 @@ class UsersController {
       const payload = JSON.stringify(user.dataValues);
       const token = await generateToken(payload);
 
-      // respond with token
-      return response
-        .status(200)
-        .json({ token, id: user.id });
+      const data = { token, id: user.id };
+      return Response.send(response, STATUS.OK, data);
     } catch (error) {
       return next(error);
     }

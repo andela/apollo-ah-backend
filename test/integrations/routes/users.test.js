@@ -174,8 +174,8 @@ describe('API endpoint: /api/users', () => {
         ))
         .then((res) => {
           expect(res).to.have.status(200);
-          expect(res.body).to.haveOwnProperty('token');
-          expect(res.body).to.haveOwnProperty('id');
+          expect(res.body.data).to.haveOwnProperty('token');
+          expect(res.body.data).to.haveOwnProperty('id');
           done();
         })
         .catch(done);

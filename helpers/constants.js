@@ -8,7 +8,6 @@ export const STATUS = {
   NOT_FOUND: 404, // Not found, when a resource can't be found to fulfill the request
   UNPROCESSED: 422, // Unprocssable entity, requests parameters contains invalid fields
   SERVER_ERROR: 500,
-
 };
 
 export const MESSAGE = {
