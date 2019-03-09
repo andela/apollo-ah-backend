@@ -20,10 +20,6 @@ describe('API endpoint: /api/users', () => {
   beforeEach(() => {
     // reset the dummy user data
     dummyUser = { ...DUMMY_USER };
-    // clear database table
-    Bluebird.all([
-      models.User.destroy({ truncate: true }),
-    ]);
   });
 
   describe('Registration endpoint', () => {
