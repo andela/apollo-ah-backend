@@ -2,32 +2,24 @@
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
 import articleHelpers from '../helpers/articleHelpers';
+import Response from '../helpers/responseHelper';
 
-const buildErrorObject = (...message) => ({ errors: { body: [message] } });
-
-const errorMessageComposer = (title, body, description) => {
-  let titleErrorMessage;
-  let bodyErrorMessage;
-  let descriptionErrorMessage;
-
-  if (!title) titleErrorMessage = 'title cannot be empty';
-  if (!body) bodyErrorMessage = 'body cannot be empty';
-  if (!description) descriptionErrorMessage = 'description cannot be empty';
-
-  return [titleErrorMessage, bodyErrorMessage, descriptionErrorMessage];
-};
-
-const checkInputType = (inputType) => {
-  if (inputType === 'tagId') return { errors: { body: 'tagId needs to be a number' } };
-  return { errors: { body: [`${inputType} must be a string`] } };
-};
-
-const trimCheck = inputType => (
-  { errors: { body: [`${inputType} cannot be empty.`] } }
-);
-
-export default {
-  validateCreateArticleInput: async (req, res, next) => {
+/**
+ * Wrapper class for validating requests.
+ *
+ * @export
+ * @class ArticlesMiddleware
+ */
+export default class AriclesMiddleware {
+  /**
+   * Validates the request body before sending it to the controller
+   * @static
+   * @param {function} req the request object
+   * @param {function} res the response object
+   * @param {function} next the express built in next() middleare
+   * @returns {function} returns erros objects or calls next
+   */
+  static async validateCreateArticleInput(req, res, next) {
     const authorId = req.user.id;
     const {
       title = '',
@@ -35,34 +27,38 @@ export default {
       body = '',
     } = req.body;
 
-    if (!title || !body || !description) {
-      const getErrorMessage = errorMessageComposer(title, body, description);
-      const errorObject = buildErrorObject(...getErrorMessage);
-      return res.status(400).send(errorObject);
+    if (typeof title !== 'string') {
+      return Response.send(res, 400, [], 'title must be a string', 'failed');
     }
-
-    if (typeof title !== 'string') return res.status(400).send(checkInputType('title'));
-    if (typeof body !== 'string') return res.status(400).send(checkInputType('body'));
+    if (typeof body !== 'string') {
+      return Response.send(res, 400, [], 'body must be a string', 'failed');
+    }
     if (typeof description !== 'string') {
-      return res.status(400).send(checkInputType('description'));
+      return Response.send(res, 400, [], 'description must be a string', 'failed');
     }
 
-    if (!title.trim()) return res.status(400).send(trimCheck('title'));
-    if (!body.trim()) return res.status(400).send(trimCheck('body'));
-    if (!description.trim()) return res.status(400).send(trimCheck('description'));
+    if (!title || !title.trim()) {
+      return Response.send(res, 400, [], 'title cannot be empty', 'failed');
+    }
+    if (!body || !body.trim()) {
+      return Response.send(res, 400, [], 'body cannot be empty', 'failed');
+    }
+    if (!description || !description.trim()) {
+      return Response.send(res, 400, [], 'description cannot be empty', 'failed');
+    }
 
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
-        return res.status(400).send({
-          errors: { body: ['an article with that title already exist'] }
-        });
+        return Response.send(
+          res, 400, [], 'an article with that title already exist', 'failed',
+        );
       }
       const slug = slugify(`${title}-${uuid()}`, '-');
       res.locals.slug = slug;
       return next();
     } catch (error) {
-      return res.status(400).send(error);
+      return Response.send(res, 400, error, 'could not create article', 'failed');
     }
-  },
-};
+  }
+}

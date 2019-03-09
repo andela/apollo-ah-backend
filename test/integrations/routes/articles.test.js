@@ -6,6 +6,7 @@ import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
 import logger from '../../../helpers/logger';
+import { STATUS } from '../../../helpers/constants';
 
 logger.log('The test is running');
 chai.use(chaiHttp);
@@ -54,9 +55,10 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .send(dummyArticle)
         .set({ Authorization: `Bearer ${dummyUser.token}` })
         .end((err, res) => {
-          expect(res.status).to.equal(201);
-          expect(typeof res.body).to.equal('object');
-          expect(res.body.title).to.equal(dummyArticle.title);
+          expect(res).to.have.status(STATUS.CREATED);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+          expect(res.body.data.title).to.equal(dummyArticle.title);
           done();
         });
     });
@@ -71,8 +73,10 @@ describe('API endpoint: /api/articles (Routes)', () => {
           .send(dummyArticle)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res.status).to.equal(400);
-            expect(res.body.errors.body[0]).to.equal('an article with that title already exist');
+            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body.message).to.equal('an article with that title already exist');
             done();
           });
       });
