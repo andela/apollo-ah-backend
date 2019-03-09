@@ -1,5 +1,8 @@
-const router = require("express").Router();
+import express from 'express';
+import users from './users';
+import articleRouter from './articleRoutes';
 
+const router = express.Router();
 
 /**
  * @swagger
@@ -15,6 +18,8 @@ const router = require("express").Router();
  *       password:
  *         type: string
  */
-router.use("/api", require("./api"));
+router.use('/users', users);
 
-module.exports = router;
+router.use('/articles', articleRouter);
+
+export default router;

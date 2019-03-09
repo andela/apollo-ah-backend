@@ -46,3 +46,5 @@ yarn.lock
 
 # others
 *.todo
+log
+package-lock.json

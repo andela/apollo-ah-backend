@@ -5,18 +5,15 @@ node_js:
 
 cache: npm
 
-script:
-  - npm run coverage
-
-before_install:
-  - npm i
-
 env:
   global:
     - NODE_ENV=test
 
 after_success:
-  - ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info  
+  - npm run coverage
+
+before_install:
+  - npm i 
 
 services:
   - postgresql
@@ -24,7 +21,6 @@ services:
 before_script:
   - psql -c 'CREATE DATABASE authorshaven;' -U postgres
   - psql -c "CREATE USER authorshaven WITH PASSWORD 'secret';" -U postgres
-  - npm run migrate
 
 notifications:
   email: false

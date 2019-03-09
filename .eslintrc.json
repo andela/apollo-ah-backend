@@ -28,6 +28,7 @@
             "MethodDefinition": true,
             "ClassDeclaration": true
         }
-    }]
+    }],
+    "no-unused-vars": ["error", { "args": "none" }]
   }
 }
