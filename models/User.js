@@ -7,11 +7,11 @@ import bcrypt from 'bcryptjs';
  * @param {Sequelize.DataTypes} DataTypes - A convinient object holding data types
  * @return {Sequelize.Model} - User model
  */
-const User = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const UserSchema = sequelize.define('user', {
+  const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -47,8 +47,8 @@ const User = (sequelize, DataTypes) => {
    * @param {Sequelize.Model} models - Sequelize model
    * @returns {void}
    */
-  UserSchema.associate = (models) => {
-    // UserSchema.hasOne(models.Profile);
+  User.associate = (models) => {
+    // association comes here
   };
 
   /**
@@ -58,10 +58,8 @@ const User = (sequelize, DataTypes) => {
    * @param {string} password - Password to validate
    * @returns {boolean} Truthy upon successful validation
    */
-  UserSchema.comparePassword = (user, password) => (
+  User.comparePassword = (user, password) => (
     bcrypt.compareSync(password, user.password)
   );
-  return UserSchema;
+  return User;
 };
-
-export default User;

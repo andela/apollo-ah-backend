@@ -8,7 +8,7 @@ export default {
    * @return {void}
    */
   up: (queryInterface, sequelize) => (
-    queryInterface.createTable('users', {
+    queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -34,7 +34,6 @@ export default {
         allowNull: true,
         type: sequelize.DATE,
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-        // onUpdate: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   ),
@@ -48,6 +47,6 @@ export default {
    * @return {void}
    */
   down: (queryInterface, sequelize) => (
-    queryInterface.dropTable('users')
+    queryInterface.dropTable('Users')
   ),
 };

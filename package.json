@@ -17,6 +17,7 @@
     "migrate:undo": "npm run sequelize -- db:migrate:undo",
     "mocha": "mocha",
     "mocha:watch": "npm run mocha -- -w",
+    "premocha": "NODE_ENV=test npm run migrate",
     "seed": "sequelize db:seed:all --seeders-path database/seeders",
     "sequelize": "sequelize",
     "start": "node dist/bin/www.js",
