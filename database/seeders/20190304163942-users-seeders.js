@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 export default {
   /**
    * Run the seeder
@@ -8,7 +10,7 @@ export default {
    * @return {void}
    */
   up: (queryInterface, sequelize) => (
-    queryInterface.bulkInsert('users', [
+    queryInterface.bulkInsert('Users', [
       {
         email: 'demo@demo.com',
         password: '$2a$10$/RAAxAh65nDlKdDtp00gB.noVOtvyktM4nSHR1rfZwJIvqsM35rtW'
@@ -29,6 +31,6 @@ export default {
    * @return {void}
    */
   down: (queryInterface, sequelize) => (
-    queryInterface.bulkDelete('users', null, {})
+    queryInterface.bulkDelete('Users', null, {})
   )
 };

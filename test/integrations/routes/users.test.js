@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import Bluebird from 'bluebird';
 import faker from 'faker';
 import sinon from 'sinon';
 import app from '../../../index';
