@@ -21,7 +21,6 @@ services:
 before_script:
   - psql -c 'CREATE DATABASE authorshaven;' -U postgres
   - psql -c "CREATE USER authorshaven WITH PASSWORD 'secret';" -U postgres
-  - npm run migrate
 
 notifications:
   email: false
@@ -35,3 +34,4 @@ deploy:
     master: apollo-ah-backend
   run:
     - "npm run migrate"
+ 
