@@ -37,7 +37,6 @@ const createUser = async () => {
 
 describe('API endpoint: /api/articles (Routes)', () => {
   before(async () => {
-    models.sequelize.sync();
     createUser();
     authpayload = await chai.request(app)
       .post('/api/v1/users/login')

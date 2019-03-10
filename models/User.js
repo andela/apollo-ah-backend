@@ -41,14 +41,8 @@ const User = (sequelize, DataTypes) => {
     }
   });
 
-  /**
-   * User relationship
-   *
-   * @param {Sequelize.Model} models - Sequelize model
-   * @returns {void}
-   */
   UserSchema.associate = (models) => {
-    // UserSchema.hasOne(models.Profile);
+    UserSchema.hasOne(models.Profile, { foreignKey: 'user_id' });
     UserSchema.hasMany(models.Article, { foreignKey: 'authorId' });
   };
 

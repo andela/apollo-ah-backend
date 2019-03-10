@@ -3,7 +3,7 @@ import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import authenticate from '../middlewares/authenticate';
 
-const articleRouter = express.Router();
+const articles = express.Router();
 
 /**
  * @swagger
@@ -49,7 +49,7 @@ const articleRouter = express.Router();
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articleRouter
+articles
   // .get('/', (req, res) => res.send({ message: 'We can get multiple articles' }))
   .post(
     '/',
@@ -58,4 +58,4 @@ articleRouter
     articlesController.create
   );
 
-export default articleRouter;
+export default articles;

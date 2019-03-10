@@ -1,6 +1,7 @@
 import express from 'express';
 import users from './users';
-import articleRouter from './articleRoutes';
+import profileRouter from './profile';
+import articles from './articles';
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ const router = express.Router();
  *         type: string
  */
 router.use('/users', users);
-router.use('/articles', articleRouter);
+router.use(profileRouter);
+router.use('/articles', articles);
 
 export default router;
