@@ -6,7 +6,9 @@ import errorhandler from 'errorhandler';
 import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import methodOveride from 'method-override';
+import passport from 'passport';
 import logger from './helpers/logger';
+import models from './models';
 
 // Routes
 import apiRoutes from './routes';
@@ -35,6 +37,22 @@ app.use(
     saveUninitialized: false
   })
 );
+
+const { User } = models;
+
+// PASSPORT CONFIGURATION
+// Initialize Passport.js
+app.use(passport.initialize());
+// Restore session
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((userId, done) => {
+  User.findById(userId, done);
+});
 
 if (!isProduction) {
   app.use(errorhandler());
@@ -71,37 +89,37 @@ app.get('/swagger.json', (req, res) => {
 });
 
 
-// / catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+//  catch 404 and forward to error handler
+// app.use((req, res, next) => {
+//   const err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
 
 // development error handler
 // will print stacktrace
-if (!isProduction) {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-    res.json({
-      errors: {
-        message: err.message,
-        error: err
-      }
-    });
-  });
-}
+// if (!isProduction) {
+//   app.use((err, req, res) => {
+//     res.status(err.status || 500);
+//     res.json({
+//       errors: {
+//         message: err.message,
+//         error: err
+//       }
+//     });
+//   });
+// }
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: {}
-    }
-  });
-});
+// app.use((err, req, res) => {
+//   res.status(err.status || 500);
+//   res.json({
+//     errors: {
+//       message: err.message,
+//       error: {}
+//     }
+//   });
+// });
 
 export default app;
