@@ -6,6 +6,7 @@ import Logger from '../../helpers/logger';
 
 const should = chai.should();
 
+
 describe('Mail class test', () => {
   it('should send a mail to a user', async () => {
     const data = {
