@@ -8,10 +8,8 @@ import morgan from 'morgan';
 import methodOveride from 'method-override';
 import passport from 'passport';
 import logger from './helpers/logger';
+import routes from './routes';
 import models from './models';
-
-// Routes
-import apiRoutes from './routes';
 
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
@@ -80,8 +78,7 @@ app.get('/', (req, res) => {
   res.status(200).send({ message: 'Welcome to the API' });
 });
 
-// routes endpoint
-app.use('/api/v1', apiRoutes);
+app.use('/api/v1', routes);
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
@@ -90,36 +87,36 @@ app.get('/swagger.json', (req, res) => {
 
 
 //  catch 404 and forward to error handler
-// app.use((req, res, next) => {
-//   const err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
 // development error handler
 // will print stacktrace
-// if (!isProduction) {
-//   app.use((err, req, res) => {
-//     res.status(err.status || 500);
-//     res.json({
-//       errors: {
-//         message: err.message,
-//         error: err
-//       }
-//     });
-//   });
-// }
+if (!isProduction) {
+  app.use((err, req, res) => {
+    res.status(err.status || 500);
+    res.json({
+      errors: {
+        message: err.message,
+        error: err
+      }
+    });
+  });
+}
 
 // production error handler
 // no stacktraces leaked to user
-// app.use((err, req, res) => {
-//   res.status(err.status || 500);
-//   res.json({
-//     errors: {
-//       message: err.message,
-//       error: {}
-//     }
-//   });
-// });
+app.use((err, req, res) => {
+  res.status(err.status || 500);
+  res.json({
+    errors: {
+      message: err.message,
+      error: {}
+    }
+  });
+});
 
 export default app;

@@ -14,6 +14,8 @@ if (config.use_env_variable) {
 
 const models = {
   User: sequelize.import('./User.js'),
+  Profile: sequelize.import('./Profile.js'),
+  Article: sequelize.import('./Article.js')
 };
 
 Object.keys(models).forEach((key) => {

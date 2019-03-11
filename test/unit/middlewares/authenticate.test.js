@@ -5,13 +5,13 @@ import authenticate from '../../../middlewares/authenticate';
 
 const should = chai.should();
 
-describe.skip('middlewares', () => {
+describe('middlewares', () => {
   describe('authenticate()', () => {
     it('should throw error on missing Authorization Header', (done) => {
       const callback = sinon.spy();
       const request = {
         headers: {
-          authorization: '',
+          Authorization: '',
         },
       };
       const response = {};

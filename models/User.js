@@ -17,8 +17,8 @@ const User = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
       validate: {
-        isEmail: { msg: 'Must be a valid email address' },
-      },
+        isEmail: { msg: 'Must be a valid email address' }
+      }
     },
     password: {
       type: DataTypes.STRING,
@@ -32,23 +32,18 @@ const User = (sequelize, DataTypes) => {
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: sequelize.NOW,
+      defaultValue: sequelize.NOW
     },
     updatedAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW,
-      onUpdate: sequelize.NOW,
-    },
+      onUpdate: sequelize.NOW
+    }
   });
 
-  /**
-   * User relationship
-   *
-   * @param {Sequelize.Model} models - Sequelize model
-   * @returns {void}
-   */
   UserSchema.associate = (models) => {
-    // UserSchema.hasOne(models.Profile);
+    UserSchema.hasOne(models.Profile, { foreignKey: 'user_id' });
+    UserSchema.hasMany(models.Article, { foreignKey: 'authorId' });
   };
 
   /**
@@ -58,9 +53,7 @@ const User = (sequelize, DataTypes) => {
    * @param {string} password - Password to validate
    * @returns {boolean} Truthy upon successful validation
    */
-  UserSchema.comparePassword = (user, password) => (
-    bcrypt.compareSync(password, user.password)
-  );
+  UserSchema.comparePassword = (user, password) => bcrypt.compareSync(password, user.password);
   return UserSchema;
 };
 
