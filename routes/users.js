@@ -116,7 +116,26 @@ router.post(
   UsersController.sendPasswordRecoveryLink
 );
 
-
+/**
+* /api/v1/users/confirm_account:
+*  get:
+*    tags:
+*      - AccountConfirm
+*    description: Confirm a user account
+*    produces:
+*       - application/json
+*    parameters:
+*      - name: token
+*        description: The confirmation token
+*        in: query
+*        required: true
+*        type: string
+*    responses:
+*      200:
+*        description: Account confirmed
+*        schema:
+*          type: object
+*/
 router.get('/confirm_account', UsersController.confirmUser);
 
 export default router;
