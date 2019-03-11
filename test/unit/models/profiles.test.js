@@ -18,7 +18,7 @@ describe('usernameExists function', () => {
       gender: '',
     };
     const { dataValues: { id } } = await models.User.create(dummyUser);
-    dummyUser.id = id;
+    dummyUser.user_id = id;
     await models.Profile.create(dummyUser);
     const userExists = await (ProfileController.usernameExists(dummyUser.username));
     expect(userExists).to.equal(true);
