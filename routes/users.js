@@ -1,6 +1,6 @@
 import express from 'express';
 import UsersController from '../controllers/users';
-import { handleRegistration } from '../middlewares/handleValidation';
+import Handler from '../middlewares/handleValidation';
 import Validator from '../middlewares/validator';
 
 const router = express.Router();
@@ -14,6 +14,17 @@ const router = express.Router();
  *         type: string
  *       password:
  *         type: string
+ *   CDMS:
+ *     properties:
+ *       code:
+ *         type: int
+ *       data:
+ *         type: object
+ *     message:
+ *       type: string
+ *     status:
+ *       type: boolean
+ *
  */
 
 /**
@@ -44,7 +55,7 @@ const router = express.Router();
  */
 router.post('/',
   Validator.validateRegistration(),
-  handleRegistration,
+  Handler.handleRegistration,
   UsersController.register);
 
 /**
@@ -74,6 +85,36 @@ router.post('/',
  *           $ref: '#/definitions/User'
  */
 router.post('/login', UsersController.login);
+
+/**
+ * @swagger
+ * /api/v1/users/forgot_password:
+ *   post:
+ *     tags:
+ *       - password
+ *     description: Sends a password reset link to the email address
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         description: User's email
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Password reset succesful
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *         format:
+ *           $ref: '#/definitions/CMDS'
+ */
+router.post(
+  '/forgot_password',
+  Validator.validateForgotPassword(),
+  Handler.handleForgotPassword,
+  UsersController.sendPasswordRecoveryLink
+);
 
 
 router.get('/confirm_account', UsersController.confirmUser);
