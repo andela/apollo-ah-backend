@@ -57,7 +57,7 @@ describe('Testing user profile feature', () => {
     dummyUser3.token = authpayload.body.token;
     return dummyUser3;
   });
-  after(() => models.Profile.destroy({ truncate: true }));
+  // after(() => models.Profile.destroy({ truncate: true }));
   it('should create profile when details are correct', async () => {
     try {
       const res = await chai

@@ -50,5 +50,5 @@ module.exports = {
       }
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Profiles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('profiles')
 };

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import faker from 'faker';
-import Bluebird from 'bluebird';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
@@ -45,7 +44,6 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
     dummyUser.token = authpayload.body.token;
     return dummyUser;
   });
-  after(() => Bluebird.all([models.Article.destroy({ truncate: true })]));
 
   describe('POST: /api/v1/articles', () => {
     describe('create an article without a title', () => {
@@ -240,7 +238,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
     describe('verify slugs are being created from the title', () => {
       it('Should create an article with a slug', (done) => {
         const article = {
-          title: 'no errors allowed',
+          title: faker.random.words(),
           description: 'dehjfjdh',
           body: 'sentence'
         };

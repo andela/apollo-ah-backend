@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import faker from 'faker';
-import Bluebird from 'bluebird';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
@@ -20,10 +19,11 @@ const dummyUser = {
 };
 
 const dummyArticle = {
-  title: 'Hello world',
+  title: 'Hello worlrd',
   description: 'lorem ipsum exists',
   body: faker.lorem.paragraphs(),
 };
+
 
 const createUser = async () => {
   try {
@@ -44,20 +44,25 @@ before(async () => {
 });
 
 describe('API endpoint: /api/articles (Routes)', () => {
-  after(() => Bluebird.all([models.Article.destroy({ truncate: true })]));
+  // after(() => Bluebird.all([models.Article.destroy({ truncate: false })]));
 
   describe('POST: /api/v1/articles', () => {
     it('Should create an article', (done) => {
+      const fakeArticle = {
+        title: faker.random.words(),
+        description: 'lorem ipsum exists',
+        body: faker.lorem.paragraphs(),
+      };
       chai
         .request(app)
         .post('/api/v1/articles')
-        .send(dummyArticle)
+        .send(fakeArticle)
         .set({ Authorization: `Bearer ${authToken}` })
         .end((err, res) => {
           expect(res).to.have.status(STATUS.CREATED);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
-          expect(res.body.data.title).to.equal(dummyArticle.title);
+          expect(res.body.data.title).to.equal(fakeArticle.title);
           done();
         });
     });

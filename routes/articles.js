@@ -1,6 +1,7 @@
 import express from 'express';
 import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
+import ArticleLikeController from '../controllers/articleLikesController';
 import authenticate from '../middlewares/authenticate';
 
 const articles = express.Router();
@@ -52,10 +53,22 @@ const articles = express.Router();
 articles
   // .get('/', (req, res) => res.send({ message: 'We can get multiple articles' }))
   .post(
-    '/',
+    '/articles',
     authenticate,
     articlesMiddleware.validateCreateArticleInput,
     articlesController.create
+  )
+
+  .post(
+    '/articles/:slug/likes',
+    authenticate,
+    ArticleLikeController.like
+  )
+
+  .post(
+    '/articles/:slug/dislikes',
+    authenticate,
+    ArticleLikeController.dislike
   );
 
 export default articles;

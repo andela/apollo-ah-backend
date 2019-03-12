@@ -1,6 +1,6 @@
 import express from 'express';
 import users from './users';
-import profileRouter from './profile';
+import profile from './profile';
 import articles from './articles';
 
 const router = express.Router();
@@ -20,7 +20,7 @@ const router = express.Router();
  *         type: string
  */
 router.use('/users', users);
-router.use(profileRouter);
-router.use('/articles', articles);
+router.use(profile);
+router.use(articles);
 
 export default router;
