@@ -361,7 +361,7 @@ describe('POST /api/v1/users/login', () => {
       .send(user)
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.haveOwnProperty('token');
         expect(res.body).to.haveOwnProperty('id');
       });

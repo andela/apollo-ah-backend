@@ -3,9 +3,16 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
 import jwt from 'jsonwebtoken';
+import { STATUS } from '../../../helpers/constants';
 import app from '../../../index';
 
+
 chai.use(chaiHttp);
+
+const {
+  CREATED,
+  OK,
+} = STATUS;
 
 const token = `${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
 const article = {
@@ -30,7 +37,7 @@ describe('article like and dislike endpoint', () => {
       .post(`/api/v1/articles/${slug}/likes`)
       .set({ Authorization: `Bearer ${token}` })
       .end((err, res) => {
-        expect(res.status).eql(201);
+        expect(res.status).eql(CREATED);
         expect(res.body.message).to.equal('successfully liked article');
         done();
       });
@@ -42,7 +49,7 @@ describe('article like and dislike endpoint', () => {
       .post(`/api/v1/articles/${slug}/dislikes`)
       .set({ Authorization: `Bearer ${token}` })
       .end((err, res) => {
-        expect(res.status).eql(200);
+        expect(res.status).eql(OK);
         expect(res.body.message).to.equal('successfully disliked article');
         done();
       });

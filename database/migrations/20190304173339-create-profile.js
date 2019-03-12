@@ -17,19 +17,10 @@ module.exports = {
     username: {
       type: Sequelize.STRING
     },
-    gender: {
-      type: Sequelize.STRING
-    },
     bio: {
       type: Sequelize.STRING
     },
     image: {
-      type: Sequelize.STRING
-    },
-    phone: {
-      type: Sequelize.STRING
-    },
-    address: {
       type: Sequelize.STRING
     },
     createdAt: {

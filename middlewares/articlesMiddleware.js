@@ -3,6 +3,7 @@ import slugify from 'slugify';
 import uuid from 'uuid/v4';
 import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
+import { STATUS } from '../helpers/constants';
 
 /**
  * Wrapper class for validating requests.
@@ -28,37 +29,37 @@ export default class AriclesMiddleware {
     } = req.body;
 
     if (typeof title !== 'string') {
-      return Response.send(res, 400, [], 'title must be a string', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'title must be a string', 'failed');
     }
     if (typeof body !== 'string') {
-      return Response.send(res, 400, [], 'body must be a string', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'body must be a string', 'failed');
     }
     if (typeof description !== 'string') {
-      return Response.send(res, 400, [], 'description must be a string', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description must be a string', 'failed');
     }
 
     if (!title || !title.trim()) {
-      return Response.send(res, 400, [], 'title cannot be empty', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'title cannot be empty', 'failed');
     }
     if (!body || !body.trim()) {
-      return Response.send(res, 400, [], 'body cannot be empty', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'body cannot be empty', 'failed');
     }
     if (!description || !description.trim()) {
-      return Response.send(res, 400, [], 'description cannot be empty', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description cannot be empty', 'failed');
     }
 
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
         return Response.send(
-          res, 403, [], 'an article with that title already exist', 'failed',
+          res, STATUS.FORBIDDEN, [], 'an article with that title already exist', 'failed',
         );
       }
       const slug = slugify(`${title}-${uuid()}`, '-');
       res.locals.slug = slug;
       return next();
     } catch (error) {
-      return Response.send(res, 400, error, 'could not create article', 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, error, 'could not create article', 'failed');
     }
   }
 }

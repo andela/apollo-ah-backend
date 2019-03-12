@@ -5,8 +5,14 @@ import faker from 'faker';
 import jwt from 'jsonwebtoken';
 import app from '../../../index';
 import models from '../../../models';
+import { STATUS } from '../../../helpers/constants';
 
 chai.use(chaiHttp);
+
+const {
+  CREATED,
+  BAD_REQUEST,
+} = STATUS;
 
 const profile = {
   firstname: faker.name.firstName(),
@@ -30,7 +36,7 @@ describe('Testing user profile feature', () => {
         .post('/api/v1/profile')
         .send(profile)
         .set('Authorization', token);
-      expect(res).to.have.status(201);
+      expect(res).to.have.status(CREATED);
       expect(res.body).to.have.property('message');
       expect(res.body.data).to.be.an('object');
       expect(res.body.status).to.be.equals(true);
@@ -59,7 +65,7 @@ describe('Testing user profile feature', () => {
       .send({ ...profile, firstname: '' })
       .set('Authorization', token)
       .end((err, res) => {
-        expect(res.status).eql(400);
+        expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('firstname');
         expect(res.body.data[0].errors.firstname).to.be.equals('Firstname is required');
@@ -74,7 +80,7 @@ describe('Testing user profile feature', () => {
       .send({ ...profile, lastname: '' })
       .set('Authorization', token)
       .end((err, res) => {
-        expect(res.status).eql(400);
+        expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('lastname');
         expect(res.body.data[0].errors.lastname).to.be.equals('Lastname is required');
@@ -89,40 +95,10 @@ describe('Testing user profile feature', () => {
       .send({ ...profile, username: '' })
       .set('Authorization', token)
       .end((err, res) => {
-        expect(res.status).eql(400);
+        expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('username');
         expect(res.body.data[0].errors.username).to.be.equals('username field cannot be emnpty');
-        done();
-      });
-  });
-
-  it('should throw an error if gender is not provided', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profile')
-      .send({ ...profile, gender: '' })
-      .set('Authorization', token)
-      .end((err, res) => {
-        expect(res.status).eql(400);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('gender');
-        expect(res.body.data[0].errors.gender).to.be.equals('Gender is required');
-        done();
-      });
-  });
-
-  it('should throw an error if gender type is not M or F', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profile')
-      .send({ ...profile, gender: 'male' })
-      .set('Authorization', token)
-      .end((err, res) => {
-        expect(res.status).eql(400);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('genderType');
-        expect(res.body.data[0].errors.genderType).to.be.equals('Gender must either be M or F');
         done();
       });
   });
@@ -134,7 +110,7 @@ describe('Testing user profile feature', () => {
       .send({ ...profile, bio: '' })
       .set('Authorization', token)
       .end((err, res) => {
-        expect(res.status).eql(400);
+        expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('bio');
         expect(res.body.data[0].errors.bio).to.be.equals('Please provide a brief description about yourself');
@@ -149,40 +125,10 @@ describe('Testing user profile feature', () => {
       .send({ ...profile, image: 'hffhh.cam' })
       .set('Authorization', token)
       .end((err, res) => {
-        expect(res.status).eql(400);
+        expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('image');
         expect(res.body.data[0].errors.image).to.be.equals('image URL is not valid');
-        done();
-      });
-  });
-
-  it('should throw an error if phone number is invalid', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profile')
-      .send({ ...profile, phone: '0292922' })
-      .set('Authorization', token)
-      .end((err, res) => {
-        expect(res.status).eql(400);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('phone' && 'phoneLength');
-        expect(res.body.data[0].errors.phone).to.be.equals('Phone number should have a country code and not contain alphabets e.g +234');
-        done();
-      });
-  });
-
-  it('should throw an error if phone number is too short or long', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profile')
-      .send({ ...profile, phone: '+2340' })
-      .set('Authorization', token)
-      .end((err, res) => {
-        expect(res.status).eql(400);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('phone' && 'phoneLength');
-        expect(res.body.data[0].errors.phoneLength).to.be.equals('Phone number length should adhere to international standard');
         done();
       });
   });

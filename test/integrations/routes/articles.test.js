@@ -21,7 +21,7 @@ const dummyUser = {
 };
 
 const dummyArticle = {
-  title: 'Hello worlrd',
+  title: 'Hello world',
   description: 'lorem ipsum exists',
   body: faker.lorem.paragraphs(),
 };
@@ -88,9 +88,9 @@ describe('API endpoint: /api/articles (Routes)', () => {
           .send(dummyArticle)
           .set({ Authorization: `Bearer ${authToken}` })
           .end((err, res) => {
-            expect(res).to.have.status(403);
+            expect(res).to.have.status(STATUS.FORBIDDEN);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(403);
+            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.FORBIDDEN);
             expect(res.body.message).to.equal('an article with that title already exist');
             done();
           });

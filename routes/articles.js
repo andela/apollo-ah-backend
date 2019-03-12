@@ -51,7 +51,6 @@ const articles = express.Router();
  *           $ref: '#/definitions/Article'
  */
 articles
-  // .get('/', (req, res) => res.send({ message: 'We can get multiple articles' }))
   .post(
     '/articles',
     authenticate,
@@ -59,12 +58,55 @@ articles
     articlesController.create
   )
 
+/**
+ * @swagger
+ * /api/v1/articles/:slug/likes:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: like an article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: Successfully liked article
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+
   .post(
     '/articles/:slug/likes',
     authenticate,
     ArticleLikeController.like
   )
 
+/**
+ * @swagger
+ * /api/v1/articles/:slug/dislikes:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: like an article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: Successfully disliked article
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
   .post(
     '/articles/:slug/dislikes',
     authenticate,
