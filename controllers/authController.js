@@ -1,17 +1,17 @@
 import { generateToken } from '../helpers/utils';
+import logger from '../helpers/logger';
 
 /**
  * Class representing social authentication controller
  * @class socialAuthController
- * @returns {object}
  */
 export default class authController {
   /**
    * Login or creates a new user
    * @static
-   * @param {Request} req - Request object
-   * @param {Response} res - Response object
-   * @returns {object}
+   * @param {req} req - Request object
+   * @param {res} res - Response object
+   * @returns {object} - User object
    */
   static async socialAuth(req, res) {
     const { dataValues } = req.user;
@@ -29,7 +29,7 @@ export default class authController {
         }
       });
     } catch (err) {
-      next(err);
+      logger.log(err);
     }
   }
 }
