@@ -24,6 +24,15 @@ export default class Mail {
           pass: 'vzqEWNH9SjSxAntXMs'
         }
       });
+    } else if (env('NODE_ENV') === 'test') {
+      transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+          user: 'armando.haag@ethereal.email',
+          pass: 'vzqEWNH9SjSxAntXMs'
+        }
+      });
     } else {
       transporter = nodemailer.createTransport({
         host: env('MAIL_HOST'),

@@ -1,7 +1,7 @@
 import { body } from 'express-validator/check';
 import { MESSAGE, FIELD } from '../helpers/constants';
 import UsersController from '../controllers/users';
-
+import ProfileController from '../controllers/profileController';
 /**
  * Used with express validator to validate input paramters
  * @export
@@ -17,8 +17,30 @@ export default class Validator {
   static validateRegistration() {
     return [
       ...Validator.validateEmail(),
+      ...Validator.verifyEmail(),
       ...Validator.validatePassword(),
       ...Validator.validateUsername()
+    ];
+  }
+
+  /**
+   * Validates email when recovering password
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateForgotPassword() {
+    return [
+      ...Validator.validateEmail(),
+      [
+        body(FIELD.EMAIL)
+          .trim()
+          .custom(async (email) => {
+            if (!await UsersController.getUser('email', email)) {
+              return Promise.reject(MESSAGE.EMAIL_NOT_EXISTS);
+            }
+          }),
+      ]
     ];
   }
 
@@ -55,7 +77,9 @@ export default class Validator {
         .not().isEmpty()
         .withMessage(MESSAGE.USERNAME_EMPTY)
         .custom(async (username) => {
-          // TODO: Check if username exists
+          if (await ProfileController.usernameExists(username.toLowerCase())) {
+            return Promise.reject(MESSAGE.USERNAME_EXITS);
+          }
         }),
     ];
   }
@@ -73,11 +97,23 @@ export default class Validator {
         .not().isEmpty()
         .withMessage(MESSAGE.EMAIL_EMPTY)
         .isEmail()
-        .withMessage(MESSAGE.EMAIL_INVALID)
+        .withMessage(MESSAGE.EMAIL_INVALID),
+    ];
+  }
+
+  /**
+   * Verifies that the email exists
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static verifyEmail() {
+    return [
+      body(FIELD.EMAIL)
+        .trim()
         .custom(async (email) => {
-          const user = await UsersController.getUser('email', email);
-          if (user) {
-            return Promise.reject((MESSAGE.EMAIL_EXISTS));
+          if (await UsersController.getUser('email', email)) {
+            return Promise.reject(MESSAGE.EMAIL_EXISTS);
           }
         }),
     ];

@@ -36,17 +36,17 @@ export const generateOrFindUser = async (accessToken, refreshToken, profile, don
   if (profile.emails[0]) {
     try {
       await User.findOrCreate({ where: { email: profile.emails[0].value } })
-       /*the "spread" divides the array that findOrCreate method returns 
-        into 2 parts and passes them as 
-        arguments to the callback function, 
-        which treats them as "user" and "created".*/
+      /* the "spread" divides the array that findOrCreate method returns
+        into 2 parts and passes them as
+        arguments to the callback function,
+        which treats them as "user" and "created". */
         .spread((user, created) => {
-          done(null, user)
-        })
+          done(null, user);
+        });
     } catch (err) {
-      next(err);
+      logger.log(err);
     }
-  };
+  }
 };
 
 passport.use(new FacebookStrategy({

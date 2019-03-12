@@ -12,8 +12,8 @@ logger.log('The test is running');
 chai.use(chaiHttp);
 
 let authpayload;
-
-let dummyUser = {
+let authToken;
+const dummyUser = {
   email: 'faker@email.com',
   password: 'i2345678',
   username: 'heron419'
@@ -28,22 +28,22 @@ const dummyArticle = {
 const createUser = async () => {
   try {
     const user = await models.User.create(dummyUser);
-    dummyUser = user;
-    return dummyUser;
+    return user;
   } catch (error) {
     return error;
   }
 };
 
+before(async () => {
+  await createUser();
+  authpayload = await chai.request(app)
+    .post('/api/v1/users/login')
+    .send(dummyUser);
+  authToken = authpayload.body.token;
+  return dummyUser;
+});
+
 describe('API endpoint: /api/articles (Routes)', () => {
-  before(async () => {
-    createUser();
-    authpayload = await chai.request(app)
-      .post('/api/v1/users/login')
-      .send(dummyUser);
-    dummyUser.token = authpayload.body.token;
-    return dummyUser;
-  });
   after(() => Bluebird.all([models.Article.destroy({ truncate: true })]));
 
   describe('POST: /api/v1/articles', () => {
@@ -52,7 +52,7 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .request(app)
         .post('/api/v1/articles')
         .send(dummyArticle)
-        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .end((err, res) => {
           expect(res).to.have.status(STATUS.CREATED);
           expect(res.body).to.be.an('object');
@@ -70,7 +70,7 @@ describe('API endpoint: /api/articles (Routes)', () => {
           .request(app)
           .post('/api/v1/articles')
           .send(dummyArticle)
-          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .set({ Authorization: `Bearer ${authToken}` })
           .end((err, res) => {
             expect(res).to.have.status(STATUS.BAD_REQUEST);
             expect(res.body).to.be.an('object');
