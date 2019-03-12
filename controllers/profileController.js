@@ -1,6 +1,7 @@
 import models from '../models';
 import { STATUS } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
+import Logger from '../helpers/logger';
 
 const { Profile } = models;
 
@@ -74,6 +75,24 @@ class ProfileController {
       }
       return Response.send(res, SERVER_ERROR, error.message, 'Profile update failed, try again later!', false);
     }
+  }
+
+  /**
+ * Verifies if the username already exists
+ *
+ * @static
+ * @param {string} username The username
+ * @returns {boolean} true if username exists and false otherwise
+ * @memberof ProfileController
+ */
+  static async usernameExists(username) {
+    let user = null;
+    try {
+      user = await Profile.findOne({ where: { username } });
+    } catch (error) {
+      Logger.log(error);
+    }
+    return user !== null;
   }
 }
 

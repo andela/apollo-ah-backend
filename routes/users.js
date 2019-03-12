@@ -1,6 +1,6 @@
 import express from 'express';
 import UsersController from '../controllers/users';
-import { handleRegistration } from '../middlewares/handleValidation';
+import Handler from '../middlewares/handleValidation';
 import Validator from '../middlewares/validator';
 
 const router = express.Router();
@@ -14,6 +14,17 @@ const router = express.Router();
  *         type: string
  *       password:
  *         type: string
+ *   CDMS:
+ *     properties:
+ *       code:
+ *         type: int
+ *       data:
+ *         type: object
+ *     message:
+ *       type: string
+ *     status:
+ *       type: boolean
+ *
  */
 
 /**
@@ -44,7 +55,7 @@ const router = express.Router();
  */
 router.post('/',
   Validator.validateRegistration(),
-  handleRegistration,
+  Handler.handleRegistration,
   UsersController.register);
 
 /**
@@ -77,25 +88,54 @@ router.post('/login', UsersController.login);
 
 /**
  * @swagger
- * /api/v1/users/confirm_account:
- *  get:
- *    tags:
- *      - AccountConfirm
- *    description: Confirm a user account
- *    produces:
+ * /api/v1/users/forgot_password:
+ *   post:
+ *     tags:
+ *       - password
+ *     description: Sends a password reset link to the email address
+ *     produces:
  *       - application/json
- *    parameters:
- *      - name: token
- *        description: The confirmation token
- *        in: query
- *        required: true
- *        type: string
- *    responses:
- *      200:
- *        description: Account confirmed
- *        schema:
- *          type: object
+ *     parameters:
+ *       - name: email
+ *         description: User's email
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Password reset succesful
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *         format:
+ *           $ref: '#/definitions/CMDS'
  */
+router.post(
+  '/forgot_password',
+  Validator.validateForgotPassword(),
+  Handler.handleForgotPassword,
+  UsersController.sendPasswordRecoveryLink
+);
+
+/**
+* /api/v1/users/confirm_account:
+*  get:
+*    tags:
+*      - AccountConfirm
+*    description: Confirm a user account
+*    produces:
+*       - application/json
+*    parameters:
+*      - name: token
+*        description: The confirmation token
+*        in: query
+*        required: true
+*        type: string
+*    responses:
+*      200:
+*        description: Account confirmed
+*        schema:
+*          type: object
+*/
 router.get('/confirm_account', UsersController.confirmUser);
 
 export default router;
