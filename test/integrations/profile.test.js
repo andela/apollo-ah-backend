@@ -2,32 +2,11 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-/**
- * todo: to be removed if Fejiro decides he's fine with it.
- */
-// import jwt from 'jsonwebtoken';
-import app from '../../../index';
-import models from '../../../models';
+import jwt from 'jsonwebtoken';
+import app from '../../index';
+import models from '../../models';
 
 chai.use(chaiHttp);
-
-let authpayload;
-
-let dummyUser3 = {
-  email: 'faker37@email.com',
-  password: 'i2345678',
-  username: 'heron419'
-};
-
-const createUser = async () => {
-  try {
-    const user = await models.User.create(dummyUser3);
-    dummyUser3 = user;
-    return dummyUser3;
-  } catch (error) {
-    return error;
-  }
-};
 
 const profile = {
   firstname: faker.name.firstName(),
@@ -38,33 +17,19 @@ const profile = {
   gender: 'M',
   user_id: 1,
   username: faker.random.words(),
-  image: faker.image.imageUrl()
+  image: faker.image.imageUrl(),
 };
 
-/**
- * @todo to remove token if Fejiro decides he's fine with it
- */
-
-// const token = `Bearer ${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
+const token = `Bearer ${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
 
 describe('Testing user profile feature', () => {
-  before(async () => {
-    models.sequelize.sync();
-    createUser();
-    authpayload = await chai.request(app)
-      .post('/api/v1/users/login')
-      .send(dummyUser3);
-    dummyUser3.token = authpayload.body.token;
-    return dummyUser3;
-  });
-  // after(() => models.Profile.destroy({ truncate: true }));
+  after(() => models.Profile.destroy({ truncate: true }));
   it('should create profile when details are correct', async () => {
     try {
-      const res = await chai
-        .request(app)
+      const res = await chai.request(app)
         .post('/api/v1/profile')
         .send(profile)
-        .set('Authorization', `Bearer ${dummyUser3.token}`);
+        .set('Authorization', token);
       expect(res).to.have.status(201);
       expect(res.body).to.have.property('message');
       expect(res.body.data).to.be.an('object');
@@ -77,7 +42,7 @@ describe('Testing user profile feature', () => {
         'bio',
         'phone',
         'address',
-        'image'
+        'image',
       ]);
       expect(res.body.data.id).to.not.be.a('string');
       expect(res.body.data.user_id).to.not.be.a('string');
@@ -92,7 +57,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, firstname: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -107,7 +72,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, lastname: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -122,7 +87,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, username: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -137,7 +102,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, gender: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -152,7 +117,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, gender: 'male' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -167,14 +132,12 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, bio: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('bio');
-        expect(res.body.data[0].errors.bio).to.be.equals(
-          'Please provide a brief description about yourself'
-        );
+        expect(res.body.data[0].errors.bio).to.be.equals('Please provide a brief description about yourself');
         done();
       });
   });
@@ -184,7 +147,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, image: 'hffhh.cam' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
@@ -199,14 +162,12 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, phone: '0292922' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('phone' && 'phoneLength');
-        expect(res.body.data[0].errors.phone).to.be.equals(
-          'Phone number should have a country code and not contain alphabets e.g +234'
-        );
+        expect(res.body.data[0].errors.phone).to.be.equals('Phone number should have a country code and not contain alphabets e.g +234');
         done();
       });
   });
@@ -216,14 +177,12 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profile')
       .send({ ...profile, phone: '+2340' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
+      .set('Authorization', token)
       .end((err, res) => {
         expect(res.status).eql(400);
         expect(res.body.data[0]).to.have.property('errors');
         expect(res.body.data[0].errors).to.have.property('phone' && 'phoneLength');
-        expect(res.body.data[0].errors.phoneLength).to.be.equals(
-          'Phone number length should adhere to international standard'
-        );
+        expect(res.body.data[0].errors.phoneLength).to.be.equals('Phone number length should adhere to international standard');
         done();
       });
   });

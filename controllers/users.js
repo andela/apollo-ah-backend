@@ -35,7 +35,7 @@ class UsersController {
       // generate confirm token
       const confirmToken = await generateToken({ email: user.email });
       // generate confirm link
-      const confrimLink = `${env('API_DOMAIN')}api/v1/users/confirm_account?token=${confirmToken}`;
+      const confrimLink = `${env('API_DOMAIN')}/api/v1/users/confirm_account?token=${confirmToken}`;
       // send the user a mail
       const data = {
         email: user.email,
@@ -45,11 +45,49 @@ class UsersController {
         },
         template: 'signup'
       };
+      user.firstname = '';
+      user.lastname = '';
+      user.gender = '';
+      user.bio = '';
+      user.username = request.body.username.toLowerCase();
+      user.user_id = user.id;
+      await models.Profile.create(user);
+      Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
-      return Response.send(response, STATUS.CREATED, { token, id: user.id });
+      return;
     } catch (error) {
-      logger.error(error);
       return next(error);
+    }
+  }
+
+  /**
+ * Creates an email reset link and sends to the user
+ *
+ * @static
+ * @param {object} request The express request object
+ * @param {object} response The express response object
+ * @param {function} next The express next function
+ * @returns {void}
+ * @memberof UsersController
+ */
+  static async sendPasswordRecoveryLink(request, response, next) {
+    try {
+      const { email } = request.body;
+      const token = jwt.sign({ email }, env('APP_KEY'), { expiresIn: '1h' });
+      const link = `${env('API_DOMAIN')}/users/reset_password?token=${token}`;
+      const data = {
+        email,
+        subject: 'Reset your Password',
+        mailContext: {
+          link
+        },
+        template: 'password'
+      };
+      Response.send(response, STATUS.OK, [], MESSAGE.PASSWORD_REQUEST_SUCCESSFUL);
+      await Mail.sendMail(data);
+      return;
+    } catch (error) {
+      next(error);
     }
   }
 

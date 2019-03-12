@@ -109,12 +109,12 @@ router.post('/login', UsersController.login);
  *         format:
  *           $ref: '#/definitions/CMDS'
  */
-// router.post(
-//   '/forgot_password',
-//   Validator.validateForgotPassword(),
-//   Handler.handleForgotPassword,
-//   UsersController.sendPasswordRecoveryLink
-// );
+router.post(
+  '/forgot_password',
+  Validator.validateForgotPassword(),
+  Handler.handleForgotPassword,
+  UsersController.sendPasswordRecoveryLink
+);
 
 /**
 * /api/v1/users/confirm_account:

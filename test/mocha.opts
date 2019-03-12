@@ -1,3 +1,4 @@
+--recursive
 -r @babel/register
 -r @babel/polyfill
 -r test/setup
