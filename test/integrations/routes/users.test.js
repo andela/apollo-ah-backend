@@ -6,9 +6,9 @@ import faker from 'faker';
  * @todo To be removed pending acceptance of current user test
  */
 // import Bluebird from 'bluebird';
-import app from '../../index';
-import models from '../../models';
-import { STATUS, MESSAGE, FIELD } from '../../helpers/constants';
+import app from '../../../index';
+import models from '../../../models';
+import { STATUS, MESSAGE, FIELD } from '../../../helpers/constants';
 
 chai.use(chaiHttp);
 describe('Registration endpoint', () => {

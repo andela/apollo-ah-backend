@@ -51,7 +51,7 @@ export default class AriclesMiddleware {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
         return Response.send(
-          res, 400, [], 'an article with that title already exist', 'failed',
+          res, 403, [], 'an article with that title already exist', 'failed',
         );
       }
       const slug = slugify(`${title}-${uuid()}`, '-');

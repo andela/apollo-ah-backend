@@ -12,6 +12,8 @@ chai.use(chaiHttp);
 
 let authpayload;
 let authToken;
+// let newArticle;
+
 const dummyUser = {
   email: 'faker@email.com',
   password: 'i2345678',
@@ -35,6 +37,7 @@ const createUser = async () => {
 };
 
 before(async () => {
+  // newArticle = await feedArticleToDb();
   await createUser();
   authpayload = await chai.request(app)
     .post('/api/v1/users/login')
@@ -49,7 +52,7 @@ describe('API endpoint: /api/articles (Routes)', () => {
   describe('POST: /api/v1/articles', () => {
     it('Should create an article', (done) => {
       const fakeArticle = {
-        title: faker.random.words(),
+        title: faker.random.words(15),
         description: 'lorem ipsum exists',
         body: faker.lorem.paragraphs(),
       };
@@ -70,16 +73,24 @@ describe('API endpoint: /api/articles (Routes)', () => {
 
   describe('POST: /api/v1/articles', () => {
     describe('A user tries to create a new article with an existing title', () => {
-      it('Should create an article', (done) => {
+      before((done) => {
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(dummyArticle)
+          .set({ Authorization: `Bearer ${authToken}` })
+          .end((err, res) => done());
+      });
+      it('Should return an error', (done) => {
         chai
           .request(app)
           .post('/api/v1/articles')
           .send(dummyArticle)
           .set({ Authorization: `Bearer ${authToken}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(403);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(403);
             expect(res.body.message).to.equal('an article with that title already exist');
             done();
           });

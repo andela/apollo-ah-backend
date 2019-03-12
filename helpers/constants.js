@@ -23,12 +23,21 @@ export const MESSAGE = {
   EMAIL_EMPTY: 'Email is required',
   EMAIL_INVALID: 'Provide a valid email address',
   EMAIL_EXISTS: 'The email address already exists. If you are registered, proceed to login instead',
+  EMAIL_NOT_EXISTS: 'The email address is not registered. Please try again',
 
   USERNAME_EMPTY: 'Username is required',
   USERNAME_EXITS: 'The username is already taken, try another one',
+  USERNAME_NOT_ALPHANUMERIC: 'Username should contain only letters and numbers',
 
-  ACCOUNT_CONFIRM: 'Your account has been successfully confirmed'
+  ACCOUNT_CONFIRM: 'Your account has been successfully confirmed',
+
+  LOGIN_SUCCESSFUL: 'Login successful',
+
+  PASSWORD_REQUEST_FAILED: 'Password reset failed',
+  PASSWORD_REQUEST_SUCCESSFUL: 'We have sent you  an email',
 };
+
+export const TOKEN_VALIDITY = 604800; // 7 days
 
 export const FIELD = {
   USERNAME: 'username',

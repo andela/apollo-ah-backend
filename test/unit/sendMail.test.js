@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
-import sinon from 'sinon';
-import chai from 'chai';
+import { expect } from 'chai';
 import Mail from '../../helpers/sendMail';
 import Logger from '../../helpers/logger';
 
-const should = chai.should();
-
-
-describe('Mail class test', () => {
-  it('should send a mail to a user', async () => {
+describe('Mail class', () => {
+  it('should send a mail to a user with valid data', async () => {
+    let result;
     const data = {
       email: 'jerry@gmail.com',
       subject: 'Account confirmation',
@@ -18,12 +14,14 @@ describe('Mail class test', () => {
       template: 'signup'
     };
     try {
-      await Mail.sendMail(data);
+      result = await Mail.sendMail(data);
     } catch (e) {
       Logger.log(e);
     }
+    expect(result).to.be.an('object');
   });
-  it('should not send a mail', async () => {
+  it('should not send a mail with invalid data', async () => {
+    let result;
     const data = {
       email: null,
       subject: 'Account confirmation',
@@ -33,9 +31,10 @@ describe('Mail class test', () => {
       template: 'signup'
     };
     try {
-      await Mail.sendMail(data);
+      result = await Mail.sendMail(data);
     } catch (e) {
       Logger.log(e);
     }
+    expect(result).to.be.an('undefined');
   });
 });
