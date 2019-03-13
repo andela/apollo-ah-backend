@@ -18,7 +18,6 @@ describe('Settings Model', () => {
     };
     const { dataValues: { id } } = await models.User.create(dummyUser);
     dummyUser.user_id = id;
-    console.log(id);
     const data = models.Setting.create({ user_id: dummyUser.user_id });
     expect(data).to.be.an('object');
   });
