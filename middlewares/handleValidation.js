@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator/check';
 import { STATUS, MESSAGE, expressValidatorFormater } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
+
 /**
  * Wrapper class to handle validation results from exprsss-validator
  *
@@ -51,6 +52,22 @@ export default class Handler {
         message,
         false,
       );
+    }
+    next();
+  }
+
+  /**
+   * This function checks for validation error and returns an error or allows the request process
+   * to proceed to the controller
+   * @param {Object} req - inccoming request object
+   * @param {Object} res - response object
+   * @param {Object} next - next object
+   * @return {Object} res - response object
+   */
+  static handleValidation(req, res, next) {
+    const errors = validationResult(req).formatWith(expressValidatorFormater);
+    if (!errors.isEmpty()) {
+      return Response.send(res, 400, errors.array({ onlyFirstError: true }), 'Validation error occurred', false);
     }
     next();
   }
