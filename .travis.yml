@@ -18,6 +18,9 @@ before_install:
 services:
   - postgresql
 
+after_script:
+  - npm run migrate:refresh
+
 before_script:
   - psql -c 'CREATE DATABASE authorshaven;' -U postgres
   - psql -c "CREATE USER authorshaven WITH PASSWORD 'secret';" -U postgres
