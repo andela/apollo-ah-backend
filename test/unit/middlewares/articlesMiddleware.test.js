@@ -1,13 +1,17 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import faker from 'faker';
-import Bluebird from 'bluebird';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
 import { STATUS } from '../../../helpers/constants';
 
 chai.use(chaiHttp);
+
+const {
+  CREATED,
+  BAD_REQUEST,
+} = STATUS;
 
 let authpayload;
 
@@ -43,7 +47,6 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
     dummyUser.token = authpayload.body.token;
     return dummyUser;
   });
-  after(() => Bluebird.all([models.Article.destroy({ truncate: true })]));
 
   describe('POST: /api/v1/articles', () => {
     describe('create an article without a title', () => {
@@ -56,9 +59,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('title cannot be empty');
             done();
           });
@@ -77,9 +80,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('description cannot be empty');
             done();
           });
@@ -98,9 +101,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('body cannot be empty');
             done();
           });
@@ -119,9 +122,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('body must be a string');
             done();
           });
@@ -140,9 +143,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('title must be a string');
             done();
           });
@@ -161,9 +164,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('description must be a string');
             done();
           });
@@ -182,9 +185,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('body cannot be empty');
             done();
           });
@@ -203,9 +206,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('title cannot be empty');
             done();
           });
@@ -224,9 +227,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.BAD_REQUEST);
+            expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('description cannot be empty');
             done();
           });
@@ -238,7 +241,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
     describe('verify slugs are being created from the title', () => {
       it('Should create an article with a slug', (done) => {
         const article = {
-          title: 'no errors allowed',
+          title: faker.random.words(),
           description: 'dehjfjdh',
           body: 'sentence'
         };
@@ -248,9 +251,9 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           .send(article)
           .set({ Authorization: `Bearer ${dummyUser.token}` })
           .end((err, res) => {
-            expect(res).to.have.status(STATUS.CREATED);
+            expect(res).to.have.status(CREATED);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+            expect(res.body).to.haveOwnProperty('code').to.equal(CREATED);
             expect(res.body.data.slug).to.be.a('string');
             done();
           });

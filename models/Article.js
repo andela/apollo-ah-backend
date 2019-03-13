@@ -34,12 +34,12 @@ const Article = (sequelize, DataTypes) => {
     {}
   );
   ArticleSchema.associate = (models) => {
-    // associations can be defined here
     models.Article.belongsTo(models.User, {
       onDelete: 'CASCADE',
       targetKey: 'id',
       foreignKey: 'authorId'
     });
+    ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
   };
   return ArticleSchema;
 };

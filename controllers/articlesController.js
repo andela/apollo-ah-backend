@@ -1,5 +1,6 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
+import { STATUS } from '../helpers/constants';
 
 /**
  * Wrapper class for sending article objects as response.
@@ -26,9 +27,9 @@ export default class ArticlesController {
     };
     try {
       const article = await models.Article.create(content);
-      return Response.send(res, 201, article, 'success');
+      return Response.send(res, STATUS.CREATED, article, 'success');
     } catch (error) {
-      return Response.send(res, 400, error, 'failed');
+      return Response.send(res, STATUS.BAD_REQUEST, error, 'failed');
     }
   }
 }

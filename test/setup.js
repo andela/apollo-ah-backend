@@ -24,7 +24,7 @@ const initSetup = (done) => {
  * @returns {void}
  */
 const tearDown = (done) => {
-  runAll(['seed:undo'])
+  runAll([''])
     .then(() => done())
     .catch(done);
 };
