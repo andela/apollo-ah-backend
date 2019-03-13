@@ -118,4 +118,19 @@ export default class Validator {
         }),
     ];
   }
+
+  /**
+   * Verifies the input data for user settings
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateSettings() {
+    return [
+      body('canEmail', 'A valid value is required').exists()
+        .isBoolean(),
+      body('canNotify', 'A valid value is required').exists()
+        .isBoolean(),
+    ];
+  }
 }
