@@ -35,6 +35,9 @@ export const MESSAGE = {
 
   PASSWORD_REQUEST_FAILED: 'Password reset failed',
   PASSWORD_REQUEST_SUCCESSFUL: 'We have sent you  an email',
+
+  WELCOME_MESSAGE: 'Welcome to Author Haven API',
+  ROUTE_NOT_FOUND: 'Provided route is invalid.'
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

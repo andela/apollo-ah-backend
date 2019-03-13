@@ -50,7 +50,7 @@ class UsersController {
       user.gender = '';
       user.bio = '';
       user.username = request.body.username.toLowerCase();
-      user.user_id = user.id;
+      user.userId = user.id;
       await models.Profile.create(user);
       Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);

@@ -5,10 +5,8 @@ import Bluebird from 'bluebird';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
-import logger from '../../../helpers/logger';
 import { STATUS } from '../../../helpers/constants';
 
-logger.log('The test is running');
 chai.use(chaiHttp);
 
 let authpayload;

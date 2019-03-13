@@ -1,6 +1,6 @@
 /* eslint no-unused-vars: ["error", { "args": "none" }] */
 export default {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('articles', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Articles', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -41,7 +41,7 @@ export default {
       onDelete: 'CASCADE',
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id'
       }
     }

@@ -32,7 +32,7 @@ describe('Registration endpoint', () => {
         .to.haveOwnProperty('message')
         .to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
       expect(response.body)
-        .to.haveOwnProperty('statusjkghghjkh')
+        .to.haveOwnProperty('status')
         .to.equal(true);
       expect(response.body)
         .to.haveOwnProperty('data')
@@ -218,7 +218,7 @@ describe('Registration endpoint', () => {
       bio: '',
     };
     const { dataValues: { id } } = await models.User.create(user);
-    user.user_id = id;
+    user.userId = id;
     await models.Profile.create(user);
     user.email = faker.internet.email();
     chai
