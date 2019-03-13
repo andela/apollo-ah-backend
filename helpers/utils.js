@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { TOKEN_VALIDITY } from '../helpers/constants';
 
 /**
  * Retrieves the value for environment config variable

@@ -13,12 +13,21 @@ export const STATUS = {
 export const MESSAGE = {
   SERVER_ERROR: 'An internal error has occured. This is not your fault. We are working to fix this problem. Please try again later.',
 
+  UNATHORIZED_ACCESS: 'You do not have permission to ',
+
   REGISTRATION_ERROR: 'Registration failed',
   REGISTRATION_SUCCESSFUL: 'Registraion successful',
 
   PASSWORD_TOO_SHORT: 'Your password must be at least 8 characters. Please try again.',
   PASSWORD_NOT_ALPHANUMERIC: 'Password should contain both letters and numbers',
   PASSWORD_EMPTY: 'Password is required',
+  PASSWORD_NOT_MATCH: 'The password and confirm password fields do not match',
+  CONFIRM_PASSWORD_EMPTY: 'Confirm password field is required',
+
+  PASSWORD_REQUEST_FAILED: 'Password reset failed',
+  PASSWORD_REQUEST_SUCCESSFUL: 'Your password reset link has been sent to your email',
+  PASSWORD_RESET_SUCCESSFUL: 'Password reset successful',
+  PASSWORD_LINK_EXPIRED: 'Your request to reset password has expired. Please try again',
 
   EMAIL_EMPTY: 'Email is required',
   EMAIL_INVALID: 'Provide a valid email address',
@@ -32,9 +41,6 @@ export const MESSAGE = {
   ACCOUNT_CONFIRM: 'Your account has been successfully confirmed',
 
   LOGIN_SUCCESSFUL: 'Login successful',
-
-  PASSWORD_REQUEST_FAILED: 'Password reset failed',
-  PASSWORD_REQUEST_SUCCESSFUL: 'We have sent you  an email',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
@@ -43,6 +49,7 @@ export const FIELD = {
   USERNAME: 'username',
   PASSWORD: 'password',
   EMAIL: 'email',
+  CONFIRM_PASSWORD: 'confirm_password',
 };
 
 /**
