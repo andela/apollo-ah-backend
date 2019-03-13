@@ -23,21 +23,9 @@ const Profile = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    gender: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     bio: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     image: {
       type: DataTypes.STRING,

@@ -46,5 +46,5 @@ export default {
       }
     }
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('articles')
 };
