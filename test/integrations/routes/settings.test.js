@@ -39,6 +39,7 @@ describe('Settings endpoints Tests', () => {
       .send(setting);
     expect(response).to.have.status(200);
     expect(response.body).to.be.an('object');
+    expect(response.body).to.haveOwnProperty('code');
   });
   it('should not update an un authenticated user settings', async () => {
     const setting = {
@@ -65,6 +66,7 @@ describe('Settings endpoints Tests', () => {
       .send(setting);
     expect(response).to.have.status(400);
     expect(response.body).to.be.an('object');
+    expect(response.body).to.haveOwnProperty('code');
   });
 
   it('should not update an a user settings with a bad (empty) request', async () => {

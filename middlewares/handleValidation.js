@@ -67,7 +67,7 @@ export default class Handler {
   static handleValidation(req, res, next) {
     const errors = validationResult(req).formatWith(expressValidatorFormater);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 400, error: errors.array({ onlyFirstError: true }) });
+      return Response.send(res, 400, errors.array({ onlyFirstError: true }), 'Validation error occurred', false);
     }
     next();
   }
