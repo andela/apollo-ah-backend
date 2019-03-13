@@ -6,8 +6,10 @@ import errorhandler from 'errorhandler';
 import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import methodOveride from 'method-override';
+import passport from 'passport';
 import logger from './helpers/logger';
 import routes from './routes';
+import models from './models';
 
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
@@ -33,6 +35,22 @@ app.use(
     saveUninitialized: false
   })
 );
+
+const { User } = models;
+
+// PASSPORT CONFIGURATION
+// Initialize Passport.js
+app.use(passport.initialize());
+// Restore session
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((userId, done) => {
+  User.findById(userId, done);
+});
 
 if (!isProduction) {
   app.use(errorhandler());
@@ -68,7 +86,7 @@ app.get('/swagger.json', (req, res) => {
 });
 
 
-// / catch 404 and forward to error handler
+//  catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
