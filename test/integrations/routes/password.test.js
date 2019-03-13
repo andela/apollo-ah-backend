@@ -143,7 +143,7 @@ describe('Reset password endpoint', () => {
     const pword = faker.internet.password();
     const user = {
       password: '',
-      confirm_password: pword,
+      confirmPassword: pword,
     };
     chai
       .request(app)
@@ -172,11 +172,11 @@ describe('Reset password endpoint', () => {
       });
     done();
   });
-  it('should return an error if confirm_password field is not provided', (done) => {
+  it('should return an error if confirmPassword field is not provided', (done) => {
     const pword = faker.internet.password();
     const user = {
       password: pword,
-      confirm_password: '',
+      confirmPassword: '',
     };
     chai
       .request(app)
@@ -205,10 +205,10 @@ describe('Reset password endpoint', () => {
       });
     done();
   });
-  it('should return an error if password and confirm_password fields do not match', (done) => {
+  it('should return an error if password and confirmPassword fields do not match', (done) => {
     const user = {
       password: faker.internet.password(),
-      confirm_password: faker.internet.password(),
+      confirmPassword: faker.internet.password(),
     };
     chai
       .request(app)
@@ -237,7 +237,7 @@ describe('Reset password endpoint', () => {
     const pword = faker.internet.password();
     const user = {
       password: pword,
-      confirm_password: pword,
+      confirmPassword: pword,
     };
     chai
       .request(app)
@@ -267,7 +267,7 @@ describe('Reset password endpoint', () => {
     const email = faker.internet.email();
     const user = {
       password: pword,
-      confirm_password: pword,
+      confirmPassword: pword,
     };
     const token = jwt.sign({ email }, env('PASSWORD_RESET_KEY'));
     chai
@@ -299,7 +299,7 @@ describe('Reset password endpoint', () => {
       email: faker.internet.email(),
       username: faker.internet.userName(),
       password: pword,
-      confirm_password: pword,
+      confirmPassword: pword,
     };
     await models.User.create(user);
     const token = jwt.sign({ email: user.email }, env('PASSWORD_RESET_KEY'));
