@@ -56,7 +56,7 @@ settingRouter.put(
 *        type: string
 *    responses:
 *      200:
-*        description: User setting updated
+*        description: Settings fetched successfully
 *        schema:
 *          type: object
 */
