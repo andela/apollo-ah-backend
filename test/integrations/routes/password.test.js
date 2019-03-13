@@ -269,7 +269,7 @@ describe('Reset password endpoint', () => {
       password: pword,
       confirmPassword: pword,
     };
-    const token = jwt.sign({ email }, env('PASSWORD_RESET_KEY'));
+    const token = jwt.sign({ email }, env('APP_KEY'));
     chai
       .request(app)
       .patch(`/api/v1/users/reset_password?token=${token}`)
@@ -302,7 +302,7 @@ describe('Reset password endpoint', () => {
       confirmPassword: pword,
     };
     await models.User.create(user);
-    const token = jwt.sign({ email: user.email }, env('PASSWORD_RESET_KEY'));
+    const token = jwt.sign({ email: user.email }, env('APP_KEY'));
     chai
       .request(app)
       .patch(`/api/v1/users/reset_password?token=${token}`)

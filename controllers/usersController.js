@@ -73,7 +73,7 @@ class UsersController {
   static async sendPasswordRecoveryLink(request, response, next) {
     try {
       const { email } = request.body;
-      const token = jwt.sign({ email }, env('PASSWORD_RESET_KEY'), { expiresIn: '1h' });
+      const token = jwt.sign({ email }, env('APP_KEY'), { expiresIn: '1h' });
       const link = `${env('API_DOMAIN')}/users/reset_password?token=${token}`;
       const data = {
         email,
