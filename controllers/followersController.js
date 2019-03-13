@@ -48,7 +48,7 @@ class FollowersController {
       const { followable, follower } = await FollowersController.validateFollowable(request);
       const existingFollower = await followable.hasFollowers(follower);
       if (!existingFollower) {
-        next(createError(400, 'Sorry, you cannot follow a user you not following'));
+        next(createError(400, 'Sorry, you cannot unfollow a user you are not following'));
       }
 
       await followable.removeFollower(follower);

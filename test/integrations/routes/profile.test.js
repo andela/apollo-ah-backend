@@ -133,8 +133,8 @@ describe('Testing user profile feature', () => {
       });
   });
 
-  describe('POST /api/v1/profile/:username/follow', () => {
-    it('should allow a user to follower another user', (done) => {
+  describe('POST /api/v1/profile/:username/follow', async () => {
+    it('should allow a user to follow another user', (done) => {
       models.User
         .create({
           email: 'faker37@email.com',
@@ -151,7 +151,6 @@ describe('Testing user profile feature', () => {
             .set('Authorization', token)
         ))
         .then((res) => {
-          console.log(res.body);
           expect(res).to.have.status(STATUS.OK);
           done();
         })
