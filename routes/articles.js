@@ -1,6 +1,7 @@
 import express from 'express';
 import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
+import ArticleLikeController from '../controllers/articleLikesController';
 import authenticate from '../middlewares/authenticate';
 
 const articles = express.Router();
@@ -50,12 +51,66 @@ const articles = express.Router();
  *           $ref: '#/definitions/Article'
  */
 articles
-  // .get('/', (req, res) => res.send({ message: 'We can get multiple articles' }))
   .post(
-    '/',
+    '/articles',
     authenticate,
     articlesMiddleware.validateCreateArticleInput,
     articlesController.create
+  )
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/likes:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: like an article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: Successfully liked article
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+
+  .post(
+    '/articles/:slug/likes',
+    authenticate,
+    ArticleLikeController.like
+  )
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/dislikes:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: like an article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: Successfully disliked article
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+  .post(
+    '/articles/:slug/dislikes',
+    authenticate,
+    ArticleLikeController.dislike
   );
 
 export default articles;

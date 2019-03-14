@@ -1,27 +1,20 @@
 
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('profiles', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('settings', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    firstname: {
-      type: Sequelize.STRING
+    canEmail: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
     },
-    lastname: {
-      type: Sequelize.STRING
-    },
-    username: {
-      type: Sequelize.STRING
-    },
-    bio: {
-      type: Sequelize.STRING
-    },
-    image: {
-      type: Sequelize.STRING
+    canNotify: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
     },
     createdAt: {
       allowNull: false,
@@ -41,5 +34,5 @@ module.exports = {
       }
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('profiles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('settings')
 };

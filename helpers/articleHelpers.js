@@ -32,17 +32,15 @@ export default {
       const articleLength = articleBody.body.split(' ').length;
       if (articleLength <= defaultArticleLength) {
         readTime = '1 minute read';
-        return readTime
-      } else {
-        readTime = Math.round(articleLength / defaultArticleLength);
-        if (readTime === 1) {
-          return `${readTime} minute read`;
-        } else {
-          return `${readTime} minutes read`;
-        }
+        return readTime;
       }
+      readTime = Math.round(articleLength / defaultArticleLength);
+      if (readTime === 1) {
+        return `${readTime} minute read`;
+      }
+      return `${readTime} minutes read`;
     } catch (err) {
-      return error;
+      return err;
     }
   }
 };

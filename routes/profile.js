@@ -28,7 +28,47 @@ const profileRouter = express.Router();
  *         type: string
  */
 
-
+/**
+ * @swagger
+ * /api/v1/profile:
+ *   post:
+ *     tags:
+ *       - profile
+ *     description: Create a new article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: firstname
+ *         description: users firstname
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: lastname
+ *         description: users lastname
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: username
+ *         description: A selected username for the user
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: bio
+ *         description: A brief bio of the user
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: image
+ *         description: A photo image of the user
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: Profile created successfully
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
 profileRouter.post(
   '/profile',
   middlewares.authenticate,
