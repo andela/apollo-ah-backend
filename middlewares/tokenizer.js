@@ -23,7 +23,7 @@ export default class Tokenizer {
   static verifyResetPassword(request, response, next) {
     try {
       const { email } = jwt.verify(request.query.token, env('APP_KEY'));
-      request.recoveryEmail = email;
+      request.body.email = email;
       next();
     } catch (error) {
       return Response.send(response, STATUS.UNATHORIZED, [], MESSAGE.PASSWORD_LINK_EXPIRED, false);

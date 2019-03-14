@@ -130,7 +130,7 @@ class UsersController {
           password: request.body.password
         },
         {
-          where: { email: request.recoveryEmail }
+          where: { email: request.body.email }
         }
       );
       const success = count > 0;
