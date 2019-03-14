@@ -19,6 +19,9 @@ export default {
     description: {
       type: Sequelize.STRING
     },
+    readTime: {
+      type: Sequelize.STRING
+    },
     /**
        * @todo include tagId for articles tagList in tagList model
        */

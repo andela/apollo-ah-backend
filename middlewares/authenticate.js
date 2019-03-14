@@ -16,11 +16,8 @@ import { env } from '../helpers/utils';
  */
 function authenticate(request, response, next) {
   // Get auth header value
-  const bearer = request.headers.authorization;
-  if (!bearer) return next(createError(401, 'You are unauthorized to access the requested resource. Please log in.'));
-
-  const token = bearer.split(' ')[1];
-
+  const token = request.headers.authorization;
+  if (!token) return next(createError(401, 'You are unauthorized to access the requested resource. Please log in.'));
   return jwt.verify(token, env('APP_KEY'), (err, decoded) => {
     if (err || !decoded) return next(createError(401, 'Authentication failure: Invalid access token.'));
 
