@@ -53,7 +53,7 @@ class UsersController {
       user.userId = user.id;
       await models.Profile.create(user);
       // create a user default settings
-      await models.Setting.create({ user_id: user.user_id });
+      await models.Setting.create({ userId: user.userId });
       Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
       return;

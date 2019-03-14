@@ -17,6 +17,7 @@ export default {
       },
       email: {
         type: Sequelize.STRING,
+        unique: true
       },
       isConfirmed: {
         type: Sequelize.BOOLEAN,
