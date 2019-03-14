@@ -23,7 +23,7 @@ const router = express.Router();
  */
 router.use('/users', users);
 router.use(profile);
-router.use(articles);
+router.use('/articles', articles);
 router.use('/auth', authRoute);
 router.use('/articles', articles);
 router.use('/setting', settingRouter);
