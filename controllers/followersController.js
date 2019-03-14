@@ -1,6 +1,7 @@
 import createError from 'http-errors';
 import models from '../models';
 import Response from '../helpers/responseHelper';
+import { MESSAGE } from '../helpers/constants';
 
 /**
  * Class handling followers operation
@@ -24,8 +25,7 @@ class FollowersController {
     try {
       const { followable, follower } = await FollowersController.validateFollowable(request);
       await followable.addFollower(follower);
-
-      return Response.send(response, 200, [], `Successfully followed ${username}`);
+      return Response.send(response, 200, [], `${MESSAGE.FOLLOW_SUCCESS} ${username}`);
     } catch (error) {
       next(error);
     }
@@ -48,11 +48,11 @@ class FollowersController {
       const { followable, follower } = await FollowersController.validateFollowable(request);
       const existingFollower = await followable.hasFollowers(follower);
       if (!existingFollower) {
-        next(createError(400, 'Sorry, you cannot unfollow a user you are not following'));
+        next(createError(400, MESSAGE.UNFOLLOW_ERROR));
       }
 
       await followable.removeFollower(follower);
-      return Response.send(response, 200, [], `Successfully unfollowed ${username}`);
+      return Response.send(response, 200, [], `${MESSAGE.UNFOLLOW_SUCCESS} ${username}`);
     } catch (error) {
       next(error);
     }
@@ -75,10 +75,14 @@ class FollowersController {
       });
       const profile = await models.Profile.findOne({ where: { username } });
       if (follower.id === profile.userId) {
-        throw createError(400, 'Sorry you cannot follow yourself');
+        throw createError(400, MESSAGE.FOLLOW_ERROR);
       }
 
       const followable = await profile.getUser();
+      if (followable.deletedAt !== null) {
+        throw createError(404, MESSAGE.FOLLOW_ERROR);
+      }
+
       return { followable, follower };
     } catch (error) {
       throw error;

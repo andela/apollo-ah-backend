@@ -37,7 +37,14 @@ export const MESSAGE = {
   PASSWORD_REQUEST_SUCCESSFUL: 'We have sent you  an email',
 
   WELCOME_MESSAGE: 'Welcome to Author Haven API',
-  ROUTE_NOT_FOUND: 'Provided route is invalid.'
+  ROUTE_NOT_FOUND: 'Provided route is invalid.',
+
+  FOLLOW_SUCCESS: 'Successfully followed',
+  UNFOLLOW_SUCCESS: 'Successfully unfollowed',
+  FOLLOW_ERROR: 'Sorry you cannot follow yourself',
+  UNFOLLOW_ERROR: 'Sorry, cannot unfollow a user not being followed',
+
+  INACTIVE_USER_ERROR: 'The user can no longer be reached.',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
