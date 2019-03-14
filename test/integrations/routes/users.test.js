@@ -23,16 +23,16 @@ describe('Registration endpoint', () => {
         .request(app)
         .post('/api/v1/users')
         .send(user);
-      expect(response).to.have.status(STATUS.CREATED);
+      expect(response).to.have.status(STATUS.OK);
       expect(response.body).to.be.an('object');
       expect(response.body)
         .to.haveOwnProperty('code')
-        .to.equal(STATUS.CREATED);
+        .to.equal(STATUS.OK);
       expect(response.body)
         .to.haveOwnProperty('message')
         .to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
       expect(response.body)
-        .to.haveOwnProperty('statusjkghghjkh')
+        .to.haveOwnProperty('statuskhkhkhkhjkghghjkh')
         .to.equal(true);
       expect(response.body)
         .to.haveOwnProperty('data')
@@ -218,7 +218,7 @@ describe('Registration endpoint', () => {
       bio: '',
     };
     const { dataValues: { id } } = await models.User.create(user);
-    user.user_id = id;
+    user.userId = id;
     await models.Profile.create(user);
     user.email = faker.internet.email();
     chai

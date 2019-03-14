@@ -10,7 +10,7 @@ const ArticleLike = (sequelize, DataTypes) => {
   /**
  * @type {Sequelize.Model}
  */
-  const ArticleLikeSchema = sequelize.define('articleLike', {
+  const ArticleLikeSchema = sequelize.define('ArticleLike', {
     like: {
       type: DataTypes.BOOLEAN,
     }

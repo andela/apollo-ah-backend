@@ -7,7 +7,7 @@
 
 const Article = (sequelize, DataTypes) => {
   const ArticleSchema = sequelize.define(
-    'article',
+    'Article',
     {
       title: {
         type: DataTypes.STRING,

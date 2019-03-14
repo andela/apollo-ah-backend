@@ -11,7 +11,7 @@ const User = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const UserSchema = sequelize.define('user', {
+  const UserSchema = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -42,7 +42,7 @@ const User = (sequelize, DataTypes) => {
   });
 
   UserSchema.associate = (models) => {
-    UserSchema.hasOne(models.Profile, { foreignKey: 'user_id' });
+    UserSchema.hasOne(models.Profile, { foreignKey: 'userId' });
     UserSchema.hasMany(models.Article, { foreignKey: 'authorId' });
   };
 

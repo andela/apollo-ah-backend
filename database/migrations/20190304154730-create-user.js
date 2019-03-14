@@ -8,7 +8,7 @@ export default {
    * @return {void}
    */
   up: (queryInterface, sequelize) => (
-    queryInterface.createTable('users', {
+    queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -47,5 +47,5 @@ export default {
    * @param {Sequelize} sequelize - Sequelize object.
    * @return {void}
    */
-  down: (queryInterface, sequelize) => queryInterface.dropTable('users')
+  down: (queryInterface, sequelize) => queryInterface.dropTable('Users')
 };

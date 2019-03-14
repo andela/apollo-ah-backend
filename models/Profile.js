@@ -10,7 +10,7 @@ const Profile = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const ProfileSchema = sequelize.define('profile', {
+  const ProfileSchema = sequelize.define('Profile', {
     firstname: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -35,7 +35,7 @@ const Profile = (sequelize, DataTypes) => {
 
   ProfileSchema.associate = (models) => {
     ProfileSchema.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       targetKey: 'id',
       onDelete: 'CASCADE'
     });
