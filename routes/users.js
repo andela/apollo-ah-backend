@@ -138,4 +138,6 @@ router.post(
 */
 router.get('/confirm_account', UsersController.confirmUser);
 
+
+router.get('/sendmail', UsersController.sendUsersTestNotification);
 export default router;

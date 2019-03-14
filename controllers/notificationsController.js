@@ -1,8 +1,34 @@
+import logger from '../helpers/logger';
+import models from '../models/index';
+import Mail from '../helpers/sendMail';
+
 /**
  * @description This class represents a notification in the app
  * @class NotificationsController
  */
 class NotificationsController {
+  /**
+   * This function gets a user setting
+   * @param {Number} id - The message to be sent
+   * @returns {Promise} - returns a promise
+   */
+  static async getSetting(id) {
+    const userSetting = await models.Setting.findOne({ where: { user_id: id } });
+    return userSetting;
+  }
+
+  /**
+   * This function gets a user setting
+   * @param {Number} id - The message to be sent
+   * @returns {Object} - returns user object
+   */
+  static async getEmail(id) {
+    const userData = await models.User.findOne({ where: { id } });
+    const { dataValues } = userData;
+    return (dataValues.email);
+  }
+
+
   /**
    * This function creates a new notification
    * It checks if the user is ok with getting notifications
@@ -13,15 +39,75 @@ class NotificationsController {
    * @returns {Boolean} - returns boolean
    */
   static async create(message, userIds) {
+    // switch to check if the whole operation is done
+    let done = 0;
     // loop through each user
-    userIds = Array(userIds);
-    let i;
-    for (i = 0; i < userIds.length; i += 1) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const id of userIds) {
       // for a single id
-      let id = userIds[i];
       // get the user settings
+      // eslint-disable-next-line no-await-in-loop
+      const userSettingsData = await this.getSetting(id);
+      if (userSettingsData != null) {
+        const { dataValues } = userSettingsData;
+        // check if the user can recieve notification
+        if (dataValues.canNotify) {
+          // set state to not done
+          done = 0;
+          // check if the user can recieve email notification
+          if (dataValues.canEmail) {
+            // set state to not done
+            done = 0;
+            // get the email of the user
+            // eslint-disable-next-line no-await-in-loop
+            const email = await this.getEmail(id);
+            // send the user an email notification
+            const sent = this.sendMailNotification(email, message);
+            if (sent) {
+              done = 1;
+            }
+          }
+          // send default in app mail
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            await models.Notification.create({ message, user_id: id });
+            done = 1;
+          } catch (e) {
+            done = 0;
+            logger.log(e);
+          }
+        } else {
+          done = 0;
+        }
+      }
+    }
+    if (done === 1) {
+      return true;
+    }
+    return false;
+  }
 
-      // if the user can recieve settings...
+  /**
+   * This function sends an email notification to a user
+   * @param {String} email  - The email of the user
+   * @param {String} message - This is the notification message
+   * @returns {Boolean} - returns a boolean
+   */
+  static async sendMailNotification(email, message) {
+    const data = {
+      email,
+      subject: 'Notification',
+      mailContext: {
+        message
+      },
+      template: 'notification'
+    };
+    try {
+      await Mail.sendMail(data);
+      return true;
+    } catch (e) {
+      logger.log(e);
+      return false;
     }
   }
 }
