@@ -2,5 +2,5 @@
 -r @babel/register
 -r @babel/polyfill
 -r test/setup
---timeout 10000
+--timeout 50000
 --exit
