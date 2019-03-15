@@ -20,12 +20,12 @@ class FollowersController {
    * @memberof FollowersController
    */
   static async follow(request, response, next) {
-    const { params: { username } } = request;
+    const { user, params: { username } } = request;
 
     try {
-      const { followable, follower } = await FollowersController.validateFollowable(request);
+      const { followable, follower } = await FollowersController.validateFollowable(user, username);
       await followable.addFollower(follower);
-      return Response.send(response, 200, [], `${MESSAGE.FOLLOW_SUCCESS} ${username}`);
+      return Response.send(response, 200, followable, `${MESSAGE.FOLLOW_SUCCESS} ${username}`);
     } catch (error) {
       next(error);
     }
@@ -42,17 +42,17 @@ class FollowersController {
    * @memberof FollowersController
    */
   static async unfollow(request, response, next) {
-    const { params: { username } } = request;
+    const { user, params: { username } } = request;
 
     try {
-      const { followable, follower } = await FollowersController.validateFollowable(request);
+      const { followable, follower } = await FollowersController.validateFollowable(user, username);
       const existingFollower = await followable.hasFollowers(follower);
       if (!existingFollower) {
         next(createError(400, MESSAGE.UNFOLLOW_ERROR));
       }
 
       await followable.removeFollower(follower);
-      return Response.send(response, 200, [], `${MESSAGE.UNFOLLOW_SUCCESS} ${username}`);
+      return Response.send(response, 200, followable, `${MESSAGE.UNFOLLOW_SUCCESS} ${username}`);
     } catch (error) {
       next(error);
     }
@@ -62,13 +62,12 @@ class FollowersController {
    * Validate users to follow
    *
    * @static
-   * @param {object} request - Express Request object
+   * @param {object} user - Authenticated user object
+   * @param {object} username - Username of the user to follow
    * @returns {object} Object holding the information of the followable and follower
    * @memberof FollowersController
    */
-  static async validateFollowable(request) {
-    const { user, params: { username } } = request;
-
+  static async validateFollowable(user, username) {
     try {
       const follower = await models.User.findOne({
         where: { id: user.id }
