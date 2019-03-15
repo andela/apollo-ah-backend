@@ -228,7 +228,6 @@ class UsersController {
       userIdsArray.push(userIds.id);
     });
     const res = await NotificationsController.create('Hello welcome to AH.', userIdsArray);
-    console.log(res);
     return res;
   }
 }

@@ -1,6 +1,8 @@
 import logger from '../helpers/logger';
 import models from '../models/index';
 import Mail from '../helpers/sendMail';
+import Response from '../helpers/responseHelper';
+import { STATUS } from '../helpers/constants';
 /**
  * @description This class represents a notification in the app
  * @class NotificationsController
@@ -104,6 +106,31 @@ class NotificationsController {
     }
     if (global.socket) {
       await global.socket.emit(`notification${id}`, { message });
+    }
+  }
+
+  /**
+   * This function gets an authenticated users notifications from the database
+   * @param {Request} request - request object
+   * @param {Response} response - response object
+   * @returns {Response} response object
+   */
+  static async getAllNotifications(request, response) {
+    // get user id
+    const userId = request.user.id;
+    // get users notifications
+    try {
+      const notificationData = await models.Notification.findAll({
+        where: { user_id: userId },
+        raw: true
+      });
+      if (notificationData == null) {
+        return Response.send(response, STATUS.OK, null, 'No notifications');
+      }
+      return Response.send(response, STATUS.OK, notificationData, 'Successful');
+    } catch (e) {
+      logger.log(e);
+      return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occured', false);
     }
   }
 }
