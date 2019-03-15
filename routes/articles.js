@@ -52,7 +52,7 @@ const articles = express.Router();
  */
 articles
   .post(
-    '/articles',
+    '/',
     authenticate,
     articlesMiddleware.validateCreateArticleInput,
     articlesController.create
@@ -81,7 +81,7 @@ articles
  */
 
   .post(
-    '/articles/:slug/likes',
+    '/:slug/likes',
     authenticate,
     ArticleLikeController.like
   )
@@ -108,7 +108,7 @@ articles
  *           $ref: '#/definitions/Article'
  */
   .post(
-    '/articles/:slug/dislikes',
+    '/:slug/dislikes',
     authenticate,
     ArticleLikeController.dislike
   );

@@ -1,5 +1,6 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
+import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 
 /**
@@ -22,8 +23,9 @@ export default class ArticlesController {
     const {
       title, body, description,
     } = req.body;
+    const readTime = articleHelpers.articleReadTime(req.body);
     const content = {
-      title, body, description, slug, authorId,
+      title, body, description, slug, authorId, readTime
     };
     try {
       const article = await models.Article.create(content);

@@ -3,7 +3,7 @@ import { STATUS } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
 import Logger from '../helpers/logger';
 
-const { Profile } = models;
+const { Profile, User } = models;
 
 const {
   CREATED,
@@ -99,7 +99,7 @@ class ProfileController {
   }
 
   /**
-  * @description It creates the user's profile.
+  * @description It gets all user's profile.
   * @function getAllProfile
   * @memberof profileController
   * @static
@@ -109,7 +109,13 @@ class ProfileController {
   */
   static async getAllProfiles(req, res) {
     try {
-      const profiles = await Profile.findAll();
+      const profiles = await Profile.findAll({
+        include: [{
+          model: User,
+          attributes: { exclude: ['password'] },
+          required: false,
+        }]
+      });
       return Response.send(res, OK, profiles, 'You have successfully fetched the profile for all users', true);
     } catch (error) {
       return Response.send(res, SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
@@ -117,7 +123,7 @@ class ProfileController {
   }
 
   /**
-  * @description It creates the user's profile.
+  * @description It gets a specific user's profile.
   * @function getProfile
   * @memberof profileController
   * @static
@@ -129,7 +135,12 @@ class ProfileController {
     const { username } = req.params;
     try {
       const profile = await Profile.findOne({
-        where: { username }
+        where: { username },
+        include: [{
+          model: User,
+          attributes: { exclude: ['password'] },
+          required: false,
+        }]
       });
       if (profile === null) {
         return Response.send(res, NOT_FOUND, {}, 'This user does not exist', false);

@@ -13,7 +13,7 @@ describe('social authentication', () => {
         emails: [{ value: 'testing@test1.com' }]
       },
     };
-    it('should hit socail authentication API', async () => {
+    it('should hit social authentication API', async () => {
       const facebookUserInfo = generateOrFindUser(
         verifyCallback.accessToken,
         verifyCallback.refreshToken,

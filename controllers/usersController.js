@@ -99,7 +99,7 @@ class UsersController {
  *
  * @static
  * @param {string} param The column to search against (e.g email, id, username)
- * @param {*} value The actual value to test for
+ * @param {string} value The actual value to test for
  * @returns {object} The user object
  * @memberof UsersController
  */
@@ -111,6 +111,37 @@ class UsersController {
       logger.log(error);
     }
     return user;
+  }
+
+  /**
+ * Updates the password of a user.
+ *
+ * @static
+ * @param {object} request The express request object
+ * @param {object} response The express response object
+ * @param {function} next The express next function
+ * @returns {void}
+ * @memberof UsersController
+ */
+  static async resetPassword(request, response, next) {
+    try {
+      const count = await User.update(
+        {
+          password: request.body.password
+        },
+        {
+          where: { email: request.body.email }
+        }
+      );
+      const success = count > 0;
+      return Response.send(
+        response, success ? STATUS.OK : STATUS.FORBIDDEN,
+        [], success ? MESSAGE.PASSWORD_RESET_SUCCESSFUL : MESSAGE.PASSWORD_LINK_EXPIRED,
+        success,
+      );
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
