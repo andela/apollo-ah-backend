@@ -1,0 +1,61 @@
+import faker from 'faker';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const users = {
+  dummyUser: {
+    email: 'fejiro@gmail.com',
+    password: 'password',
+    username: 'feji2017',
+    isConfirmed: false,
+  },
+  dummyUser2: {
+    email: 'white@gmail.com',
+    password: 'password',
+    username: 'whyte123',
+    isConfirmed: false,
+  },
+  dummyUser3: {
+    email: 'valentine@andela.com',
+    password: 'password',
+    username: 'val123',
+    isConfirmed: false,
+  },
+  dummyUser4: {
+    email: 'andra@gmail.com',
+    password: 'password',
+    username: 'andra2018',
+    isConfirmed: false,
+  },
+};
+
+const article = {
+  title: faker.lorem.words(15),
+  description: faker.lorem.words(50),
+  body: faker.lorem.words(500)
+};
+
+const newArticle = {
+  title: faker.lorem.words(15),
+  description: faker.lorem.words(50),
+  body: 'I love boats'
+};
+
+const newComment = {
+  body: 'This is a ask feedback',
+};
+
+const newUser = {
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  username: faker.internet.userName(),
+};
+
+export {
+  newArticle,
+  newComment,
+  users,
+  newUser,
+  article,
+};
