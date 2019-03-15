@@ -2,6 +2,7 @@ import express from 'express';
 import UsersController from '../controllers/usersController';
 import Handler from '../middlewares/handleValidation';
 import Validator from '../middlewares/validator';
+import Tokenizer from '../middlewares/tokenizer';
 
 const router = express.Router();
 
@@ -14,16 +15,16 @@ const router = express.Router();
  *         type: string
  *       password:
  *         type: string
- *   CDMS:
+ *   Response:
  *     properties:
  *       code:
  *         type: int
  *       data:
  *         type: object
- *     message:
- *       type: string
- *     status:
- *       type: boolean
+ *       message:
+ *         type: string
+ *       status:
+ *         type: boolean
  *
  */
 
@@ -103,11 +104,11 @@ router.post('/login', UsersController.login);
  *         type: string
  *     responses:
  *       200:
- *         description: Password reset succesful
+ *         description: Password reset link has been sent to your email
  *         schema:
  *           $ref: '#/definitions/User'
  *         format:
- *           $ref: '#/definitions/CMDS'
+ *           $ref: '#/definitions/Response'
  */
 router.post(
   '/forgot_password',
@@ -137,5 +138,47 @@ router.post(
 *          type: object
 */
 router.get('/confirm_account', UsersController.confirmUser);
+
+
+/**
+ * @swagger
+ * /api/v1/users/reset_password:
+ *   post:
+ *     tags:
+ *       - password
+ *     description: Resets the user password
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: password
+ *         description: The new password
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: confirm_password
+ *         description: Should be the same as password
+ *         in: body
+ *         required: true
+ *         type: string
+ *       - name: token
+ *         description: The authentication token
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Password reset succesful
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *         format:
+ *           $ref: '#/definitions/Response'
+ */
+router.patch(
+  '/reset_password',
+  Validator.validateResetPassword(),
+  Handler.handleForgotPassword,
+  Tokenizer.verifyResetPassword,
+  UsersController.resetPassword,
+);
 
 export default router;

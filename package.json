@@ -22,7 +22,7 @@
     "sequelize": "sequelize",
     "start": "node dist/bin/www.js",
     "start:dev": "nodemon --exec npm run dev",
-    "test": "nyc --reporter=html --reporter=text --reporter=lcov mocha"
+    "test": "nyc --reporter=html --reporter=text --reporter=lcov mocha --timeout 50000"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",

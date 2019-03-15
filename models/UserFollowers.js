@@ -4,8 +4,5 @@ export default (sequelize, DataTypes) => {
     followerId: DataTypes.INTEGER
   }, {});
 
-  UserFollowers.associate = (models) => {
-    // associate
-  };
   return UserFollowers;
 };
