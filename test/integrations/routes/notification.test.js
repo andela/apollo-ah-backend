@@ -2,7 +2,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import logger from '../../../helpers/logger';
 import app from '../../../index';
 
 chai.use(chaiHttp);
@@ -13,18 +12,13 @@ before(async () => {
   const user = {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    username: 'lioopnm',
+    username: 'lioopnmiook',
   };
-  try {
-    const response = await chai
-      .request(app)
-      .post('/api/v1/users')
-      .send(user);
-    userToken = response.body.data.token;
-  } catch (e) {
-    console.log(e);
-    logger.log(e);
-  }
+  const response = await chai
+    .request(app)
+    .post('/api/v1/users')
+    .send(user);
+  userToken = response.body.data.token;
 });
 
 describe('Notifications endpoints', () => {
