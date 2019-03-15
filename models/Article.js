@@ -25,6 +25,7 @@ const Article = (sequelize, DataTypes) => {
         defaultValue: sequelize.NOW
       },
       description: DataTypes.STRING,
+      readTime: DataTypes.STRING,
       updatedAt: {
         allowNull: true,
         type: DataTypes.DATE,

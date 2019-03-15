@@ -1,5 +1,6 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
+import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 
 /**
@@ -10,7 +11,8 @@ import { STATUS } from '../helpers/constants';
  */
 export default class ArticlesController {
   /**
-   * Sends the request payload to the database and returns the article object
+   * Sends the request payload to the database and creates an article,
+   * returning the created article object
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
@@ -22,8 +24,9 @@ export default class ArticlesController {
     const {
       title, body, description,
     } = req.body;
+    const readTime = articleHelpers.articleReadTime(req.body);
     const content = {
-      title, body, description, slug, authorId,
+      title, body, description, slug, authorId, readTime
     };
     try {
       const article = await models.Article.create(content);
@@ -36,11 +39,13 @@ export default class ArticlesController {
   }
 
   /**
-   * Sends the request to the database and returns the article object
+   * Makes a request to the database
+   * and returns an array of exisiting Article object(s),
+   * sorting them from the latest to the earliest
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
-   * @returns {function} an array of Articles object
+   * @returns {function} an array of Article object
    */
   static async getAll(req, res) {
     try {
@@ -62,7 +67,8 @@ export default class ArticlesController {
   }
 
   /**
-   * Sends the articleId parameter to the database and returns the corresponding article object
+   * Sends the article's slug parameter to the database
+   * and returns the corresponding article object
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
@@ -91,7 +97,8 @@ export default class ArticlesController {
   }
 
   /**
- * Sends the articleId parameter to the database and returns the corresponding article object
+ * Sends the articleID parameter to the database
+ * and updates the corresponding article object
  * @static
  * @param {function} req the request object
  * @param {function} res the resposne object
@@ -123,7 +130,8 @@ export default class ArticlesController {
   }
 
   /**
- * Sends the articleId parameter to the database and returns the corresponding article object
+ * Sends the articleID parameter to the database
+ * and deletes the corresponding article object
  * @static
  * @param {function} req the request object
  * @param {function} res the resposne object
