@@ -1,12 +1,21 @@
 import { expect } from 'chai';
-import UsersController from '../../controllers/users';
 import NotificationsController from '../../controllers/notificationsController';
 import models from '../../models/index';
 
-describe.only('Notifications Tests', () => {
+describe('Notifications Tests', () => {
   it('should send users test notification', async () => {
-    const result = await UsersController.sendUsersTestNotification();
-    expect(result).to.eql(true);
+    const userData = await models.User.findAll({ attributes: ['id'] });
+    const userIdsArray = [];
+    userData.forEach((data) => {
+      const { dataValues } = data;
+      const userIds = dataValues;
+      userIdsArray.push(userIds.id);
+    });
+    try {
+      console.log(await NotificationsController.create('Just be vool', userIdsArray));
+    } catch (e) {
+      expect(e).to.eql(null);
+    }
   });
 
   it('should not send users notifications without message', async () => {

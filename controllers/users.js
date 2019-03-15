@@ -187,7 +187,7 @@ class UsersController {
    * @param {function} next - Express next function
    * @returns {void}
    */
-  static async sendUsersTestNotification() {
+  static async sendUsersTestNotification(request, response) {
     // get all users on the platform
     const userData = await User.findAll({ attributes: ['id'] });
     const userIdsArray = [];

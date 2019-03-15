@@ -11,6 +11,7 @@ import logger from './helpers/logger';
 import routes from './routes';
 import models from './models';
 
+
 const isProduction = process.env.NODE_ENV === 'production';
 // Create global app object
 const app = express();
@@ -118,5 +119,6 @@ app.use((err, req, res) => {
     }
   });
 });
+
 
 export default app;
