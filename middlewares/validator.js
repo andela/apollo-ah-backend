@@ -1,6 +1,6 @@
 import { body } from 'express-validator/check';
 import { MESSAGE, FIELD } from '../helpers/constants';
-import UsersController from '../controllers/users';
+import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
 /**
  * Used with express validator to validate input paramters
@@ -17,7 +17,7 @@ export default class Validator {
   static validateRegistration() {
     return [
       ...Validator.validateEmail(),
-      ...Validator.verifyEmail(),
+      ...Validator.verifyEmailExists(),
       ...Validator.validatePassword(),
       ...Validator.validateUsername()
     ];
@@ -32,15 +32,31 @@ export default class Validator {
   static validateForgotPassword() {
     return [
       ...Validator.validateEmail(),
-      [
-        body(FIELD.EMAIL)
-          .trim()
-          .custom(async (email) => {
-            if (!await UsersController.getUser('email', email)) {
-              return Promise.reject(MESSAGE.EMAIL_NOT_EXISTS);
-            }
-          }),
-      ]
+      ...Validator.verifyEmailExists(true),
+    ];
+  }
+
+  /**
+   * Validate password and confirm_password parameters when reseting a user password
+   * @static
+   * @memberof Validator
+   * @returns {void}
+   */
+  static validateResetPassword() {
+    return [
+      body(FIELD.PASSWORD)
+        .not().isEmpty()
+        .withMessage(MESSAGE.PASSWORD_EMPTY),
+      body(FIELD.CONFIRM_PASSWORD)
+        .not().isEmpty()
+        .withMessage(MESSAGE.CONFIRM_PASSWORD_EMPTY)
+        .custom((password, { req }) => {
+          if (password !== req.body.password) {
+            throw new Error(MESSAGE.PASSWORD_NOT_MATCH);
+          } else {
+            return password;
+          }
+        })
     ];
   }
 
@@ -105,15 +121,20 @@ export default class Validator {
    * Verifies that the email exists
    * @static
    * @returns {array} The array of express validator chains
+   * @param {boolean} alternate Alternate the response message
    * @memberof Validator
    */
-  static verifyEmail() {
+  static verifyEmailExists(alternate = false) {
     return [
       body(FIELD.EMAIL)
         .trim()
         .custom(async (email) => {
-          if (await UsersController.getUser('email', email)) {
+          const user = await UsersController.getUser('email', email);
+          if (!alternate && user) {
             return Promise.reject(MESSAGE.EMAIL_EXISTS);
+          }
+          if (alternate && !user) {
+            return Promise.reject(MESSAGE.EMAIL_NOT_EXISTS);
           }
         }),
     ];
