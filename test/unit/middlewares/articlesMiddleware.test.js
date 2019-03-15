@@ -6,6 +6,7 @@ import app from '../../../index';
 import models from '../../../models';
 import logger from '../../../helpers/logger';
 import { STATUS } from '../../../helpers/constants';
+import articleHelpers from '../../../helpers/articleHelpers';
 
 logger.log('The test is running');
 chai.use(chaiHttp);
@@ -257,6 +258,33 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(CREATED);
             expect(res.body.data.slug).to.be.a('string');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
+    describe('Article read time', () => {
+      it('Should create an article with the minute(s) it will take to read it', (done) => {
+        const article = {
+          title: faker.random.words(),
+          description: 'dehjfjdh',
+          body: 'sentence I make all over again'
+        };
+        const readTime = articleHelpers.articleReadTime(article.body);
+        article.time = readTime;
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(CREATED);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(CREATED);
+            expect(res.body.data.slug).to.be.a('string');
+            expect(res.body).to.contain(readTime);
             done();
           });
       });
