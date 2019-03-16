@@ -7,7 +7,6 @@ import Response from '../helpers/responseHelper';
 import { STATUS, MESSAGE } from '../helpers/constants';
 import logger from '../helpers/logger';
 
-
 const { User } = models;
 
 /**
@@ -167,7 +166,7 @@ class UsersController {
       }
 
       // generate token from user payload
-      const payload = JSON.stringify(user.dataValues);
+      const payload = user.dataValues;
       const token = await generateToken(payload);
 
       // respond with token

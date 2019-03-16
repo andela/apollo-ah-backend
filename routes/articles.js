@@ -22,6 +22,90 @@ const articles = express.Router();
 /**
  * @swagger
  * /api/v1/articles:
+ *   get:
+ *     tags:
+ *       - articles
+ *     description: Returns a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.get(
+  '/:slug',
+  authenticate,
+  articlesMiddleware.validateGetOneArticle,
+  articlesController.getOne
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   delete:
+ *     tags:
+ *       - articles
+ *     description: Deletes a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.delete(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateDeleteArticle,
+  articlesController.delete
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   put:
+ *     tags:
+ *       - articles
+ *     description: Deletes a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully updated
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.put(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateUpdateArticle,
+  articlesController.update
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
  *   post:
  *     tags:
  *       - articles
@@ -50,13 +134,34 @@ const articles = express.Router();
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles
-  .post(
-    '/',
-    authenticate,
-    articlesMiddleware.validateCreateArticleInput,
-    articlesController.create
-  )
+articles.post(
+  '/',
+  authenticate,
+  articlesMiddleware.validateCreateArticle,
+  articlesController.create,
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   get:
+ *     tags:
+ *       - articles
+ *     description: Returns all articles
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.get(
+  '/',
+  authenticate,
+  articlesController.getAll,
+);
+
 
 /**
  * @swagger
@@ -80,11 +185,11 @@ articles
  *           $ref: '#/definitions/Article'
  */
 
-  .post(
-    '/:slug/likes',
-    authenticate,
-    ArticleLikeController.like
-  )
+articles.post(
+  '/:slug/likes',
+  authenticate,
+  ArticleLikeController.like
+);
 
 /**
  * @swagger
@@ -107,10 +212,10 @@ articles
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-  .post(
-    '/:slug/dislikes',
-    authenticate,
-    ArticleLikeController.dislike
-  );
+articles.post(
+  '/:slug/dislikes',
+  authenticate,
+  ArticleLikeController.dislike
+);
 
 export default articles;

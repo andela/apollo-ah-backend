@@ -2,10 +2,12 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import jwt from 'jsonwebtoken';
 import app from '../../../index';
-import models from '../../../models';
 import { STATUS } from '../../../helpers/constants';
+import models from '../../../models';
+import { users } from '../../helpers/testData';
+
+const { dummyUser2 } = users;
 
 chai.use(chaiHttp);
 
@@ -16,6 +18,12 @@ const {
   NOT_FOUND,
 } = STATUS;
 
+const dummyUser3 = {
+  email: faker.internet.email(),
+  password: 'i2345678',
+  username: faker.name.firstName()
+};
+
 const profile = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
@@ -23,47 +31,41 @@ const profile = {
   bio: faker.random.words(),
   address: faker.address.streetAddress(),
   gender: 'M',
-  userId: 1,
   username: faker.random.words(),
   image: faker.image.imageUrl(),
 };
 
-const userDummy = {
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  username: faker.random.words(5),
-};
-
-const token = `Bearer ${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
-
 describe('Testing user profile feature', () => {
-  after(() => models.Profile.destroy({ truncate: true }));
-  it('should create profile when details are correct', async () => {
-    try {
-      const res = await chai.request(app)
-        .post('/api/v1/profiles')
-        .send(profile)
-        .set('Authorization', token);
-      expect(res).to.have.status(CREATED);
-      expect(res.body).to.have.property('message');
-      expect(res.body.data).to.be.an('object');
-      expect(res.body.status).to.be.equals(true);
-      expect(Object.keys(res.body.data)).to.include.members([
-        'firstname',
-        'lastname',
-        'username',
-        'gender',
-        'bio',
-        'phone',
-        'address',
-        'image',
-      ]);
-      expect(res.body.data.id).to.not.be.a('string');
-      expect(res.body.data.userId).to.not.be.a('string');
-      expect(res.body.message).to.be.equals('Profile created successfully');
-    } catch (err) {
-      expect(err).to.not.be.null;
-    }
+  before(async () => {
+    const authpayload = await chai.request(app)
+      .post('/api/v1/users')
+      .send(dummyUser3);
+    dummyUser3.token = authpayload.body.data.token;
+    dummyUser3.id = authpayload.body.data.id;
+    profile.userId = authpayload.body.data.id;
+  });
+
+  it('should create profile when details are correct', (done) => {
+    chai.request(app)
+      .post('/api/v1/profiles')
+      .send(profile)
+      .set({ Authorization: `Bearer ${dummyUser3.token}` })
+      .end((err, res) => {
+        expect(res).to.have.status(CREATED);
+        expect(res.body).to.have.property('message');
+        expect(res.body.data).to.be.an('object');
+        expect(res.body.status).to.be.equals(true);
+        expect(Object.keys(res.body.data)).to.include.members([
+          'firstname',
+          'lastname',
+          'username',
+          'bio',
+          'image',
+        ]);
+        expect(res.body.data.id).to.not.be.a('string');
+        expect(res.body.data.userId).to.not.be.a('string');
+        done();
+      });
   });
 
   it('should return an error if firstname is not provided', (done) => {
@@ -71,7 +73,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profiles')
       .send({ ...profile, firstname: '' })
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
@@ -86,7 +88,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profiles')
       .send({ ...profile, lastname: '' })
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
@@ -101,7 +103,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profiles')
       .send({ ...profile, username: '' })
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
@@ -116,7 +118,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profiles')
       .send({ ...profile, bio: '' })
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
@@ -131,7 +133,7 @@ describe('Testing user profile feature', () => {
       .request(app)
       .post('/api/v1/profiles')
       .send({ ...profile, image: 'hffhh.cam' })
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
         expect(res.body.data[0]).to.have.property('errors');
@@ -145,7 +147,7 @@ describe('Testing user profile feature', () => {
     chai
       .request(app)
       .get('/api/v1/profiles')
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(OK);
         expect(res.body.code).eql(OK);
@@ -159,7 +161,7 @@ describe('Testing user profile feature', () => {
     chai
       .request(app)
       .get('/api/v1/profiles/k5')
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res).to.have.status(NOT_FOUND);
         expect(res.body.code).eql(NOT_FOUND);
@@ -168,8 +170,8 @@ describe('Testing user profile feature', () => {
       });
   });
 
-  it('should fetch a user successfully', (done) => {
-    models.User.create(userDummy)
+  it('should fetch a user profile successfully', (done) => {
+    models.User.create(dummyUser2)
       .then((user) => {
         const userId = user.dataValues.id;
         return userId;
@@ -181,14 +183,14 @@ describe('Testing user profile feature', () => {
           bio: '',
           image: '',
           userId,
-          username: userDummy.username,
+          username: dummyUser2.username,
         })
           .then((newProfile) => {
             const theUsername = newProfile.dataValues.username;
             chai
               .request(app)
               .get(`/api/v1/profiles/${theUsername}`)
-              .set('Authorization', token)
+              .set('Authorization', `Bearer ${dummyUser3.token}`)
               .end((err, res) => {
                 expect(res).to.have.status(OK);
                 expect(res.body).to.have.property('message');
@@ -197,5 +199,30 @@ describe('Testing user profile feature', () => {
               });
           });
       });
+  });
+});
+describe('POST /api/v1/profile/:username/follow', async () => {
+  it('should allow a user to follow another user', (done) => {
+    // let token;
+    models.User
+      .create({
+        email: 'faker37@email.com',
+        password: 'secret12345',
+      })
+      .then((user) => {
+        profile.userId = user.id;
+        profile.username = 'johnnybravo';
+        return models.Profile.create(profile);
+      })
+      .then(({ username }) => (
+        chai.request(app)
+          .post(`/api/v1/profiles/${username}/follow`)
+          .set('Authorization', `Bearer ${dummyUser3.token}`)
+      ))
+      .then((res) => {
+        expect(res).to.have.status(STATUS.OK);
+        done();
+      })
+      .catch(done);
   });
 });
