@@ -20,7 +20,7 @@
     "seed": "sequelize db:seed:all --seeders-path database/seeders",
     "seed:undo": "sequelize db:seed:undo:all",
     "sequelize": "sequelize",
-    "start": "node dist/bin/www.js",
+    "start": "babel-node index.js",
     "start:dev": "nodemon --exec npm run dev",
     "test": "nyc --reporter=html --reporter=text --reporter=lcov mocha --timeout 50000"
   },
