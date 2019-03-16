@@ -52,8 +52,6 @@ export default class ArticlesController {
       /**
        * @todo Page count for pagination
        */
-      // const pageCount = await models.Article.findAndCountAll();
-      // console.log(pageCount.count);
       const allArticles = await models.Article.findAll({
         limit: 10,
         order: [['createdAt', 'DESC']]
