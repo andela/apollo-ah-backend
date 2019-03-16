@@ -1,6 +1,6 @@
 export default {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('ArticleTags', {
+  up: (queryInterface, Sequelize) => (
+    queryInterface.createTable('ArticleTags', {
       articleId: {
         type: Sequelize.INTEGER,
         primaryKey: true
@@ -9,9 +9,7 @@ export default {
         type: Sequelize.STRING,
         primaryKey: true
       },
-    });
-  },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('ArticleTags');
-  }
+    })
+  ),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('ArticleTags')
 };

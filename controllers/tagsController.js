@@ -1,10 +1,6 @@
-import createError from 'http-errors';
 import models from '../models';
-import { env, generateToken } from '../helpers/utils';
-import Mail from '../helpers/sendMail';
 import ResponseHandler from '../helpers/responseHelper';
-import { STATUS, MESSAGE } from '../helpers/constants';
-import logger from '../helpers/logger';
+import { STATUS } from '../helpers/constants';
 
 /**
  * Class representing tags controller
