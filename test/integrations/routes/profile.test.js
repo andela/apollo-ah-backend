@@ -4,6 +4,7 @@ import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../../../index';
 import { STATUS } from '../../../helpers/constants';
+import models from '../../../models';
 
 chai.use(chaiHttp);
 
@@ -36,7 +37,7 @@ describe('Testing user profile feature', () => {
       .send(dummyUser3);
     dummyUser3.token = authpayload.body.data.token;
     dummyUser3.id = authpayload.body.data.id;
-    profile.user_id = authpayload.body.data.id;
+    profile.userId = authpayload.body.data.id;
   });
 
   it('should create profile when details are correct', (done) => {
@@ -57,7 +58,7 @@ describe('Testing user profile feature', () => {
           'image',
         ]);
         expect(res.body.data.id).to.not.be.a('string');
-        expect(res.body.data.user_id).to.not.be.a('string');
+        expect(res.body.data.userId).to.not.be.a('string');
         done();
       });
   });
@@ -135,5 +136,31 @@ describe('Testing user profile feature', () => {
         expect(res.body.data[0].errors.image).to.be.equals('image URL is not valid');
         done();
       });
+  });
+
+  describe('POST /api/v1/profile/:username/follow', async () => {
+    it('should allow a user to follow another user', (done) => {
+      // let token;
+      models.User
+        .create({
+          email: 'faker37@email.com',
+          password: 'secret12345',
+        })
+        .then((user) => {
+          profile.userId = user.id;
+          profile.username = 'johnnybravo';
+          return models.Profile.create(profile);
+        })
+        .then(({ username }) => (
+          chai.request(app)
+            .post(`/api/v1/profiles/${username}/follow`)
+            .set('Authorization', `Bearer ${dummyUser3.token}`)
+        ))
+        .then((res) => {
+          expect(res).to.have.status(STATUS.OK);
+          done();
+        })
+        .catch(done);
+    });
   });
 });

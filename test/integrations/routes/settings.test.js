@@ -12,18 +12,19 @@ let userToken;
 before(async () => {
   const user = {
     email: faker.internet.email(),
-    password: faker.internet.password(),
-    username: 'lemmonJunn',
+    password: 'secret12345',
+    username: faker.internet.userName(),
   };
   try {
     const response = await chai
       .request(app)
       .post('/api/v1/users')
       .send(user);
-    userToken = response.body.data.token;
+    userToken = await response.body.data.token;
   } catch (e) {
     logger.log(e);
   }
+  return userToken;
 });
 
 describe('Settings endpoints Tests', () => {
