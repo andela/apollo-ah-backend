@@ -1,7 +1,7 @@
 
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('profiles', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Profiles', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -24,22 +24,24 @@ module.exports = {
       type: Sequelize.STRING
     },
     createdAt: {
-      allowNull: false,
-      type: Sequelize.DATE
+      allowNull: true,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     updatedAt: {
-      allowNull: false,
-      type: Sequelize.DATE
+      allowNull: true,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
-    user_id: {
+    userId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id',
       }
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('profiles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Profiles')
 };

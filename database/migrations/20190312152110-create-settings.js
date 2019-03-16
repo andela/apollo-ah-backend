@@ -1,7 +1,7 @@
 
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('settings', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Settings', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -24,15 +24,15 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE
     },
-    user_id: {
+    userId: {
       allowNull: false,
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id',
       }
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('settings')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Settings')
 };

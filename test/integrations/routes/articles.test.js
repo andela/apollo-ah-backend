@@ -4,10 +4,9 @@ import faker from 'faker';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
-import logger from '../../../helpers/logger';
 import { STATUS } from '../../../helpers/constants';
+import { auth } from '../../helpers';
 
-logger.log('The test is running');
 chai.use(chaiHttp);
 
 let authpayload;
@@ -39,9 +38,7 @@ const createUser = async () => {
 before(async () => {
   // newArticle = await feedArticleToDb();
   await createUser();
-  authpayload = await chai.request(app)
-    .post('/api/v1/users/login')
-    .send(dummyUser);
+  authpayload = await auth(dummyUser);
   authToken = authpayload.body.token;
   return dummyUser;
 });

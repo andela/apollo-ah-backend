@@ -21,7 +21,7 @@ const profile = {
   bio: faker.random.words(),
   address: faker.address.streetAddress(),
   gender: 'M',
-  user_id: 1,
+  userId: 1,
   username: faker.random.words(),
   image: faker.image.imageUrl(),
 };
@@ -51,7 +51,7 @@ describe('Testing user profile feature', () => {
         'image',
       ]);
       expect(res.body.data.id).to.not.be.a('string');
-      expect(res.body.data.user_id).to.not.be.a('string');
+      expect(res.body.data.userId).to.not.be.a('string');
       expect(res.body.message).to.be.equals('Profile created successfully');
     } catch (err) {
       expect(err).to.not.be.null;
@@ -131,5 +131,30 @@ describe('Testing user profile feature', () => {
         expect(res.body.data[0].errors.image).to.be.equals('image URL is not valid');
         done();
       });
+  });
+
+  describe('POST /api/v1/profile/:username/follow', async () => {
+    it('should allow a user to follow another user', (done) => {
+      models.User
+        .create({
+          email: 'faker37@email.com',
+          password: 'secret12345',
+        })
+        .then((user) => {
+          profile.userId = user.id;
+          profile.username = 'johnnybravo';
+          return models.Profile.create(profile);
+        })
+        .then(({ username }) => (
+          chai.request(app)
+            .post(`/api/v1/profiles/${username}/follow`)
+            .set('Authorization', token)
+        ))
+        .then((res) => {
+          expect(res).to.have.status(STATUS.OK);
+          done();
+        })
+        .catch(done);
+    });
   });
 });

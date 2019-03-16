@@ -4,37 +4,41 @@ export default {
    *
    * @param {Sequelize.QueryInterface} queryInterface - The interface that communicates
    * with the database.
-   * @param {Sequelize} sequelize - Sequelize object.
+   * @param {Sequelize} Sequelize - Sequelize object.
    * @return {void}
    */
-  up: (queryInterface, sequelize) => (
-    queryInterface.createTable('users', {
+  up: (queryInterface, Sequelize) => (
+    queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: sequelize.INTEGER,
+        type: Sequelize.INTEGER,
       },
       email: {
-        type: sequelize.STRING,
+        type: Sequelize.STRING,
+        unique: true
       },
       isConfirmed: {
-        type: sequelize.BOOLEAN,
+        type: Sequelize.BOOLEAN,
         defaultValue: false
       },
       password: {
-        type: sequelize.STRING,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: true,
-        type: sequelize.DATE,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         allowNull: true,
-        type: sequelize.DATE,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-        // onUpdate: sequelize.literal('CURRENT_TIMESTAMP'),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      deletedAt: {
+        allowNull: true,
+        type: Sequelize.DATE
       },
     })
   ),
@@ -44,8 +48,8 @@ export default {
    *
    * @param {Sequelize.QueryInterface} queryInterface - The interface that communicates
    * with the database.
-   * @param {Sequelize} sequelize - Sequelize object.
+   * @param {Sequelize} Sequelize - Sequelize object.
    * @return {void}
    */
-  down: (queryInterface, sequelize) => queryInterface.dropTable('users')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Users')
 };

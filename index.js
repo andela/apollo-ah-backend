@@ -2,20 +2,23 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import cors from 'cors';
-import errorhandler from 'errorhandler';
 import swaggerJSDoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import methodOveride from 'method-override';
+import createError from 'http-errors';
 import passport from 'passport';
 import logger from './helpers/logger';
-import routes from './routes';
+import { MESSAGE } from './helpers/constants';
+import exceptionHandler from './middlewares/exceptionHandler';
 import models from './models';
 
-const isProduction = process.env.NODE_ENV === 'production';
+// Routes
+import routes from './routes';
+
 // Create global app object
 const app = express();
 
-// Normal express config defaults
+const isProduction = app.get('env') === 'production';
 
 logger.config();
 app.use(cors());
@@ -52,10 +55,6 @@ passport.deserializeUser((userId, done) => {
   User.findById(userId, done);
 });
 
-if (!isProduction) {
-  app.use(errorhandler());
-}
-
 const swaggerDefinition = {
   info: {
     title: "Author's Haven API",
@@ -75,48 +74,21 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 app.get('/', (req, res) => {
-  res.status(200).send({ message: 'Welcome to the API' });
+  res.status(200).json({ message: MESSAGE.WELCOME_MESSAGE });
 });
 
+// routes endpoint
 app.use('/api/v1', routes);
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  return res.send(swaggerSpec);
 });
 
-
-//  catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  next(createError(404, MESSAGE.ROUTE_NOT_FOUND));
 });
 
-// development error handler
-// will print stacktrace
-if (!isProduction) {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-    res.json({
-      errors: {
-        message: err.message,
-        error: err
-      }
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: {}
-    }
-  });
-});
+app.use(exceptionHandler);
 
 export default app;

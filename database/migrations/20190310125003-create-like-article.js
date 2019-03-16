@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 export function up(queryInterface, Sequelize) {
-  return queryInterface.createTable('articleLikes', {
+  return queryInterface.createTable('ArticleLikes', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -23,7 +23,7 @@ export function up(queryInterface, Sequelize) {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id',
       }
     },
@@ -32,12 +32,12 @@ export function up(queryInterface, Sequelize) {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       references: {
-        model: 'articles',
+        model: 'Articles',
         key: 'id',
       }
     },
   });
 }
 export function down(queryInterface, Sequelize) {
-  return queryInterface.dropTable('articleLikes');
+  return queryInterface.dropTable('ArticleLikes');
 }

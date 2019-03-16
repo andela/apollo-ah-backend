@@ -37,7 +37,7 @@ describe('article like and dislike endpoint', () => {
       .post(`/api/v1/articles/${slug}/likes`)
       .set({ Authorization: `Bearer ${token}` })
       .end((err, res) => {
-        expect(res.status).eql(CREATED);
+        expect(res).to.have.status(CREATED);
         expect(res.body.message).to.equal('successfully liked article');
         done();
       });
@@ -49,7 +49,7 @@ describe('article like and dislike endpoint', () => {
       .post(`/api/v1/articles/${slug}/dislikes`)
       .set({ Authorization: `Bearer ${token}` })
       .end((err, res) => {
-        expect(res.status).eql(OK);
+        expect(res).to.have.status(OK);
         expect(res.body.message).to.equal('successfully disliked article');
         done();
       });
