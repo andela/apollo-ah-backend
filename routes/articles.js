@@ -140,7 +140,8 @@ articles.post(
   '/',
   authenticate,
   articlesMiddleware.validateCreateArticle,
-  articlesController.create,
+  articlesMiddleware.validateTagList,
+  articlesController.create
 );
 
 /**
@@ -161,7 +162,7 @@ articles.post(
 articles.get(
   '/',
   authenticate,
-  articlesController.getAll,
+  articlesController.getAll
 );
 
 

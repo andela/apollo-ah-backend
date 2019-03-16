@@ -26,12 +26,8 @@ export default class ArticlesController {
     } = req.body;
     const readTime = articleHelpers.articleReadTime(req.body);
     const content = {
-      title, body, description, slug, authorId, readTime
+      title, body, description, slug, authorId, readTime, tagList
     };
-
-    if (tagList) { // convert value to list
-      content.tagList = tagList.map(tag => ({ tagName: tag }));
-    }
 
     try {
       const result = await models.Article.create(content, {
@@ -43,12 +39,8 @@ export default class ArticlesController {
           }
         ]
       });
-      const article = JSON.parse(JSON.stringify(result));
-      if (article.tagList) {
-        article.tagList = article.tagList.map(tag => tag.tagName);
-      } else {
-        article.tagList = [];
-      }
+      const article = JSON.parse(JSON.stringify(result)); // clone result
+      article.tagList = article.tagList.map(tag => tag.tagName);
 
       return Response.send(
         res,
