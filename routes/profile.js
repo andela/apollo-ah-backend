@@ -70,7 +70,7 @@ const profileRouter = express.Router();
  *           $ref: '#/definitions/Article'
  */
 profileRouter.post(
-  '/profile',
+  '/profiles',
   middlewares.authenticate,
   middlewares.validateCreateProfile,
   profileController.create

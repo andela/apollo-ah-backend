@@ -15,16 +15,26 @@ const {
 } = STATUS;
 
 let authpayload;
+let authpayload2;
+let articlePayload;
 
 let dummyUser = {
-  email: 'faker@email.com',
+  email: faker.internet.email(),
   password: 'i2345678',
   username: 'error-test'
 };
 
+let dummyUser2 = {
+  email: faker.internet.email(),
+  password: 'p98765435667',
+  username: 'murderer-inc'
+};
+
+let dummyArticle2;
+
 const dummyArticle = {
-  title: 'Hello world',
-  description: 'lorem ipsum exists',
+  title: faker.lorem.sentence(),
+  description: faker.lorem.sentences(),
   body: faker.lorem.paragraphs(),
 };
 
@@ -38,6 +48,16 @@ const createUser = async () => {
   }
 };
 
+const createUser2 = async () => {
+  try {
+    const user = await models.User.create(dummyUser2);
+    dummyUser2 = user;
+    return dummyUser2;
+  } catch (error) {
+    return error;
+  }
+};
+
 describe('API endpoint: /api/articles (Middleware test)', () => {
   before(async () => {
     models.sequelize.sync();
@@ -46,7 +66,24 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
       .post('/api/v1/users/login')
       .send(dummyUser);
     dummyUser.token = authpayload.body.token;
-    return dummyUser;
+
+    createUser2();
+    authpayload2 = await chai.request(app)
+      .post('/api/v1/users/login')
+      .send(dummyUser2);
+    dummyUser2.token = authpayload2.body.token;
+
+    articlePayload = await chai.request(app)
+      .post('/api/v1/articles')
+      .send({
+        title: 'some gibberish',
+        description: 'more gibberish',
+        body: faker.lorem.paragraphs()
+      })
+      .set({ Authorization: `Bearer ${dummyUser2.token}` });
+
+    dummyArticle2 = articlePayload.body.data;
+    // return dummyUser;
   });
 
   describe('POST: /api/v1/articles', () => {
@@ -262,8 +299,8 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
     });
   });
 
-  describe('POST: /api/v1/articles', () => {
-    describe('Article read time', () => {
+  describe('POST: /api/v1/artilces', () => {
+    describe('Articles read time', () => {
       it('Should create an article with the minute(s) it will take to read it', (done) => {
         const article = {
           title: faker.random.words(),
@@ -286,6 +323,161 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             done();
           });
       });
+    });
+  });
+
+  describe('GET: /api/v1/articles/:slug', () => {
+    it('Should return an error if the article id is a string', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/uyo')
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.NOT_FOUND);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+          expect(res.body.message).to.be.equal('no article with slug: uyo found');
+          done();
+        });
+    });
+  });
+
+  describe('GET: /api/v1/articles/:slug', () => {
+    it('Should return an error if article id is less than 0', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${-4}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.NOT_FOUND);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+          expect(res.body.message).to.be.equal('no article with slug: -4 found');
+          done();
+        });
+    });
+  });
+
+  describe('PUT: /api/v1/articles/:articleId', () => {
+    it('Should return an error if no article id is provided', (done) => {
+      chai
+        .request(app)
+        .put(`/api/v1/articles/${'   '}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.NOT_FOUND);
+
+          done();
+        });
+    });
+  });
+
+  describe('PUT: /api/v1/articles/:articleId', () => {
+    it('Should return an error if the article id is a string', (done) => {
+      chai
+        .request(app)
+        .put('/api/v1/articles/uyo')
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+          expect(res.body.message).to.be.equal('article Id is not a number');
+          done();
+        });
+    });
+  });
+
+  describe('PUT: /api/v1/articles/:articleId', () => {
+    it('Should return an error if article id is less than 0', (done) => {
+      chai
+        .request(app)
+        .put(`/api/v1/articles/${-4}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+          expect(res.body.message).to.be.equal('article Id is not valid');
+          done();
+        });
+    });
+  });
+
+  describe('PUT: /api/v1/articles/:articleId', () => {
+    it('Should return an error if authorId is incorrect', (done) => {
+      chai
+        .request(app)
+        .put(`/api/v1/articles/${dummyArticle2.id}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.FORBIDDEN);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.FORBIDDEN);
+          expect(res.body.message).to.be.equal('you do not have the right to update this article');
+          done();
+        });
+    });
+  });
+
+  describe('DELETE: /api/v1/article/:articleId', () => {
+    it('Should return an error if no article id is provided', (done) => {
+      chai
+        .request(app)
+        .delete(`/api/v1/articles/${'   '}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.NOT_FOUND);
+          done();
+        });
+    });
+  });
+
+  describe('DELETE: /api/v1/article/:articleId', () => {
+    it('Should return an error if the article id is a string', (done) => {
+      chai
+        .request(app)
+        .delete('/api/v1/articles/uyo')
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+          expect(res.body.message).to.be.equal('article Id was not provided');
+          done();
+        });
+    });
+  });
+
+  describe('DELETE: /api/v1/articles/:articleId', () => {
+    it('Should return an error if article id is less than 0', (done) => {
+      chai
+        .request(app)
+        .delete(`/api/v1/articles/${-4}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+          expect(res.body.message).to.be.equal('article Id is not valid');
+          done();
+        });
+    });
+  });
+
+  describe('DELETE: /api/v1/articles/:articleId', () => {
+    it('Should return an error if authorId is incorrect', (done) => {
+      chai
+        .request(app)
+        .delete(`/api/v1/articles/${dummyArticle2.id}`)
+        .set({ Authorization: `Bearer ${dummyUser.token}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.FORBIDDEN);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.FORBIDDEN);
+          expect(res.body.message).to.be.equal('you do not have the right to delete this article');
+          done();
+        });
     });
   });
 });

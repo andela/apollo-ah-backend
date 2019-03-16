@@ -166,7 +166,7 @@ class UsersController {
       }
 
       // generate token from user payload
-      const payload = JSON.stringify(user.dataValues);
+      const payload = user.dataValues;
       const token = await generateToken(payload);
 
       // respond with token
