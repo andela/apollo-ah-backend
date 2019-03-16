@@ -24,7 +24,6 @@ const dummyArticle = {
   body: faker.lorem.paragraphs(),
 };
 
-
 const createUser = async () => {
   try {
     const user = await models.User.create(dummyUser);
@@ -41,8 +40,6 @@ before(async () => {
 });
 
 describe('API endpoint: /api/articles (Routes)', () => {
-  // after(() => Bluebird.all([models.Article.destroy({ truncate: false })]));
-
   describe('POST: /api/v1/articles', () => {
     it('Should create an article', (done) => {
       const fakeArticle = {

@@ -22,8 +22,8 @@ export default (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      set(val) {
-        this.setDataValue('password', bcrypt.hashSync(val, 10));
+      set(value) {
+        this.setDataValue('password', bcrypt.hashSync(value, 10));
       }
     },
     isConfirmed: {
@@ -43,7 +43,7 @@ export default (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     }
-  });
+  }, {});
 
   User.associate = (models) => {
     User.hasOne(models.Profile, { foreignKey: 'userId' });

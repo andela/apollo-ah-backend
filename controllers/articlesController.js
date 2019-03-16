@@ -22,16 +22,39 @@ export default class ArticlesController {
     const authorId = req.user.id;
     const { slug } = res.locals;
     const {
-      title, body, description,
+      title, body, description, tagList
     } = req.body;
     const readTime = articleHelpers.articleReadTime(req.body);
     const content = {
       title, body, description, slug, authorId, readTime
     };
+
+    if (tagList) { // convert value to list
+      content.tagList = tagList.map(tag => ({ tagName: tag }));
+    }
+
     try {
-      const article = await models.Article.create(content);
+      const result = await models.Article.create(content, {
+        include: [
+          {
+            model: models.Tag,
+            as: 'tagList',
+            through: { attributes: [] }
+          }
+        ]
+      });
+      const article = JSON.parse(JSON.stringify(result));
+      if (article.tagList) {
+        article.tagList = article.tagList.map(tag => tag.tagName);
+      } else {
+        article.tagList = [];
+      }
+
       return Response.send(
-        res, STATUS.CREATED, article.dataValues, 'article was successfully created', true,
+        res,
+        STATUS.CREATED,
+        article,
+        'article was successfully created'
       );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);

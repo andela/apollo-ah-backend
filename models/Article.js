@@ -41,6 +41,12 @@ const Article = (sequelize, DataTypes) => {
       foreignKey: 'authorId'
     });
     ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
+    ArticleSchema.belongsToMany(models.Tag, {
+      through: models.ArticleTag,
+      foreignKey: 'articleId',
+      otherKey: 'tagName',
+      as: 'tagList'
+    });
   };
   return ArticleSchema;
 };

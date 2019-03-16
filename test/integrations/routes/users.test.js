@@ -2,10 +2,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-/**
- * @todo To be removed pending acceptance of current user test
- */
-// import Bluebird from 'bluebird';
 import app from '../../../index';
 import models from '../../../models';
 import { STATUS, MESSAGE, FIELD } from '../../../helpers/constants';

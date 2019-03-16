@@ -17,6 +17,8 @@ const articles = express.Router();
  *         type: string
  *       body:
  *         type: string
+ *       tagList:
+ *         type: array
  */
 
 /**
