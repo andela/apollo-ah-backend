@@ -1,7 +1,7 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
-import { STATUS } from '../helpers/constants';
+import { STATUS, PAGE_LIMIT, MESSAGE } from '../helpers/constants';
 
 /**
  * Wrapper class for sending article objects as response.
@@ -34,7 +34,7 @@ export default class ArticlesController {
         res, STATUS.CREATED, article.dataValues, 'article was successfully created', true,
       );
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
@@ -49,16 +49,26 @@ export default class ArticlesController {
    */
   static async getAll(req, res) {
     try {
-      /**
-       * @todo Page count for pagination
-       */
-      const allArticles = await models.Article.findAll({
-        limit: 10,
+      // TODO: Implement search algorithm here
+      const current = req.body.offset === 0 ? 1 : Number(req.query.page);
+      const allArticles = await models.Article.findAndCountAll({
+        limit: PAGE_LIMIT,
+        offset: req.body.offset,
         order: [['createdAt', 'DESC']]
       });
-      return Response.send(
-        res, STATUS.OK, allArticles, 'articles were successfully fetched',
-      );
+      const last = Math.ceil(allArticles.count / PAGE_LIMIT);
+      return allArticles.rows.length === 0
+        ? Response.send(res, STATUS.NOT_FOUND, [], MESSAGE.ARTICLES_NOT_FOUND, false)
+        : Response.send(
+          res, STATUS.OK, {
+            articles: allArticles.rows,
+            page: {
+              first: 1,
+              current,
+              last,
+            }
+          }, MESSAGE.ARTICLES_FOUND,
+        );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
     }

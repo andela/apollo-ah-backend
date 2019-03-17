@@ -51,9 +51,14 @@ export const MESSAGE = {
   UNFOLLOW_ERROR: 'Sorry, cannot unfollow a user not being followed',
 
   INACTIVE_USER_ERROR: 'The user can no longer be reached.',
+
+  ARTICLE_EXIST: 'You already have an article with that title, try another title.',
+  ARTICLES_NOT_FOUND: 'No article found.',
+  ARTICLES_FOUND: 'Articles successfully fetched',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
+export const PAGE_LIMIT = 20;
 
 export const FIELD = {
   USERNAME: 'username',

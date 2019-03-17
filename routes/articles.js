@@ -158,7 +158,7 @@ articles.post(
  */
 articles.get(
   '/',
-  authenticate,
+  articlesMiddleware.validatePagination,
   articlesController.getAll,
 );
 
