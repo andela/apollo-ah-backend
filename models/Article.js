@@ -31,6 +31,10 @@ const Article = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: null
       },
+      deletedAt: {
+        allowNull: true,
+        type: DataTypes.DATE,
+      }
     },
     {}
   );

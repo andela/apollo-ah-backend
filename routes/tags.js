@@ -28,6 +28,6 @@ const router = express.Router();
  *         schema:
  *           $ref: '#/definitions/Tag'
  */
-router.get('/', middlewares.authenticate, TagsController.index);
+router.get('/', middlewares.authenticate, TagsController.getTags);
 
 export default router;

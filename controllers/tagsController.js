@@ -9,7 +9,7 @@ import { STATUS } from '../helpers/constants';
  */
 class TagsController {
   /**
-   * Creates a new user resource
+   * Fetch a list of tags
    *
    * @static
    * @param {Request} request - Request object
@@ -19,7 +19,7 @@ class TagsController {
    *
    * @memberof TagsController
    */
-  static async index(request, response, next) {
+  static async getTags(request, response, next) {
     try {
       const result = await models.Tag.findAll({ group: ['tagName'] });
 

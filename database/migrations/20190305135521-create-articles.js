@@ -40,7 +40,11 @@ export default {
         model: 'Users',
         key: 'id'
       }
-    }
+    },
+    deletedAt: {
+      allowNull: true,
+      type: Sequelize.DATE
+    },
   }),
   down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
 };
