@@ -184,7 +184,6 @@ describe('API endpoint: /api/articles (Routes)', () => {
           expect(res).to.have.status(STATUS.NOT_FOUND);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-          expect(res.body).to.haveOwnProperty('code').equal(STATUS.NOT_FOUND);
           expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
           expect(res.body).to.haveOwnProperty('status').to.equal(false);
           expect(res.body).to.haveOwnProperty('data').to.be.an('array');

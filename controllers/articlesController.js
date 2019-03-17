@@ -47,7 +47,7 @@ export default class ArticlesController {
    * @param {function} res the resposne object
    * @returns {function} an array of Article object
    */
-  static async getAll(req, res) {
+  static async getAllArticles(req, res) {
     try {
       // TODO: Implement search algorithm here
       const current = req.body.offset === 0 ? 1 : Number(req.query.page);
@@ -61,19 +61,17 @@ export default class ArticlesController {
       const currentCount = allArticles.rows.length;
       return currentCount === 0
         ? Response.send(res, STATUS.NOT_FOUND, [], MESSAGE.ARTICLES_NOT_FOUND, false)
-        : Response.send(
-          res, STATUS.OK, {
-            articles: allArticles.rows,
-            page: {
-              first: 1,
-              current,
-              last,
-              currentCount,
-              totalCount: allArticles.count,
-              description: `${offset + 1}-${offset + currentCount} of ${allArticles.count}`
-            }
-          }, MESSAGE.ARTICLES_FOUND,
-        );
+        : Response.send(res, STATUS.OK, {
+          articles: allArticles.rows,
+          page: {
+            first: 1,
+            current,
+            last,
+            currentCount,
+            totalCount: allArticles.count,
+            description: `${offset + 1}-${offset + currentCount} of ${allArticles.count}`
+          }
+        }, MESSAGE.ARTICLES_FOUND,);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
     }

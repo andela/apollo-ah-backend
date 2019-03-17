@@ -159,7 +159,7 @@ articles.post(
 articles.get(
   '/',
   articlesMiddleware.validatePagination,
-  articlesController.getAll,
+  articlesController.getAllArticles,
 );
 
 
