@@ -51,13 +51,15 @@ export default class ArticlesController {
     try {
       // TODO: Implement search algorithm here
       const current = req.body.offset === 0 ? 1 : Number(req.query.page);
+      const { offset } = req.body;
       const allArticles = await models.Article.findAndCountAll({
         limit: PAGE_LIMIT,
-        offset: req.body.offset,
+        offset,
         order: [['createdAt', 'DESC']]
       });
       const last = Math.ceil(allArticles.count / PAGE_LIMIT);
-      return allArticles.rows.length === 0
+      const currentCount = allArticles.rows.length;
+      return currentCount === 0
         ? Response.send(res, STATUS.NOT_FOUND, [], MESSAGE.ARTICLES_NOT_FOUND, false)
         : Response.send(
           res, STATUS.OK, {
@@ -66,6 +68,9 @@ export default class ArticlesController {
               first: 1,
               current,
               last,
+              currentCount,
+              totalCount: allArticles.count,
+              description: `${offset + 1}-${offset + currentCount} of ${allArticles.count}`
             }
           }, MESSAGE.ARTICLES_FOUND,
         );
