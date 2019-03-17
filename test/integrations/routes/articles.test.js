@@ -103,7 +103,6 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .end((err, res) => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
           expect(res.body).to.haveOwnProperty('status').to.equal(true);
@@ -124,7 +123,6 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .end((err, res) => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
           expect(res.body).to.haveOwnProperty('status').to.equal(true);
@@ -145,7 +143,6 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .end((err, res) => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
           expect(res.body).to.haveOwnProperty('status').to.equal(true);
@@ -167,7 +164,6 @@ describe('API endpoint: /api/articles (Routes)', () => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
-          expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
           expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
           expect(res.body).to.haveOwnProperty('status').to.equal(true);
           expect(res.body).to.haveOwnProperty('data').to.be.an('object');
