@@ -10,15 +10,16 @@ import passport from 'passport';
 import logger from './helpers/logger';
 import { MESSAGE } from './helpers/constants';
 import exceptionHandler from './middlewares/exceptionHandler';
-import models from './models';
-
-// Routes
+import models from './models/index';
 import routes from './routes';
+
+const isProduction = process.env.NODE_ENV === 'production';
+// Routes
+
 
 // Create global app object
 const app = express();
 
-const isProduction = app.get('env') === 'production';
 
 logger.config();
 app.use(cors());
@@ -90,5 +91,6 @@ app.use((req, res, next) => {
 });
 
 app.use(exceptionHandler);
+
 
 export default app;
