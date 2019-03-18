@@ -34,31 +34,34 @@ export default class ArticlesController {
         res, STATUS.CREATED, article.dataValues, 'article was successfully created', true,
       );
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
   /**
    * Makes a request to the database
    * and returns an array of exisiting Article object(s),
-   * sorting them from the latest to the earliest
+   * sorting them from the latest to the earliest,
+   * and passsing the result to the next middleware
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
-   * @returns {function} an array of Article object
+   * @param {function} next the express next function
+   * @returns {void}
    */
-  static async getAll(req, res) {
+  static async getAllArticles(req, res, next) {
     try {
-      /**
-       * @todo Page count for pagination
-       */
-      const allArticles = await models.Article.findAll({
-        limit: 10,
+      // TODO: Implement search algorithm here
+      const { offset, limit } = req.body;
+      const articles = await models.Article.findAndCountAll({
+        limit,
+        offset,
         order: [['createdAt', 'DESC']]
       });
-      return Response.send(
-        res, STATUS.OK, allArticles, 'articles were successfully fetched',
-      );
+      const {
+        code, data, message, status
+      } = articleHelpers.getArticlesAsPages(req, articles);
+      return Response.send(res, code, data, message, status);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
     }
