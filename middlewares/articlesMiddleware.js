@@ -30,19 +30,13 @@ export default class AriclesMiddleware {
     } = req.body;
 
     if (typeof title !== 'string') {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'title must be a string', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'title must be a string', false);
     }
     if (typeof body !== 'string') {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'body must be a string', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'body must be a string', false);
     }
     if (typeof description !== 'string') {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'description must be a string', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description must be a string', false);
     }
 
     if (!title || !title.trim()) {
@@ -52,25 +46,23 @@ export default class AriclesMiddleware {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'body cannot be empty', false);
     }
     if (!description || !description.trim()) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'description cannot be empty', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description cannot be empty', false);
     }
 
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
-        return Response.send(
-          res, STATUS.FORBIDDEN, [], MESSAGE.ARTICLE_EXIST, false,
-        );
+        return Response.send(res, STATUS.FORBIDDEN, [], MESSAGE.ARTICLE_EXIST, false);
       }
-      const slug = slugify(`${title}-${uuid()}`, '-');
+      const slug = slugify(`${title}-${uuid()}`, {
+        remove: /[*+~.()'"!:@]/g,
+        replacement: '-',
+        lower: true
+      });
       res.locals.slug = slug;
       return next();
     } catch (error) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, error, 'could not create article', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, error, 'could not create article', false);
     }
   }
 
@@ -87,9 +79,7 @@ export default class AriclesMiddleware {
     const { slug } = req.params;
 
     if (!slug.trim()) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'empty space not allowed', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'empty space not allowed', false);
     }
     if (typeof slug !== 'string') {
       return Response.send(
@@ -116,23 +106,17 @@ export default class AriclesMiddleware {
     const { title = '' } = req.body;
 
     if (!articleId) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'article Id is not a number', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'article Id is not a number', false);
     }
     if (articleId < 1) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'article Id is not valid', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'article Id is not valid', false);
     }
 
     try {
       const searchResult = await models.Article.findByPk(articleId);
       const foundArticle = searchResult.dataValues;
       if (foundArticle.authorId !== userId) {
-        return Response.send(
-          res, STATUS.FORBIDDEN, [], 'you do not have the right to update this article', false,
-        );
+        return Response.send(res, STATUS.FORBIDDEN, [], 'you do not have the right to update this article', false);
       }
       if (title) {
         const slug = slugify(`${title}-${uuid()}`, '-');
@@ -160,28 +144,20 @@ export default class AriclesMiddleware {
     const articleId = Number(id);
 
     if (!articleId) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'article Id was not provided', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'article Id was not provided', false);
     }
     if (typeof articleId !== 'number') {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'article Id is not a number', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'article Id is not a number', false);
     }
     if (articleId < 1) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, [], 'article Id is not valid', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'article Id is not valid', false);
     }
 
     try {
       const searchResult = await models.Article.findByPk(articleId);
       const foundArticle = searchResult.dataValues;
       if (foundArticle.authorId !== userId) {
-        return Response.send(
-          res, STATUS.FORBIDDEN, [], 'you do not have the right to delete this article', false,
-        );
+        return Response.send(res, STATUS.FORBIDDEN, [], 'you do not have the right to delete this article', false);
       }
       res.locals.article = foundArticle;
       return next();

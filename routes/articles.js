@@ -44,12 +44,7 @@ const articles = express.Router();
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.get(
-  '/:slug',
-  authenticate,
-  articlesMiddleware.validateGetOneArticle,
-  articlesController.getOne
-);
+articles.get('/:slug', authenticate, articlesMiddleware.validateGetOneArticle, articlesController.getOne);
 
 /**
  * @swagger
@@ -72,12 +67,7 @@ articles.get(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.delete(
-  '/:articleId',
-  authenticate,
-  articlesMiddleware.validateDeleteArticle,
-  articlesController.delete
-);
+articles.delete('/:articleId', authenticate, articlesMiddleware.validateDeleteArticle, articlesController.delete);
 
 /**
  * @swagger
@@ -100,12 +90,7 @@ articles.delete(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.put(
-  '/:articleId',
-  authenticate,
-  articlesMiddleware.validateUpdateArticle,
-  articlesController.update
-);
+articles.put('/:articleId', authenticate, articlesMiddleware.validateUpdateArticle, articlesController.update);
 
 /**
  * @swagger
@@ -138,13 +123,7 @@ articles.put(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.post(
-  '/',
-  authenticate,
-  articlesMiddleware.validateCreateArticle,
-  articlesMiddleware.validateTagList,
-  articlesController.create
-);
+articles.post('/', authenticate, articlesMiddleware.validateCreateArticle, articlesMiddleware.validateTagList, articlesController.create);
 
 /**
  * @swagger
@@ -161,13 +140,7 @@ articles.post(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.get(
-  '/',
-  Validator.validatePaginationLimit(),
-  Handler.handleValidation,
-  articlesMiddleware.validatePagination,
-  articlesController.getAllArticles,
-);
+articles.get('/', Validator.validatePaginationLimit(), Handler.handleValidation, articlesMiddleware.validatePagination, articlesController.getAllArticles);
 
 
 /**
@@ -192,11 +165,7 @@ articles.get(
  *           $ref: '#/definitions/Article'
  */
 
-articles.post(
-  '/:slug/likes',
-  authenticate,
-  ArticleLikeController.like
-);
+articles.post('/:slug/likes', authenticate, ArticleLikeController.like);
 
 /**
  * @swagger
@@ -209,7 +178,7 @@ articles.post(
  *       - application/json
  *     parameters:
  *       - name: slug
- *         description: Artilce's slug
+ *         description: Article's slug
  *         in: parameter
  *         required: true
  *         type: string
@@ -219,10 +188,6 @@ articles.post(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.post(
-  '/:slug/dislikes',
-  authenticate,
-  ArticleLikeController.dislike
-);
+articles.post('/:slug/dislikes', authenticate, ArticleLikeController.dislike);
 
 export default articles;

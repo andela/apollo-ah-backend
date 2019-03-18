@@ -58,6 +58,7 @@ export default (sequelize, DataTypes) => {
       as: 'following',
       through: models.UserFollowers
     });
+    User.hasMany(models.Comment, { foreignKey: 'authorId', as: 'authors' });
   };
 
   /**
