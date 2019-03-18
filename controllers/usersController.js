@@ -6,6 +6,7 @@ import Mail from '../helpers/sendMail';
 import Response from '../helpers/responseHelper';
 import { STATUS, MESSAGE } from '../helpers/constants';
 import logger from '../helpers/logger';
+import NotificationsController from './notificationsController';
 
 const { User } = models;
 
@@ -207,6 +208,27 @@ class UsersController {
       return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occurred while updating your account', false);
     }
     return Response.send(response, STATUS.OK, null, MESSAGE.ACCOUNT_CONFIRM);
+  }
+
+  /**
+   * This function sends a user test notififcation
+   * @static
+   * @param {Request} request - Request object
+   * @param {Response} response - Response object
+   * @param {function} next - Express next function
+   * @returns {void}
+   */
+  static async sendUsersTestNotification(request, response) {
+    // get all users on the platform
+    const userData = await User.findAll({ attributes: ['id'] });
+    const userIdsArray = [];
+    userData.forEach((data) => {
+      const { dataValues } = data;
+      const userIds = dataValues;
+      userIdsArray.push(userIds.id);
+    });
+    const res = await NotificationsController.create('Hello welcome to AH.', userIdsArray);
+    return res;
   }
 }
 
