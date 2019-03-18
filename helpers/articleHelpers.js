@@ -1,4 +1,5 @@
 import models from '../models';
+import { STATUS, MESSAGE } from './constants';
 
 const { Op } = models.Sequelize;
 
@@ -42,5 +43,35 @@ export default {
     } catch (err) {
       return err;
     }
+  },
+  getArticlesAsPages: (req, articles) => {
+    const {
+      offset, limit, current
+    } = req.body;
+
+    const last = Math.ceil(articles.count / limit);
+    const currentCount = articles.rows.length;
+    let result = {
+      code: STATUS.NOT_FOUND, data: [], message: MESSAGE.ARTICLES_NOT_FOUND, status: false
+    };
+    if (currentCount !== 0) {
+      result = {
+        code: STATUS.OK,
+        data: {
+          articles: articles.rows,
+          page: {
+            first: 1,
+            current,
+            last,
+            currentCount,
+            totalCount: articles.count,
+            description: `${offset + 1}-${offset + currentCount} of ${articles.count}`
+          }
+        },
+        message: MESSAGE.ARTICLES_FOUND,
+        status: true,
+      };
+    }
+    return result;
   }
 };
