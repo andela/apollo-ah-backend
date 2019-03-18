@@ -10,7 +10,7 @@ const Setting = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const SettingSchema = sequelize.define('setting', {
+  const SettingSchema = sequelize.define('Setting', {
     canEmail: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
@@ -32,7 +32,7 @@ const Setting = (sequelize, DataTypes) => {
 
   SettingSchema.associate = (models) => {
     SettingSchema.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       targetKey: 'id',
       onDelete: 'CASCADE'
     });

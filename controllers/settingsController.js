@@ -16,7 +16,7 @@ class SettingsController {
    */
   static async create(userId) {
     // create a user
-    const data = await Setting.create({ user_id: userId });
+    const data = await Setting.create({ userId });
     return data;
   }
 
@@ -37,7 +37,7 @@ class SettingsController {
           canNotify: request.body.canNotify
         },
         {
-          where: { user_id: userId }
+          where: { userId }
         }
       );
       if (!updateData) {
@@ -62,7 +62,7 @@ class SettingsController {
 
     // get a users setting
     try {
-      const { dataValues } = await Setting.findOne({ where: { user_id: userId } });
+      const { dataValues } = await Setting.findOne({ where: { userId } });
       const setting = dataValues;
       return Response.send(response, STATUS.OK, setting, 'Successful');
     } catch (e) {

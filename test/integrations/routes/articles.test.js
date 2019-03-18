@@ -4,18 +4,16 @@ import faker from 'faker';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
-import logger from '../../../helpers/logger';
 import { STATUS } from '../../../helpers/constants';
+import { auth } from '../../helpers';
 
-logger.log('The test is running');
 chai.use(chaiHttp);
 
 let authpayload;
 let authToken;
-// let newArticle;
 
 const dummyUser = {
-  email: 'faker@email.com',
+  email: 'faker4678@email.com',
   password: 'i2345678',
   username: 'heron419'
 };
@@ -37,13 +35,9 @@ const createUser = async () => {
 };
 
 before(async () => {
-  // newArticle = await feedArticleToDb();
   await createUser();
-  authpayload = await chai.request(app)
-    .post('/api/v1/users/login')
-    .send(dummyUser);
+  authpayload = await auth(dummyUser);
   authToken = authpayload.body.token;
-  return dummyUser;
 });
 
 describe('API endpoint: /api/articles (Routes)', () => {
@@ -62,6 +56,8 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .send(fakeArticle)
         .set({ Authorization: `Bearer ${authToken}` })
         .end((err, res) => {
+          dummyArticle.id = res.body.data.id;
+          dummyArticle.slug = res.body.data.slug;
           expect(res).to.have.status(STATUS.CREATED);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
@@ -95,6 +91,67 @@ describe('API endpoint: /api/articles (Routes)', () => {
             done();
           });
       });
+    });
+  });
+
+  describe('GET: /api/v1/articles', () => {
+    it('Should return all articles', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles')
+        .set({ Authorization: `Bearer ${authToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+          done();
+        });
+    });
+  });
+
+  describe('GET: /api/v1/articles/:slug', () => {
+    it('Should return a single article', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${dummyArticle.slug}`)
+        .set({ Authorization: `Bearer ${authToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+          done();
+        });
+    });
+  });
+
+  describe('PUT: /api/v1/article/:articleId', () => {
+    it('Should update a single article', (done) => {
+      chai
+        .request(app)
+        .put(`/api/v1/articles/${dummyArticle.id}`)
+        .set({ Authorization: `Bearer ${authToken}` })
+        .send({ title: faker.lorem.sentence() })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+          done();
+        });
+    });
+  });
+
+  describe('DELETE: /api/v1/article/:articleId', () => {
+    it('Should delete a single article', (done) => {
+      chai
+        .request(app)
+        .delete(`/api/v1/articles/${dummyArticle.id}`)
+        .set({ Authorization: `Bearer ${authToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+          done();
+        });
     });
   });
 });

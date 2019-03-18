@@ -1,9 +1,14 @@
 import Sequelize from 'sequelize';
+import fs from 'fs';
+import path from 'path';
 import dbConfig from '../config/database';
 import { env } from '../helpers/utils';
 
+const basename = path.basename(__filename);
+
 const environment = env('NODE_ENV');
 const config = dbConfig[environment];
+const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -12,20 +17,25 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-const models = {
-  User: sequelize.import('./User.js'),
-  Profile: sequelize.import('./Profile.js'),
-  Article: sequelize.import('./Article.js'),
-  Setting: sequelize.import('./Setting.js'),
-  ArticleLike: sequelize.import('./ArticleLikes.js'),
-  Notification: sequelize.import('./Notification.js'),
-};
+const onlyModels = file => (
+  (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js')
+);
 
-Object.keys(models).forEach((key) => {
-  if (models[key].associate) models[key].associate(models);
+fs
+  .readdirSync(__dirname)
+  .filter(onlyModels)
+  .forEach((file) => {
+    const model = sequelize.import(path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
-models.sequelize = sequelize;
-models.Sequelize = Sequelize;
-
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+const models = db;
 export default models;
