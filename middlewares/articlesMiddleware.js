@@ -200,8 +200,11 @@ export default class AriclesMiddleware {
    */
   static validatePagination(req, res, next) {
     const page = req.query.page || 1;
-    const offset = (page * PAGE_LIMIT) - PAGE_LIMIT;
+    const limit = req.query.size || PAGE_LIMIT;
+    const offset = (page * limit) - limit;
     req.body.offset = (!offset || offset < 0) ? 0 : offset;
+    req.body.limit = limit;
+    req.body.current = req.body.offset === 0 ? 1 : Number(req.query.page);
     next();
   }
 }

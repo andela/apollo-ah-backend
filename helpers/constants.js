@@ -1,3 +1,5 @@
+export const PAGE_LIMIT = 20;
+
 export const STATUS = {
   OK: 200, // Request OK, indicates a successful request
   CREATED: 201, // Resource Created, request is ok and new resource created. Use with POST requests
@@ -55,16 +57,19 @@ export const MESSAGE = {
   ARTICLE_EXIST: 'You already have an article with that title, try another title.',
   ARTICLES_NOT_FOUND: 'No article found.',
   ARTICLES_FOUND: 'Articles successfully fetched',
+
+  PAGE_LIMIT_EXCEEDED: `The maximum size for the page limit is ${PAGE_LIMIT}`,
+  PAGE_LIMIT_INVALID: 'The page limit must be a number',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
-export const PAGE_LIMIT = 20;
 
 export const FIELD = {
   USERNAME: 'username',
   PASSWORD: 'password',
   EMAIL: 'email',
   CONFIRM_PASSWORD: 'confirmPassword',
+  PAGINATION_LIMIT: 'size',
 };
 
 /**

@@ -3,6 +3,8 @@ import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import ArticleLikeController from '../controllers/articleLikesController';
 import authenticate from '../middlewares/authenticate';
+import Validator from '../middlewares/validator';
+import Handler from '../middlewares/handleValidation';
 
 const articles = express.Router();
 
@@ -158,6 +160,8 @@ articles.post(
  */
 articles.get(
   '/',
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
   articlesMiddleware.validatePagination,
   articlesController.getAllArticles,
 );

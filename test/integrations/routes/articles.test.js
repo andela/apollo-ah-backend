@@ -4,7 +4,9 @@ import faker from 'faker';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
-import { STATUS, MESSAGE, PAGE_LIMIT } from '../../../helpers/constants';
+import {
+ STATUS, MESSAGE, PAGE_LIMIT, FIELD 
+} from '../../../helpers/constants';
 import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
@@ -95,6 +97,70 @@ describe('API endpoint: /api/articles (Routes)', () => {
   });
 
   describe('GET: /api/v1/articles', () => {
+    it('Should return  error if size parameter is not a number', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles')
+        .query({ page: 1, size: 'INVALID' })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').equal(STATUS.BAD_REQUEST);
+          expect(res.body).to.haveOwnProperty('message').equal('Validation error occurred');
+          expect(res.body).to.haveOwnProperty('status').to.equal(false);
+          expect(res.body).to.haveOwnProperty('data')
+            .to.be.an('array')
+            .to.deep.include(
+              {
+                field: FIELD.PAGINATION_LIMIT,
+                message: MESSAGE.PAGE_LIMIT_INVALID,
+              }
+            );
+          done();
+        });
+    });
+    it(`Should return  error if size parameter more than ${PAGE_LIMIT}`, (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles')
+        .query({ page: 1, size: PAGE_LIMIT + 1 })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').equal(STATUS.BAD_REQUEST);
+          expect(res.body).to.haveOwnProperty('message').equal('Validation error occurred');
+          expect(res.body).to.haveOwnProperty('status').to.equal(false);
+          expect(res.body).to.haveOwnProperty('data')
+            .to.be.an('array')
+            .to.deep.include(
+              {
+                field: FIELD.PAGINATION_LIMIT,
+                message: MESSAGE.PAGE_LIMIT_EXCEEDED,
+              }
+            );
+          done();
+        });
+    });
+    it(`Should return first ${PAGE_LIMIT} articles if size parameter is not provided`, (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles')
+        .query({ page: 1 })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
+          expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+          expect(res.body).to.haveOwnProperty('status').to.equal(true);
+          expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+          expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+          expect(res.body.data).to.haveOwnProperty('page');
+          expect(res.body.data.page).to.haveOwnProperty('first').to.equal(1);
+          expect(res.body.data.page).to.haveOwnProperty('current').to.equal(1);
+          expect(res.body.data.page).to.haveOwnProperty('last').to.be.a('number');
+          done();
+        });
+    });
     it(`Should return first ${PAGE_LIMIT} articles if page parameter is not provided`, (done) => {
       chai
         .request(app)
@@ -120,6 +186,26 @@ describe('API endpoint: /api/articles (Routes)', () => {
         .request(app)
         .get('/api/v1/articles')
         .query({ page: 'NOT_A_NUMBER' })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('code').equal(STATUS.OK);
+          expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+          expect(res.body).to.haveOwnProperty('status').to.equal(true);
+          expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+          expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+          expect(res.body.data).to.haveOwnProperty('page');
+          expect(res.body.data.page).to.haveOwnProperty('first').to.equal(1);
+          expect(res.body.data.page).to.haveOwnProperty('current').to.equal(1);
+          expect(res.body.data.page).to.haveOwnProperty('last').to.be.a('number');
+          done();
+        });
+    });
+    it('Should return all articles if size parameter is valid', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles')
+        .query({ page: 1, size: 1 })
         .end((err, res) => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');

@@ -1,7 +1,7 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
-import { STATUS, PAGE_LIMIT, MESSAGE } from '../helpers/constants';
+import { STATUS } from '../helpers/constants';
 
 /**
  * Wrapper class for sending article objects as response.
@@ -41,37 +41,27 @@ export default class ArticlesController {
   /**
    * Makes a request to the database
    * and returns an array of exisiting Article object(s),
-   * sorting them from the latest to the earliest
+   * sorting them from the latest to the earliest,
+   * and passsing the result to the next middleware
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
-   * @returns {function} an array of Article object
+   * @param {function} next the express next function
+   * @returns {void}
    */
-  static async getAllArticles(req, res) {
+  static async getAllArticles(req, res, next) {
     try {
       // TODO: Implement search algorithm here
-      const current = req.body.offset === 0 ? 1 : Number(req.query.page);
-      const { offset } = req.body;
-      const allArticles = await models.Article.findAndCountAll({
-        limit: PAGE_LIMIT,
+      const { offset, limit } = req.body;
+      const articles = await models.Article.findAndCountAll({
+        limit,
         offset,
         order: [['createdAt', 'DESC']]
       });
-      const last = Math.ceil(allArticles.count / PAGE_LIMIT);
-      const currentCount = allArticles.rows.length;
-      return currentCount === 0
-        ? Response.send(res, STATUS.NOT_FOUND, [], MESSAGE.ARTICLES_NOT_FOUND, false)
-        : Response.send(res, STATUS.OK, {
-          articles: allArticles.rows,
-          page: {
-            first: 1,
-            current,
-            last,
-            currentCount,
-            totalCount: allArticles.count,
-            description: `${offset + 1}-${offset + currentCount} of ${allArticles.count}`
-          }
-        }, MESSAGE.ARTICLES_FOUND,);
+      const {
+        code, data, message, status
+      } = articleHelpers.getArticlesAsPages(req, articles);
+      return Response.send(res, code, data, message, status);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
     }
