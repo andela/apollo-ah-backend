@@ -14,7 +14,7 @@ class NotificationsController {
    * @returns {Promise} - returns a promise
    */
   static async getSetting(id) {
-    const userSetting = await models.Setting.findOne({ where: { user_id: id } });
+    const userSetting = await models.Setting.findOne({ where: { userId: id } });
     return userSetting;
   }
 
@@ -100,7 +100,7 @@ class NotificationsController {
    */
   static async sendInAppNotification(id, message) {
     try {
-      await models.Notification.create({ message, user_id: id });
+      await models.Notification.create({ message, userId: id });
     } catch (e) {
       logger.log(e);
     }
@@ -121,7 +121,7 @@ class NotificationsController {
     // get users notifications
     try {
       const notificationData = await models.Notification.findAll({
-        where: { user_id: userId },
+        where: { userId },
         raw: true
       });
       if (notificationData == null) {
@@ -130,6 +130,7 @@ class NotificationsController {
       return Response.send(response, STATUS.OK, notificationData, 'Successful');
     } catch (e) {
       logger.log(e);
+      console.log(e);
       return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occured', false);
     }
   }

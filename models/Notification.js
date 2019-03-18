@@ -10,7 +10,7 @@ const Notification = (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const NotificationSchema = sequelize.define('notification', {
+  const NotificationSchema = sequelize.define('Notification', {
     message: {
       type: DataTypes.STRING,
       allowNull: false
@@ -28,7 +28,7 @@ const Notification = (sequelize, DataTypes) => {
 
   NotificationSchema.associate = (models) => {
     NotificationSchema.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       targetKey: 'id',
       onDelete: 'CASCADE'
     });
