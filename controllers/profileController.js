@@ -4,12 +4,15 @@ import { STATUS } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
 import Logger from '../helpers/logger';
 
-const { Profile } = models;
+const { Profile, User } = models;
 
 const {
   CREATED,
   SERVER_ERROR,
   UNAUTHORIZED,
+  BAD_REQUEST,
+  OK,
+  NOT_FOUND,
 } = STATUS;
 
 /** profile controller class */
@@ -68,7 +71,10 @@ class ProfileController {
 
       return Response.send(res, CREATED, requestForm, 'Profile updated successfully', true);
     } catch (error) {
-      if (error.message === 'insert or update on table "profiles" violates foreign key constraint "profiles_user_id_fkey"') {
+      if (error.errors[0].type === 'unique violation') {
+        return Response.send(res, BAD_REQUEST, [], 'This username already exist', false);
+      }
+      if (error.message === 'insert or update on table "profiles" violates foreign key constraint "profiles_userId_fkey"') {
         return Response.send(res, UNAUTHORIZED, [], 'You have to be signed up to create a profile', false);
       }
       return Response.send(res, SERVER_ERROR, error.message, 'Profile update failed, try again later!', false);
@@ -94,15 +100,38 @@ class ProfileController {
   }
 
   /**
-   * User followers handler
-   *
-   * @static
-   * @param {object} request - Express Request object
-   * @param {object} response - Express Response object
-   * @returns {object} Response object
-   * @param {Function} next - Express NextFunction
-   * @memberof ProfileController
-   */
+  * @description It gets all user's profile.
+  * @function getAllProfile
+  * @memberof profileController
+  * @static
+  * @param  {Object} req - The request object.
+  * @param  {Object} res - The response object.
+  * @returns {Object} - It returns the response object.
+  */
+  static async getAllProfiles(req, res) {
+    try {
+      const profiles = await Profile.findAll({
+        include: [{
+          model: User,
+          attributes: { exclude: ['password'] },
+          required: false,
+        }]
+      });
+      return Response.send(res, OK, profiles, 'You have successfully fetched the profile for all users', true);
+    } catch (error) {
+      return Response.send(res, SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
+    }
+  }
+
+  /**
+  *  User followers handler
+  * @static
+  * @param {object} request - Express Request object
+  * @param {object} response - Express Response object
+  * @returns {object} Response object
+  * @param {Function} next - Express NextFunction
+  * @memberof ProfileController
+  */
   static async follow(request, response, next) {
     const { params: { username } } = request;
 
@@ -113,6 +142,35 @@ class ProfileController {
       return Response.send(response, 400, [], `Successfully followed ${username}`);
     } catch (error) {
       next(error);
+    }
+  }
+
+  /**
+  * @description It gets a specific user's profile.
+  * @function getProfile
+  * @memberof profileController
+  * @static
+  * @param  {Object} req - The request object.
+  * @param  {Object} res - The response object.
+  * @returns {Object} - It returns the response object.
+  */
+  static async getProfile(req, res) {
+    const { username } = req.params;
+    try {
+      const profile = await Profile.findOne({
+        where: { username },
+        include: [{
+          model: User,
+          attributes: { exclude: ['password'] },
+          required: false,
+        }]
+      });
+      if (profile === null) {
+        return Response.send(res, NOT_FOUND, {}, 'This user does not exist', false);
+      }
+      return Response.send(res, OK, profile, 'Successfully returned a user', true);
+    } catch (error) {
+      return Response.send(res, SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
     }
   }
 
@@ -132,7 +190,6 @@ class ProfileController {
     try {
       const { followable, follower } = await ProfileController.validateFollowable(request);
       await followable.removeFollower(follower);
-
       return Response.send(response, 400, [], `Successfully unfollowed ${username}`);
     } catch (error) {
       next(error);
