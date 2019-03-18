@@ -130,7 +130,6 @@ class NotificationsController {
       return Response.send(response, STATUS.OK, notificationData, 'Successful');
     } catch (e) {
       logger.log(e);
-      console.log(e);
       return Response.send(response, STATUS.BAD_REQUEST, null, 'An error occured', false);
     }
   }

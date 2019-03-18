@@ -22,7 +22,6 @@ before(async () => {
       .send(user);
     userToken = await response.body.data.token;
   } catch (e) {
-    console.log(e);
     logger.log(e);
   }
   return userToken;

@@ -12,7 +12,7 @@ before(async () => {
   const user = {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    username: 'lioopnmiook',
+    username: faker.internet.userName(),
   };
   const response = await chai
     .request(app)

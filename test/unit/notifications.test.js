@@ -12,7 +12,7 @@ describe('Notifications Tests', () => {
       userIdsArray.push(userIds.id);
     });
     try {
-      console.log(await NotificationsController.create('Just be vool', userIdsArray));
+      await NotificationsController.create('Just be vool', userIdsArray);
     } catch (e) {
       expect(e).to.eql(null);
     }
