@@ -14,12 +14,9 @@ export default {
     const profile1 = {
       firstname: faker.name.firstName(),
       lastname: faker.name.lastName(),
-      phone: '+23438776199',
       bio: faker.random.words(),
-      address: faker.address.streetAddress(),
-      gender: 'M',
       userId: 1,
-      username: 'johndoe',
+      username: faker.internet.userName(),
       image: faker.image.imageUrl()
     };
 
