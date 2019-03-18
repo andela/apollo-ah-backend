@@ -207,4 +207,24 @@ export default class AriclesMiddleware {
     req.body.current = req.body.offset === 0 ? 1 : Number(req.query.page);
     next();
   }
+
+  /**
+   * Validate tagList param on the request body
+   *
+   * @static
+   * @param {object} request - Express Request object
+   * @param {object} response - Express Response object
+   * @param {NextFunction} next - Express nextFunction
+   * @returns {Function} call to next middleware
+   * @memberof AriclesMiddleware
+   */
+  static validateTagList(request, response, next) {
+    const { tagList } = request.body;
+    if (tagList) { // convert value to key:value pair
+      request.body.tagList = tagList.map(tag => ({ tagName: tag }));
+    } else {
+      request.body.tagList = [];
+    }
+    return next();
+  }
 }

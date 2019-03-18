@@ -19,6 +19,8 @@ const articles = express.Router();
  *         type: string
  *       body:
  *         type: string
+ *       tagList:
+ *         type: array
  */
 
 /**
@@ -140,7 +142,8 @@ articles.post(
   '/',
   authenticate,
   articlesMiddleware.validateCreateArticle,
-  articlesController.create,
+  articlesMiddleware.validateTagList,
+  articlesController.create
 );
 
 /**
