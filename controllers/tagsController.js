@@ -19,7 +19,7 @@ class TagsController {
    *
    * @memberof TagsController
    */
-  static async getTags(request, response, next) {
+  static async getAllTags(request, response, next) {
     try {
       const result = await models.Tag.findAll({ group: ['tagName'] });
 

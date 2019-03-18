@@ -5,7 +5,6 @@ export default (sequelize, DataTypes) => {
     tagName: {
       type: DataTypes.STRING,
       primaryKey: true,
-      unique: true,
       set(value) {
         const slug = slugify(value, {
           replacement: '-', // replace spaces with replacement

@@ -3,11 +3,9 @@ export default {
     queryInterface.createTable('ArticleTags', {
       articleId: {
         type: Sequelize.INTEGER,
-        primaryKey: true
       },
       tagName: {
         type: Sequelize.STRING,
-        primaryKey: true
       },
     })
   ),

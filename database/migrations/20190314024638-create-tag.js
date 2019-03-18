@@ -10,7 +10,6 @@ export default {
       tagName: {
         allowNull: false,
         type: Sequelize.STRING,
-        primaryKey: true
       },
     })
   ),
