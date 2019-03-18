@@ -3,6 +3,9 @@ import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 
+const { Article, Bookmark } = models;
+
+
 /**
  * Wrapper class for sending article objects as response.
  *
@@ -172,6 +175,79 @@ export default class ArticlesController {
       );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
+    }
+  }
+
+  /**
+ * @description users can bookmark articles for reading later.
+ * @static
+ * @param  {object} req - The request object
+ * @param  {object} res - The response object
+ * @return {object} - It returns the request response object
+ */
+  static async bookmarkArticle(req, res) {
+    const { slug } = req.params;
+    const userId = req.user.id;
+    let articleId;
+
+    try {
+      const articleFound = await Article.findOne({
+        where: {
+          slug
+        }
+      });
+
+      if (!articleFound) return Response.send(res, STATUS.NOT_FOUND, [], 'This article does not exist', false);
+      articleId = articleFound.id;
+      const bookmarkExist = await Bookmark.findOne({
+        where: {
+          articleId,
+          userId,
+        }
+      });
+
+      if (bookmarkExist) {
+        await Bookmark.destroy(
+          {
+            where: {
+              articleId,
+              userId
+            }
+          }
+        );
+        return Response.send(res, STATUS.OK, [], 'successfully unbookmarked this article', true);
+      }
+
+      const newBookmark = await Bookmark.create(
+        { userId, articleId }
+      );
+      return Response.send(res, STATUS.CREATED, newBookmark, 'successfully bookmarked this article', true);
+    } catch (error) {
+      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'sorry! something went wrong', false);
+    }
+  }
+
+  /**
+* @description users can get all bookmarked articles.
+* @static
+* @param  {object} req - The request object
+* @param  {object} res - The response object
+* @return {object} - It returns the request response object
+*/
+  static async getBookmarkedArticles(req, res) {
+    const userId = req.user.id;
+    try {
+      const bookmarkedArticles = await Bookmark.findAll({
+        where: {
+          userId
+        },
+        include: [{
+          model: Article,
+        }]
+      });
+      return Response.send(res, STATUS.OK, bookmarkedArticles, 'Bookmarked articles', true);
+    } catch (error) {
+      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
     }
   }
 }
