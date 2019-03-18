@@ -218,4 +218,10 @@ articles.post(
   ArticleLikeController.dislike
 );
 
+articles.post(
+  '/:slug/bookmarks',
+  authenticate,
+  articlesController.bookmark
+);
+
 export default articles;

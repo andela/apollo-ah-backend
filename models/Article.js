@@ -41,6 +41,7 @@ const Article = (sequelize, DataTypes) => {
       foreignKey: 'authorId'
     });
     ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
+    ArticleSchema.hasMany(models.Bookmark, { foreignKey: 'articleId' });
   };
   return ArticleSchema;
 };
