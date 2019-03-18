@@ -14,7 +14,10 @@ const Article = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true
       },
-      slug: DataTypes.STRING,
+      slug: {
+        type: DataTypes.STRING,
+        unique: true
+      },
       body: {
         type: DataTypes.TEXT,
         allowNull: false

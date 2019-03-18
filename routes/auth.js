@@ -11,7 +11,7 @@ const router = express.Router();
  * definitions:
  *   User:
  *     properties:
- *       id: 
+ *       id:
  *         type: int
  *       email:
  *         type: string

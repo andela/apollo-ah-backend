@@ -4,6 +4,7 @@ import profile from './profile';
 import authRoute from './auth';
 import articles from './articles';
 import settingRouter from './settings';
+import ratings from './ratings';
 
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.use(articles);
 router.use('/auth', authRoute);
 router.use('/articles', articles);
 router.use('/setting', settingRouter);
+router.use('/articles', ratings);
 
 export default router;

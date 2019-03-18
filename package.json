@@ -21,7 +21,10 @@
     "sequelize": "sequelize",
     "start": "node dist/bin/www.js",
     "start:dev": "nodemon --exec npm run dev",
-    "pretest": "NODE_ENV=test npm run migrate",
+    "undo:migrate:test": "NODE_ENV=test sequelize db:migrate:undo:all",
+    "seed:test": "NODE_ENV=test sequelize db:seed:all",
+    "migrate:test": "NODE_ENV=test sequelize db:migrate",
+    "pretest": "NODE_ENV=test npm run undo:migrate:test && npm run migrate:test && npm run seed:test",
     "test": "nyc --reporter=html --reporter=text --reporter=lcov mocha --timeout 50000"
   },
   "author": "Andela Simulations Programme",

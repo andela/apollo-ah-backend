@@ -18,6 +18,7 @@ const models = {
   Article: sequelize.import('./Article.js'),
   Setting: sequelize.import('./Setting.js'),
   ArticleLike: sequelize.import('./ArticleLikes.js'),
+  Ratings: sequelize.import('./Ratings.js'),
 };
 
 Object.keys(models).forEach((key) => {
