@@ -4,7 +4,7 @@ import uuid from 'uuid/v4';
 import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
 import models from '../models';
-import { STATUS } from '../helpers/constants';
+import { STATUS, MESSAGE, PAGE_LIMIT } from '../helpers/constants';
 
 /**
  * Wrapper class for validating requests.
@@ -72,7 +72,7 @@ export default class AriclesMiddleware {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
         return Response.send(
-          res, STATUS.FORBIDDEN, [], 'an article with that title already exist', false,
+          res, STATUS.FORBIDDEN, [], MESSAGE.ARTICLE_EXIST, false,
         );
       }
       const slug = slugify(`${title}-${uuid()}`, '-');
@@ -199,5 +199,43 @@ export default class AriclesMiddleware {
     } catch (error) {
       return Response.send(res, STATUS.SERVER_ERROR, error, 'an error occurred', false);
     }
+  }
+
+  /**
+   * Validates the page query parameter and calculate the offset value
+   * @static
+   * @param {function} req the request object
+   * @param {function} res the response object
+   * @param {function} next the express built in next() middleware
+   * @returns {function} returns erros objects or calls next
+   */
+  static validatePagination(req, res, next) {
+    const page = req.query.page || 1;
+    const limit = req.query.size || PAGE_LIMIT;
+    const offset = (page * limit) - limit;
+    req.body.offset = (!offset || offset < 0) ? 0 : offset;
+    req.body.limit = limit;
+    req.body.current = req.body.offset === 0 ? 1 : Number(req.query.page);
+    next();
+  }
+
+  /**
+   * Validate tagList param on the request body
+   *
+   * @static
+   * @param {object} request - Express Request object
+   * @param {object} response - Express Response object
+   * @param {NextFunction} next - Express nextFunction
+   * @returns {Function} call to next middleware
+   * @memberof AriclesMiddleware
+   */
+  static validateTagList(request, response, next) {
+    const { tagList } = request.body;
+    if (tagList) { // convert value to key:value pair
+      request.body.tagList = tagList.map(tag => ({ tagName: tag }));
+    } else {
+      request.body.tagList = [];
+    }
+    return next();
   }
 }

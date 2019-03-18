@@ -31,6 +31,10 @@ const Article = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: null
       },
+      deletedAt: {
+        allowNull: true,
+        type: DataTypes.DATE,
+      }
     },
     {}
   );
@@ -45,6 +49,13 @@ const Article = (sequelize, DataTypes) => {
       targetKey: 'id',
       as: 'articleCategory',
       foreignKey: 'categoryId'
+    });
+    ArticleSchema.hasMany(models.Bookmark, { foreignKey: 'articleId' });
+    ArticleSchema.belongsToMany(models.Tag, {
+      through: models.ArticleTag,
+      foreignKey: 'articleId',
+      otherKey: 'tagName',
+      as: 'tagList'
     });
   };
   return ArticleSchema;

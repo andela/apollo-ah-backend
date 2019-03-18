@@ -3,6 +3,8 @@ import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import ArticleLikeController from '../controllers/articleLikesController';
 import authenticate from '../middlewares/authenticate';
+import Validator from '../middlewares/validator';
+import Handler from '../middlewares/handleValidation';
 
 const articles = express.Router();
 
@@ -17,6 +19,8 @@ const articles = express.Router();
  *         type: string
  *       body:
  *         type: string
+ *       tagList:
+ *         type: array
  */
 
 /**
@@ -138,7 +142,8 @@ articles.post(
   '/',
   authenticate,
   articlesMiddleware.validateCreateArticle,
-  articlesController.create,
+  articlesMiddleware.validateTagList,
+  articlesController.create
 );
 
 /**
@@ -158,8 +163,10 @@ articles.post(
  */
 articles.get(
   '/',
-  authenticate,
-  articlesController.getAll,
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
+  articlesMiddleware.validatePagination,
+  articlesController.getAllArticles,
 );
 
 
@@ -216,6 +223,33 @@ articles.post(
   '/:slug/dislikes',
   authenticate,
   ArticleLikeController.dislike
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/bookmarks:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: create a bookmark
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: successfully bookmarked this article
+ *         schema:
+ *           $ref: '#/definitions/Bookmark'
+ */
+articles.post(
+  '/:slug/bookmarks',
+  authenticate,
+  articlesController.bookmarkArticle
 );
 
 export default articles;

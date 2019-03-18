@@ -22,22 +22,15 @@ export default {
     readTime: {
       type: Sequelize.STRING
     },
-    /**
-       * @todo include tagId for articles tagList in tagList model
-       */
-    // tagId: {
-    //   type: Sequelize.INTEGER,
-    //   allowNull: true,
-    //   defaultValue: null
-    // },
     createdAt: {
-      allowNull: false,
-      type: Sequelize.DATE
+      allowNull: true,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     updatedAt: {
       allowNull: true,
       type: Sequelize.DATE,
-      defaultValue: null
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     authorId: {
       type: Sequelize.INTEGER,
@@ -47,7 +40,11 @@ export default {
         model: 'Users',
         key: 'id'
       }
-    }
+    },
+    deletedAt: {
+      allowNull: true,
+      type: Sequelize.DATE
+    },
   }),
   down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
 };

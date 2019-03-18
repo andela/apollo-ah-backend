@@ -2,7 +2,11 @@ import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
+
 const { ArticleCategory } = models;
+
+const { Article, Bookmark } = models;
+
 
 /**
  * Wrapper class for sending article objects as response.
@@ -23,7 +27,7 @@ export default class ArticlesController {
     const authorId = req.user.id;
     const { slug } = res.locals;
     const {
-      title, body, description, categoryId
+      title, body, description, categoryId, tagList
     } = req.body;
 
     const readTime = articleHelpers.articleReadTime(req.body);
@@ -31,34 +35,50 @@ export default class ArticlesController {
       const categoryFound = await articleHelpers.findArticleCategory(res, categoryId);
       const { category } = categoryFound;
       const content = {
-        title, body, description, slug, authorId, readTime, categoryId
+        title, body, description, slug, authorId, readTime, categoryId, tagList
       };
-      const article = await models.Article.create(content);
+      const result = await models.Article.create(content, {
+        include: [
+          {
+            model: models.Tag,
+            as: 'tagList',
+            through: { attributes: [] }
+          }
+        ]
+      });
 
+      const article = JSON.parse(JSON.stringify(result)); // clone result
+      article.tagList = article.tagList.map(tag => tag.tagName);
+      article.category = category;
       return Response.send(
-        res, STATUS.CREATED, { ...article.dataValues, category }, 'article was successfully created', true,
+        res,
+        STATUS.CREATED,
+        article,
+        'article was successfully created'
       );
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
   /**
    * Makes a request to the database
    * and returns an array of exisiting Article object(s),
-   * sorting them from the latest to the earliest
+   * sorting them from the latest to the earliest,
+   * and passsing the result to the next middleware
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
-   * @returns {function} an array of Article object
+   * @param {function} next the express next function
+   * @returns {void}
    */
-  static async getAll(req, res) {
+  static async getAllArticles(req, res, next) {
     try {
-      /**
-       * @todo Page count for pagination
-       */
-      const allArticles = await models.Article.findAll({
-        limit: 10,
+      // TODO: Implement search algorithm here
+      const { offset, limit } = req.body;
+      const articles = await models.Article.findAndCountAll({
+        limit,
+        offset,
         order: [['createdAt', 'DESC']],
         include: [{
           model: ArticleCategory,
@@ -67,9 +87,10 @@ export default class ArticlesController {
           required: true,
         }]
       });
-      return Response.send(
-        res, STATUS.OK, allArticles, 'articles were successfully fetched',
-      );
+      const {
+        code, data, message, status
+      } = articleHelpers.getArticlesAsPages(req, articles);
+      return Response.send(res, code, data, message, status);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
     }
@@ -171,6 +192,79 @@ export default class ArticlesController {
       );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
+    }
+  }
+
+  /**
+ * @description users can bookmark articles for reading later.
+ * @static
+ * @param  {object} req - The request object
+ * @param  {object} res - The response object
+ * @return {object} - It returns the request response object
+ */
+  static async bookmarkArticle(req, res) {
+    const { slug } = req.params;
+    const userId = req.user.id;
+    let articleId;
+
+    try {
+      const articleFound = await Article.findOne({
+        where: {
+          slug
+        }
+      });
+
+      if (!articleFound) return Response.send(res, STATUS.NOT_FOUND, [], 'This article does not exist', false);
+      articleId = articleFound.id;
+      const bookmarkExist = await Bookmark.findOne({
+        where: {
+          articleId,
+          userId,
+        }
+      });
+
+      if (bookmarkExist) {
+        await Bookmark.destroy(
+          {
+            where: {
+              articleId,
+              userId
+            }
+          }
+        );
+        return Response.send(res, STATUS.OK, [], 'successfully unbookmarked this article', true);
+      }
+
+      const newBookmark = await Bookmark.create(
+        { userId, articleId }
+      );
+      return Response.send(res, STATUS.CREATED, newBookmark, 'successfully bookmarked this article', true);
+    } catch (error) {
+      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'sorry! something went wrong', false);
+    }
+  }
+
+  /**
+* @description users can get all bookmarked articles.
+* @static
+* @param  {object} req - The request object
+* @param  {object} res - The response object
+* @return {object} - It returns the request response object
+*/
+  static async getBookmarkedArticles(req, res) {
+    const userId = req.user.id;
+    try {
+      const bookmarkedArticles = await Bookmark.findAll({
+        where: {
+          userId
+        },
+        include: [{
+          model: Article,
+        }]
+      });
+      return Response.send(res, STATUS.OK, bookmarkedArticles, 'Bookmarked articles', true);
+    } catch (error) {
+      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
     }
   }
 }

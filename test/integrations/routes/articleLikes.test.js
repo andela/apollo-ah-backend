@@ -31,7 +31,6 @@ const createUser = async () => {
   }
 };
 
-// const token = `${jwt.sign({ user: { id: 1 } }, 'secret', { expiresIn: '24hrs' })}`;
 const article = {
   title: faker.lorem.words(),
   description: faker.lorem.words(),
