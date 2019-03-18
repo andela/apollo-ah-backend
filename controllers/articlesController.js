@@ -3,7 +3,7 @@ import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 
-const { Article, User, Bookmark } = models;
+const { Article, Bookmark } = models;
 
 
 /**
@@ -167,19 +167,12 @@ export default class ArticlesController {
  * @param  {object} res - The response object
  * @return {object} - It returns the request response object
  */
-  static async bookmark(req, res) {
+  static async bookmarkArticle(req, res) {
     const { slug } = req.params;
     const userId = req.user.id;
     let articleId;
 
     try {
-      const user = await User.findOne({
-        where: {
-          id: userId
-        }
-      });
-
-      if (!user) return Response.send(res, STATUS.UNATHORIZED, [], 'You have to signed up to bookmark an article', false);
       const articleFound = await Article.findOne({
         where: {
           slug
