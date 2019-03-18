@@ -1,6 +1,5 @@
 import express from 'express';
 import passport from '../auth/passport';
-// import { env, validateConfigVariable } from '../helpers/utils';
 import authController from '../controllers/authController';
 
 

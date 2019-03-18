@@ -1,20 +1,16 @@
 
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Settings', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Notifications', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    canEmail: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: true
-    },
-    canNotify: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: true
+    message: {
+      type: Sequelize.STRING,
+      allowNull: false
     },
     createdAt: {
       allowNull: false,
@@ -32,7 +28,7 @@ module.exports = {
         model: 'Users',
         key: 'id',
       }
-    },
+    }
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Settings')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Notifications')
 };

@@ -1,5 +1,5 @@
-import { body } from 'express-validator/check';
-import { MESSAGE, FIELD } from '../helpers/constants';
+import { body, query } from 'express-validator/check';
+import { MESSAGE, FIELD, PAGE_LIMIT } from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
 /**
@@ -114,6 +114,24 @@ export default class Validator {
         .withMessage(MESSAGE.EMAIL_EMPTY)
         .isEmail()
         .withMessage(MESSAGE.EMAIL_INVALID),
+    ];
+  }
+
+  /**
+   * Validates the page size for article pagination
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validatePaginationLimit() {
+    return [
+      query(FIELD.PAGINATION_LIMIT)
+        .optional()
+        .trim()
+        .isInt()
+        .withMessage(MESSAGE.PAGE_LIMIT_INVALID)
+        .isInt({ max: PAGE_LIMIT })
+        .withMessage(MESSAGE.PAGE_LIMIT_EXCEEDED)
     ];
   }
 

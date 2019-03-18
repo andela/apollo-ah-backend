@@ -7,11 +7,11 @@ import bcrypt from 'bcryptjs';
  * @param {Sequelize.DataTypes} DataTypes - A convinient object holding data types
  * @return {Sequelize.Model} - User model
  */
-const User = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   /**
    * @type {Sequelize.Model}
    */
-  const UserSchema = sequelize.define('user', {
+  const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -22,8 +22,8 @@ const User = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      set(val) {
-        this.setDataValue('password', bcrypt.hashSync(val, 10));
+      set(value) {
+        this.setDataValue('password', bcrypt.hashSync(value, 10));
       }
     },
     isConfirmed: {
@@ -38,12 +38,26 @@ const User = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW,
       onUpdate: sequelize.NOW
+    },
+    deletedAt: {
+      allowNull: true,
+      type: DataTypes.DATE,
     }
-  });
+  }, {});
 
-  UserSchema.associate = (models) => {
-    UserSchema.hasOne(models.Profile, { foreignKey: 'user_id' });
-    UserSchema.hasMany(models.Article, { foreignKey: 'authorId' });
+  User.associate = (models) => {
+    User.hasOne(models.Profile, { foreignKey: 'userId' });
+    User.hasMany(models.Article, { foreignKey: 'authorId' });
+    User.belongsToMany(models.User, {
+      foreignKey: 'userId',
+      as: 'followers',
+      through: models.UserFollowers
+    });
+    User.belongsToMany(models.User, {
+      foreignKey: 'followerId',
+      as: 'following',
+      through: models.UserFollowers
+    });
   };
 
   /**
@@ -53,8 +67,7 @@ const User = (sequelize, DataTypes) => {
    * @param {string} password - Password to validate
    * @returns {boolean} Truthy upon successful validation
    */
-  UserSchema.comparePassword = (user, password) => bcrypt.compareSync(password, user.password);
-  return UserSchema;
-};
+  User.comparePassword = (user, password) => bcrypt.compareSync(password, user.password);
 
-export default User;
+  return User;
+};

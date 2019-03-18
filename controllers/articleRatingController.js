@@ -3,7 +3,7 @@ import Response from '../helpers/responseHelper';
 import { STATUS } from '../helpers/constants';
 import getAverageRatings from '../helpers/articleRatingHelper';
 
-const { Ratings } = models;
+const { ratings } = models;
 /**
  * Class representing article rating controller.
  *
@@ -23,12 +23,12 @@ export default class ArticleRatingController {
     const { articleId } = req.params;
     const { body: { stars } } = req;
     try {
-      const articleRating = await Ratings.create({
+      const articleRating = await ratings.create({
         userId,
         articleId,
         stars
       });
-      return Response.send(res, STATUS.CREATED, articleRating, 'sucsess');
+      return Response.send(res, STATUS.CREATED, articleRating, 'success');
     } catch (err) {
       return Response.send(res, STATUS.SERVER_ERROR, err, 'failed');
     }
@@ -43,7 +43,7 @@ export default class ArticleRatingController {
    */
   static async get(req, res) {
     try {
-      const getRatings = await Ratings.findAndCountAll({
+      const getRatings = await ratings.findAndCountAll({
         where: {
           articleId: req.params.articleId,
         }

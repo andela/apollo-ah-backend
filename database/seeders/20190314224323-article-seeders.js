@@ -1,7 +1,14 @@
 import faker from 'faker';
 
 export default {
-  up: (queryInterface, Sequelize) => queryInterface.bulkInsert('articles', [{
+  up: (queryInterface, Sequelize) => (queryInterface.bulkInsert('Articles', [{
+    title: faker.lorem.words(),
+    slug: faker.lorem.slug(),
+    body: faker.lorem.words(),
+    description: faker.lorem.words(),
+    authorId: 1,
+  },
+  {
     title: 'Javascript',
     slug: 'Javascript-2db9e3cd-f9ed-4f9c-a8f6-e5731c8e1415',
     body: faker.lorem.paragraphs(),
@@ -50,7 +57,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 2,
-  }], {}),
+  }])),
   // eslint-disable-next-line no-unused-expressions
-  down: (queryInterface, Sequelize) => queryInterface.bulkDelete('article', null, {})
+  down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Articles', null, {})
 };

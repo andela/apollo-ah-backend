@@ -1,6 +1,6 @@
 /* eslint no-unused-vars: ["error", { "args": "none" }] */
 export default {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('articles', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Articles', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -22,32 +22,29 @@ export default {
     readTime: {
       type: Sequelize.STRING
     },
-    /**
-       * @todo include tagId for articles tagList in tagList model
-       */
-    // tagId: {
-    //   type: Sequelize.INTEGER,
-    //   allowNull: true,
-    //   defaultValue: null
-    // },
     createdAt: {
-      allowNull: false,
-      type: Sequelize.DATE
+      allowNull: true,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     updatedAt: {
       allowNull: true,
       type: Sequelize.DATE,
-      defaultValue: null
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     authorId: {
       type: Sequelize.INTEGER,
       onDelete: 'CASCADE',
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id'
       }
-    }
+    },
+    deletedAt: {
+      allowNull: true,
+      type: Sequelize.DATE
+    },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('articles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
 };

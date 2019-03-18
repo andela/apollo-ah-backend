@@ -3,6 +3,8 @@ import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import ArticleLikeController from '../controllers/articleLikesController';
 import authenticate from '../middlewares/authenticate';
+import Validator from '../middlewares/validator';
+import Handler from '../middlewares/handleValidation';
 
 const articles = express.Router();
 
@@ -17,7 +19,93 @@ const articles = express.Router();
  *         type: string
  *       body:
  *         type: string
+ *       tagList:
+ *         type: array
  */
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   get:
+ *     tags:
+ *       - articles
+ *     description: Returns a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.get(
+  '/:slug',
+  authenticate,
+  articlesMiddleware.validateGetOneArticle,
+  articlesController.getOne
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   delete:
+ *     tags:
+ *       - articles
+ *     description: Deletes a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.delete(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateDeleteArticle,
+  articlesController.delete
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   put:
+ *     tags:
+ *       - articles
+ *     description: Deletes a single article
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: articleId
+ *         description: Id for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully updated
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.put(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateUpdateArticle,
+  articlesController.update
+);
 
 /**
  * @swagger
@@ -50,13 +138,37 @@ const articles = express.Router();
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles
-  .post(
-    '/articles',
-    authenticate,
-    articlesMiddleware.validateCreateArticleInput,
-    articlesController.create
-  )
+articles.post(
+  '/',
+  authenticate,
+  articlesMiddleware.validateCreateArticle,
+  articlesMiddleware.validateTagList,
+  articlesController.create
+);
+
+/**
+ * @swagger
+ * /api/v1/articles:
+ *   get:
+ *     tags:
+ *       - articles
+ *     description: Returns all articles
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Article'
+ */
+articles.get(
+  '/',
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
+  articlesMiddleware.validatePagination,
+  articlesController.getAllArticles,
+);
+
 
 /**
  * @swagger
@@ -80,11 +192,11 @@ articles
  *           $ref: '#/definitions/Article'
  */
 
-  .post(
-    '/articles/:slug/likes',
-    authenticate,
-    ArticleLikeController.like
-  )
+articles.post(
+  '/:slug/likes',
+  authenticate,
+  ArticleLikeController.like
+);
 
 /**
  * @swagger
@@ -107,10 +219,10 @@ articles
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-  .post(
-    '/articles/:slug/dislikes',
-    authenticate,
-    ArticleLikeController.dislike
-  );
+articles.post(
+  '/:slug/dislikes',
+  authenticate,
+  ArticleLikeController.dislike
+);
 
 export default articles;

@@ -1,7 +1,7 @@
 import express from 'express';
 import profileController from '../controllers/profileController';
+import followersController from '../controllers/followersController';
 import middlewares from '../middlewares';
-
 
 const profileRouter = express.Router();
 
@@ -67,13 +67,137 @@ const profileRouter = express.Router();
  *       201:
  *         description: Profile created successfully
  *         schema:
- *           $ref: '#/definitions/Article'
+ *           $ref: '#/definitions/Profile'
  */
 profileRouter.post(
-  '/profile',
+  '/profiles',
   middlewares.authenticate,
   middlewares.validateCreateProfile,
   profileController.create
+)
+
+/**
+ * @swagger
+ * /api/v1/profile:
+ *   get:
+ *     tags:
+ *       - profile
+ *     description: Get all profiles
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       201:
+ *         description: You have successfully fetched the profile for all users
+ *         schema:
+ *           $ref: '#/definitions/Profile'
+ */
+
+  .get(
+    '/profiles',
+    middlewares.authenticate,
+    profileController.getAllProfiles,
+  )
+
+/**
+ * @swagger
+ * /api/v1/profile/:username:
+ *   get:
+ *     tags:
+ *       - profile
+ *     description: Get a profile
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       201:
+ *         description: Successfully returned a user
+ *         schema:
+ *           $ref: '#/definitions/Profile'
+ */
+
+  .get(
+    '/profiles/:username',
+    middlewares.authenticate,
+    profileController.getProfile,
+  );
+
+/**
+ * @swagger
+ * /api/v1/profiles/{username}/follow:
+ *   post:
+ *     tags:
+ *       - follow
+ *       - following
+ *       - follower
+ *     description: Authenticated user can follow other users
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successfully followed user
+ */
+profileRouter.post(
+  '/profiles/:username/follow',
+  middlewares.authenticate,
+  followersController.follow
+);
+
+/**
+ * @swagger
+ * /api/v1/profiles/{username}/unfollow:
+ *   post:
+ *     tags:
+ *       - unfollow
+ *       - following
+ *       - follower
+ *     description: Authenticated user can unfollow other users
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successfully unfollowed user
+ */
+profileRouter.post(
+  '/profiles/:username/unfollow',
+  middlewares.authenticate,
+  followersController.unfollow
+);
+
+/**
+ * @swagger
+ * /api/v1/profiles/followers:
+ *   get:
+ *     tags:
+ *       - followers
+ *     description: Fetch all followers by authenticated user
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful
+ */
+profileRouter.get(
+  '/profiles/followers',
+  middlewares.authenticate,
+  followersController.followers
+);
+
+/**
+ * @swagger
+ * /api/v1/profiles/followers:
+ *   get:
+ *     tags:
+ *       - followers
+ *     description: Fetch all the following users by authenticated user
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful
+ */
+profileRouter.get(
+  '/profiles/following',
+  middlewares.authenticate,
+  followersController.followers
 );
 
 export default profileRouter;

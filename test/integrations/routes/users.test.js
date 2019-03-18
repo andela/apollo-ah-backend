@@ -2,37 +2,30 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-/**
- * @todo To be removed pending acceptance of current user test
- */
-// import Bluebird from 'bluebird';
 import app from '../../../index';
 import models from '../../../models';
+import { newUser } from '../../helpers/testData';
 import { STATUS, MESSAGE, FIELD } from '../../../helpers/constants';
+
 
 chai.use(chaiHttp);
 describe('Registration endpoint', () => {
   it('should create a new user with valid input', async () => {
-    const user = {
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-      username: '',
-    };
     try {
       const response = await chai
         .request(app)
         .post('/api/v1/users')
-        .send(user);
-      expect(response).to.have.status(STATUS.CREATED);
+        .send(newUser);
+      expect(response).to.have.status(STATUS.OK);
       expect(response.body).to.be.an('object');
       expect(response.body)
         .to.haveOwnProperty('code')
-        .to.equal(STATUS.CREATED);
+        .to.equal(STATUS.OK);
       expect(response.body)
         .to.haveOwnProperty('message')
         .to.equal(MESSAGE.REGISTRATION_SUCCESSFUL);
       expect(response.body)
-        .to.haveOwnProperty('statusjkghghjkh')
+        .to.haveOwnProperty('status')
         .to.equal(true);
       expect(response.body)
         .to.haveOwnProperty('data')
@@ -42,15 +35,10 @@ describe('Registration endpoint', () => {
     }
   });
   it('should return an error if username is not provided', (done) => {
-    const user = {
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-      username: '',
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, username: '' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -76,15 +64,10 @@ describe('Registration endpoint', () => {
       });
   });
   it('should return an error if password field is empty', (done) => {
-    const user = {
-      email: faker.internet.email(),
-      password: '',
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, password: '' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -109,15 +92,10 @@ describe('Registration endpoint', () => {
       });
   });
   it('should return an error if password is less than 8 characters', (done) => {
-    const user = {
-      email: faker.internet.email(),
-      password: 'short',
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, password: 'short' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -142,15 +120,10 @@ describe('Registration endpoint', () => {
       });
   });
   it('should return an error if password contains only letters', (done) => {
-    const user = {
-      email: faker.internet.email(),
-      password: 'password without numbers',
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, password: 'password without numbers' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -175,15 +148,10 @@ describe('Registration endpoint', () => {
       });
   });
   it('should return an error if password contains only numbers', (done) => {
-    const user = {
-      email: faker.internet.email(),
-      password: '7509634876',
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, password: '7509634876' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -218,7 +186,7 @@ describe('Registration endpoint', () => {
       bio: '',
     };
     const { dataValues: { id } } = await models.User.create(user);
-    user.user_id = id;
+    user.userId = id;
     await models.Profile.create(user);
     user.email = faker.internet.email();
     chai
@@ -248,15 +216,10 @@ describe('Registration endpoint', () => {
       });
   });
   it('should return an error if email is not supplied', (done) => {
-    const user = {
-      email: '',
-      password: faker.internet.password(),
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, email: '' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -281,15 +244,10 @@ describe('Registration endpoint', () => {
     done();
   });
   it('should return an error if email is supplied but invalid', (done) => {
-    const user = {
-      email: 'INVALID_EMAIL',
-      password: faker.internet.password(),
-      username: faker.internet.userName(),
-    };
     chai
       .request(app)
       .post('/api/v1/users')
-      .send(user)
+      .send({ ...newUser, email: 'INVALID_EMAIL' })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(STATUS.BAD_REQUEST);
