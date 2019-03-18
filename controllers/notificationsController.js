@@ -19,7 +19,7 @@ class NotificationsController {
   }
 
   /**
-   * This function gets a user setting
+   * This function gets a users email
    * @param {Number} id - The message to be sent
    * @returns {String} - returns user email
    */
