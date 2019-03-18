@@ -22,6 +22,7 @@ const dummyArticle = {
   title: 'Hello world',
   description: 'lorem ipsum exists',
   body: faker.lorem.paragraphs(),
+  categoryId: 1,
 };
 
 
@@ -49,6 +50,7 @@ describe('API endpoint: /api/articles (Routes)', () => {
         title: faker.random.words(15),
         description: 'lorem ipsum exists',
         body: faker.lorem.paragraphs(),
+        categoryId: 1,
       };
       chai
         .request(app)

@@ -27,6 +27,7 @@ export default class AriclesMiddleware {
       title = '',
       description = '',
       body = '',
+      categoryId = '',
     } = req.body;
 
     if (typeof title !== 'string') {
@@ -45,6 +46,13 @@ export default class AriclesMiddleware {
       );
     }
 
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(categoryId)) {
+      return Response.send(
+        res, STATUS.BAD_REQUEST, {}, 'category type must be an integer', false,
+      );
+    }
+
     if (!title || !title.trim()) {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'title cannot be empty', false);
     }
@@ -55,6 +63,9 @@ export default class AriclesMiddleware {
       return Response.send(
         res, STATUS.BAD_REQUEST, [], 'description cannot be empty', false,
       );
+    }
+    if (!categoryId) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'category cannot be empty', false);
     }
 
     try {

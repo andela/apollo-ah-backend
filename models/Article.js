@@ -35,12 +35,17 @@ const Article = (sequelize, DataTypes) => {
     {}
   );
   ArticleSchema.associate = (models) => {
-    models.Article.belongsTo(models.User, {
+    ArticleSchema.belongsTo(models.User, {
       onDelete: 'CASCADE',
       targetKey: 'id',
       foreignKey: 'authorId'
     });
     ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
+    ArticleSchema.belongsTo(models.ArticleCategory, {
+      targetKey: 'id',
+      as: 'articleCategory',
+      foreignKey: 'categoryId'
+    });
   };
   return ArticleSchema;
 };

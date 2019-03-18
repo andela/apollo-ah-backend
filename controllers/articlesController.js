@@ -2,6 +2,7 @@ import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
+const { ArticleCategory } = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -22,16 +23,20 @@ export default class ArticlesController {
     const authorId = req.user.id;
     const { slug } = res.locals;
     const {
-      title, body, description,
+      title, body, description, categoryId
     } = req.body;
+
     const readTime = articleHelpers.articleReadTime(req.body);
-    const content = {
-      title, body, description, slug, authorId, readTime
-    };
     try {
+      const categoryFound = await articleHelpers.findArticleCategory(res, categoryId);
+      const { category } = categoryFound;
+      const content = {
+        title, body, description, slug, authorId, readTime, categoryId
+      };
       const article = await models.Article.create(content);
+
       return Response.send(
-        res, STATUS.CREATED, article.dataValues, 'article was successfully created', true,
+        res, STATUS.CREATED, { ...article.dataValues, category }, 'article was successfully created', true,
       );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
@@ -54,7 +59,13 @@ export default class ArticlesController {
        */
       const allArticles = await models.Article.findAll({
         limit: 10,
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        include: [{
+          model: ArticleCategory,
+          as: 'articleCategory',
+          attributes: { exclude: ['id'] },
+          required: true,
+        }]
       });
       return Response.send(
         res, STATUS.OK, allArticles, 'articles were successfully fetched',
@@ -77,7 +88,13 @@ export default class ArticlesController {
     const { slug } = req.params;
     try {
       const article = await models.Article.findOne({
-        where: { slug: slug.trim() }
+        where: { slug: slug.trim() },
+        include: [{
+          model: ArticleCategory,
+          as: 'articleCategory',
+          attributes: { exclude: ['id'] },
+          required: true,
+        }]
       });
       if (!article) {
         return Response.send(

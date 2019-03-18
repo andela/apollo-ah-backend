@@ -14,7 +14,6 @@ const {
   OK,
 } = STATUS;
 
-let authpayload;
 
 let dummyUser5 = {
   email: faker.internet.email(),
@@ -36,13 +35,14 @@ const createUser = async () => {
 const article = {
   title: faker.lorem.words(),
   description: faker.lorem.words(),
-  body: faker.lorem.words()
+  body: faker.lorem.words(),
+  categoryId: 1,
 };
 describe('article like and dislike endpoint', () => {
   let slug;
   before(async () => {
     createUser();
-    authpayload = await chai.request(app)
+    const authpayload = await chai.request(app)
       .post('/api/v1/users/login')
       .send(dummyUser5);
     dummyUser5.token = authpayload.body.token;

@@ -1,4 +1,9 @@
+/* eslint-disable no-restricted-globals */
+import Logger from './logger';
+import { STATUS } from './constants';
+import Response from './responseHelper';
 import models from '../models';
+
 
 const { Op } = models.Sequelize;
 
@@ -42,5 +47,19 @@ export default {
     } catch (err) {
       return err;
     }
-  }
+  },
+  findArticleCategory: async (res, categoryId) => {
+    try {
+      const categoryFound = await models.ArticleCategory.findOne({
+        where: {
+          id: categoryId
+        }
+      });
+      if (categoryFound) {
+        return categoryFound.dataValues;
+      }
+    } catch (err) {
+      Logger.log(err.message);
+    }
+  },
 };
