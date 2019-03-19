@@ -36,7 +36,7 @@ export default {
       }
     },
     isAnonymousUser: {
-      type: Sequelize.STRING,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
     }
   }),
