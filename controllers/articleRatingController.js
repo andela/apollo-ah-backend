@@ -5,18 +5,18 @@ import getAverageRatings from '../helpers/articleRatingHelper';
 
 const { ratings } = models;
 /**
- * Class representing article rating controller.
- *
- * @export
+ * @description Article rating functionality
+ * @export- ArticleRatingController
  * @class ArticleRatingController
+ * @returns {object} the rated article object
 */
 export default class ArticleRatingController {
   /**
-   * Sends the request payload to the database and returns the article object
+   * @description Add ratings for a specific article and returns the rated article
    * @static
-   * @param {function} req the request object
-   * @param {function} res the resposne object
-   * @returns {function} the Article object
+   * @param {req} req - the request object
+   * @param {res} res - the resposne object
+   * @returns {object} the rated article object
    */
   static async create(req, res) {
     const userId = req.user.id;
@@ -35,11 +35,11 @@ export default class ArticleRatingController {
   }
 
   /**
-   * Sends the request payload to the database and returns the article object
+   * @description Gets all rated article from the database and returns the rated articles
    * @static
    * @param {function} req the request object
    * @param {function} res the resposne object
-   * @returns {function} the Article object
+   * @returns {object} the rated article object
    */
   static async get(req, res) {
     try {

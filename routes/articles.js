@@ -225,4 +225,31 @@ articles.post(
   ArticleLikeController.dislike
 );
 
+/**
+ * @swagger
+ * /api/v1/articles/:slug/bookmarks:
+ *   post:
+ *     tags:
+ *       - articles
+ *     description: create a bookmark
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Artilce's slug
+ *         in: parameter
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: successfully bookmarked this article
+ *         schema:
+ *           $ref: '#/definitions/Bookmark'
+ */
+articles.post(
+  '/:slug/bookmarks',
+  authenticate,
+  articlesController.bookmarkArticle
+);
+
 export default articles;
