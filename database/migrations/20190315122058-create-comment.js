@@ -35,7 +35,7 @@ export default {
         key: 'id',
       }
     },
-    user: {
+    isAnonymousUser: {
       type: Sequelize.STRING,
       allowNull: false,
     }

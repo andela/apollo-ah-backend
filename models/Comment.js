@@ -13,10 +13,10 @@ const Comment = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      user: {
+      isAnonymousUser: {
         allowNull: false,
         type: DataTypes.STRING,
-        defaultValue: true
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,

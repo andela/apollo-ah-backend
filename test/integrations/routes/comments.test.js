@@ -54,16 +54,14 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
         commentId = res.body.data.id;
         expect(res).to.have.status(STATUS.CREATED);
         expect(res.body).to.be.an('object');
-        expect(res.body)
-          .to.haveOwnProperty('code')
-          .to.equal(STATUS.CREATED);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('comment successfully created');
         done();
       });
   });
 
   it('Should create a comment as an anonymous user', (done) => {
-    const comment = { body: faker.lorem.sentence(), user: false };
+    const comment = { body: faker.lorem.sentence(), isAnonymousUser: true };
     chai
       .request(app)
       .post(`/api/v1/articles/${newSlug}/comments`)
@@ -72,9 +70,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       .end((err, res) => {
         expect(res).to.have.status(STATUS.CREATED);
         expect(res.body).to.be.an('object');
-        expect(res.body)
-          .to.haveOwnProperty('code')
-          .to.equal(STATUS.CREATED);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('comment successfully created');
         done();
       });
@@ -88,9 +84,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body)
-          .to.haveOwnProperty('code')
-          .to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
         expect(res.body.message).to.equal('comments successfully fetched');
         done();
       });
@@ -106,9 +100,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       .end((err, res) => {
         expect(res).to.have.status(STATUS.CREATED);
         expect(res.body).to.be.an('object');
-        expect(res.body)
-          .to.haveOwnProperty('code')
-          .to.equal(STATUS.CREATED);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('comment successfully updated');
         done();
       });
@@ -122,9 +114,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body)
-          .to.haveOwnProperty('code')
-          .to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
         expect(res.body.message).to.equal('comment was successfully deleted');
         done();
       });

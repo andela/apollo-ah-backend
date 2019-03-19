@@ -20,11 +20,11 @@ export default class CommentsController {
    * @returns {function} The comment object
    */
   static async createComment(req, res) {
-    const { articleId, authorId, userType: user } = res.locals;
+    const { articleId, authorId, isAnonymousUser } = res.locals;
     const { body } = req.body;
 
     const content = {
-      articleId, authorId, body, user,
+      articleId, authorId, body, isAnonymousUser,
     };
 
     try {
@@ -90,14 +90,14 @@ export default class CommentsController {
    * @returns {function} The comment object
    */
   static async updateComment(req, res) {
-    const { articleId, authorId, userType: user } = res.locals;
+    const { articleId, authorId, isAnonymousUser } = res.locals;
     const { body } = req.body;
     const { id } = req.params;
 
     try {
-      const comment = await models.Comment.update({ body: body.trim(), user }, {
+      const comment = await models.Comment.update({ body: body.trim(), isAnonymousUser }, {
         where: { articleId, id, authorId },
-        fields: ['body', 'user'],
+        fields: ['body', 'isAnonymousUser'],
         returning: true,
         paranoid: true,
       });

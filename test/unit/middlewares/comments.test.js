@@ -117,7 +117,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
       chai
         .request(app)
         .post(`/api/v1/articles/${newSlug}/comments`)
-        .send({ ...comment, user: 'anonkjfjhfds' })
+        .send({ ...comment, isAnonymousUser: 'anonkjfjhfds' })
         .set({ Authorization: `Bearer ${authToken}` })
         .end((err, res) => {
           expect(res).to.have.status(STATUS.BAD_REQUEST);
@@ -218,7 +218,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
         });
     });
     it('Should return an error if user field is not a boolean', (done) => {
-      const comment = { body: faker.lorem.paragraph(), user: 'sdiuydsghsd' };
+      const comment = { body: faker.lorem.paragraph(), isAnonymousUser: 'sdiuydsghsd' };
       chai
         .request(app)
         .put(`/api/v1/articles/${newSlug}/comments/${newComment.id}`)
