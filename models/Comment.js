@@ -15,7 +15,7 @@ const Comment = (sequelize, DataTypes) => {
       },
       isAnonymousUser: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.BOOLEAN,
         defaultValue: false
       },
       createdAt: {
