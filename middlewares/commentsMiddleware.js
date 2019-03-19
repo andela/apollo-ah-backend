@@ -29,8 +29,8 @@ export default class CommentsMiddleware {
     if (!body || !body.trim()) {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'body not provided', false);
     }
-    if (user && user !== 'anonymous') {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'user field only accepts "anonymous"', false);
+    if (user && user !== false) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'user field only accepts boolean', false);
     }
 
     try {
@@ -38,7 +38,7 @@ export default class CommentsMiddleware {
       if (!article) {
         return Response.send(res, STATUS.NOT_FOUND, [], 'No article with that slug exist', false);
       }
-      if (user && user === 'anonymous') res.locals.userType = 'anonymous';
+      if (user && user === false) res.locals.userType = false;
       res.locals.authorId = userId;
       res.locals.articleId = article.dataValues.id;
       return next();
@@ -99,8 +99,8 @@ export default class CommentsMiddleware {
     if (!body || !body.trim()) {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'comment body not provided', false);
     }
-    if (user && user !== 'anonymous' && user !== 'user') {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'user field only accepts "anonymous" or "user"', false);
+    if (user && user !== true && user !== false) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'user field only accepts booleans', false);
     }
 
     try {
@@ -115,8 +115,8 @@ export default class CommentsMiddleware {
 
       res.locals.authorId = userId;
       res.locals.articleId = article.dataValues.id;
-      if (user && user === 'anonymous') res.locals.userType = 'anonymous';
-      if (user && user === 'user') res.locals.userType = 'user';
+      if (user && user === false) res.locals.userType = false;
+      if (user && user === true) res.locals.userType = true;
       return next();
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, 'Server error', false);

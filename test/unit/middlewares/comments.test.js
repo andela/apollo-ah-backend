@@ -15,7 +15,7 @@ let authToken;
 let newSlug;
 let newComment;
 
-let dummyUser54 = {
+let dummyUser = {
   email: faker.internet.email(),
   password: 'iOpur7879w89we',
   username: faker.name.firstName()
@@ -24,16 +24,16 @@ let dummyUser54 = {
 const dummyArticle = {
   title: faker.lorem.sentence(),
   description: faker.lorem.sentence(),
-  body: faker.lorem.paragraphs(),
+  body: faker.lorem.paragraphs()
 };
 
 const dummyComment = { body: faker.lorem.sentence() };
 
 const createUser = async () => {
   try {
-    const user = await models.User.create(dummyUser54);
-    dummyUser54 = user;
-    return dummyUser54;
+    const user = await models.User.create(dummyUser);
+    dummyUser = user;
+    return dummyUser;
   } catch (error) {
     return error;
   }
@@ -41,18 +41,21 @@ const createUser = async () => {
 
 before(async () => {
   createUser();
-  authpayload = await chai.request(app)
+  authpayload = await chai
+    .request(app)
     .post('/api/v1/users/login')
-    .send(dummyUser54);
+    .send(dummyUser);
   authToken = authpayload.body.token;
 
-  const newArticle = await chai.request(app)
+  const newArticle = await chai
+    .request(app)
     .post('/api/v1/articles/')
     .send(dummyArticle)
     .set({ Authorization: `Bearer ${authToken}` });
   newSlug = newArticle.body.data.slug;
 
-  const articleComment = await chai.request(app)
+  const articleComment = await chai
+    .request(app)
     .post(`/api/v1/articles/${newSlug}/comments/`)
     .send(dummyComment)
     .set({ Authorization: `Bearer ${authToken}` });
@@ -109,7 +112,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
         });
     });
 
-    it('Should return an error if user field is not anonymous', (done) => {
+    it('Should return an error if user field is not a boolean', (done) => {
       const comment = { body: faker.lorem.sentences() };
       chai
         .request(app)
@@ -120,7 +123,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
           expect(res).to.have.status(STATUS.BAD_REQUEST);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
-          expect(res.body.message).to.equal('user field only accepts "anonymous"');
+          expect(res.body.message).to.equal('user field only accepts boolean');
           done();
         });
     });
@@ -214,7 +217,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
           done();
         });
     });
-    it('Should return an error if user field is neither a user nor anonymous', (done) => {
+    it('Should return an error if user field is not a boolean', (done) => {
       const comment = { body: faker.lorem.paragraph(), user: 'sdiuydsghsd' };
       chai
         .request(app)
@@ -225,7 +228,7 @@ describe('API endpoint: /api/articles/:slug/comments (Middlewares)', () => {
           expect(res).to.have.status(STATUS.BAD_REQUEST);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
-          expect(res.body.message).to.equal('user field only accepts "anonymous" or "user"');
+          expect(res.body.message).to.equal('user field only accepts booleans');
           done();
         });
     });

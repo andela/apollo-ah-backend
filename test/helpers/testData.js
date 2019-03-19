@@ -31,9 +31,9 @@ const users = {
 };
 
 const article = {
-  title: faker.lorem.words(15),
+  title: faker.lorem.words(10),
   description: faker.lorem.words(50),
-  body: faker.lorem.words(500)
+  body: faker.lorem.words(50)
 };
 
 const newArticle = {

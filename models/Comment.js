@@ -16,7 +16,7 @@ const Comment = (sequelize, DataTypes) => {
       user: {
         allowNull: false,
         type: DataTypes.STRING,
-        defaultValue: 'user'
+        defaultValue: true
       },
       createdAt: {
         allowNull: false,
