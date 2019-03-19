@@ -61,7 +61,7 @@ export default {
       Logger.log(err.message);
     }
   },
-  getArticlesAsPages: (req, articles) => {
+  getResourcesAsPages: (req, articles) => {
     const {
       offset, limit, current
     } = req.body;

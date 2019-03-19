@@ -89,7 +89,7 @@ export default class ArticlesController {
       });
       const {
         code, data, message, status
-      } = articleHelpers.getArticlesAsPages(req, articles);
+      } = articleHelpers.getResourcesAsPages(req, articles);
       return Response.send(res, code, data, message, status);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, false);
@@ -118,17 +118,11 @@ export default class ArticlesController {
         }]
       });
       if (!article) {
-        return Response.send(
-          res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false,
-        );
+        return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);
       }
-      return Response.send(
-        res, STATUS.OK, article, 'article was successfully fetched', true,
-      );
+      return Response.send(res, STATUS.OK, article, 'article was successfully fetched', true);
     } catch (error) {
-      return Response.send(
-        res, STATUS.BAD_REQUEST, error, 'server error', false,
-      );
+      return Response.send(res, STATUS.BAD_REQUEST, error, 'server error', false);
     }
   }
 
@@ -153,15 +147,11 @@ export default class ArticlesController {
         paranoid: true,
       });
       if (!article) {
-        return Response.send(
-          res, STATUS.NOT_FOUND, [], `no article with id: ${articleId} found`, false,
-        );
+        return Response.send(res, STATUS.NOT_FOUND, [], `no article with id: ${articleId} found`, false);
       }
-      return Response.send(
-        res, STATUS.OK, article[1], 'article was successfully updated', true,
-      );
+      return Response.send(res, STATUS.OK, article[1], 'article was successfully updated', true);
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
@@ -183,15 +173,11 @@ export default class ArticlesController {
         returning: true,
       });
       if (!article) {
-        return Response.send(
-          res, STATUS.NOT_FOUND, [], `no article with id: ${articleId} found`, false,
-        );
+        return Response.send(res, STATUS.NOT_FOUND, [], `no article with id: ${articleId} found`, false);
       }
-      return Response.send(
-        res, STATUS.OK, foundArticle, 'article was successfully deleted', true,
-      );
+      return Response.send(res, STATUS.OK, foundArticle, 'article was successfully deleted', true);
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
