@@ -7,6 +7,7 @@ import settingRouter from './settings';
 import bookmark from './bookmarks';
 import tags from './tags';
 import notificationsRouter from './notifications';
+import reportRoute from './reportArticle';
 
 
 const router = express.Router();
@@ -33,5 +34,6 @@ router.use('/setting', settingRouter);
 router.use('/bookmarks', bookmark);
 router.use('/tags', tags);
 router.use('/notification', notificationsRouter);
+router.use('/articles', reportRoute);
 
 export default router;
