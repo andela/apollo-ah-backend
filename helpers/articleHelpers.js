@@ -44,7 +44,7 @@ export default {
       return err;
     }
   },
-  getArticlesAsPages: (req, articles) => {
+  getResourcesAsPages: (req, articles) => {
     const {
       offset, limit, current
     } = req.body;

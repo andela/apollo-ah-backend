@@ -2,7 +2,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import models from '../../../models';
 import { STATUS } from '../../../helpers/constants';
 import app from '../../../index';
 
@@ -15,21 +14,12 @@ const {
 } = STATUS;
 
 let authpayload;
+let authToken;
 
-let dummyUser5 = {
+const dummyUser5 = {
   email: faker.internet.email(),
   password: 'i2345678',
-  username: 'heron419rklekl'
-};
-
-const createUser = async () => {
-  try {
-    const user = await models.User.create(dummyUser5);
-    dummyUser5 = user;
-    return dummyUser5;
-  } catch (error) {
-    return error;
-  }
+  username: faker.name.firstName()
 };
 
 const article = {
@@ -40,16 +30,15 @@ const article = {
 describe('article like and dislike endpoint', () => {
   let slug;
   before(async () => {
-    createUser();
     authpayload = await chai.request(app)
-      .post('/api/v1/users/login')
+      .post('/api/v1/users/')
       .send(dummyUser5);
-    dummyUser5.token = authpayload.body.token;
+    authToken = authpayload.body.data.token;
 
     const articleResult = await chai
       .request(app)
       .post('/api/v1/articles')
-      .set({ Authorization: `Bearer ${dummyUser5.token}` })
+      .set({ Authorization: `Bearer ${authToken}` })
       .send({ ...article });
     slug = articleResult.body.data.slug;
   });
@@ -58,7 +47,7 @@ describe('article like and dislike endpoint', () => {
     chai
       .request(app)
       .post(`/api/v1/articles/${slug}/likes`)
-      .set({ Authorization: `Bearer ${dummyUser5.token}` })
+      .set({ Authorization: `Bearer ${authToken}` })
       .end((err, res) => {
         expect(res).to.have.status(CREATED);
         expect(res.body.message).to.equal('successfully liked article');
@@ -70,7 +59,7 @@ describe('article like and dislike endpoint', () => {
     chai
       .request(app)
       .post(`/api/v1/articles/${slug}/dislikes`)
-      .set({ Authorization: `Bearer ${dummyUser5.token}` })
+      .set({ Authorization: `Bearer ${authToken}` })
       .end((err, res) => {
         expect(res).to.have.status(OK);
         expect(res.body.message).to.equal('successfully disliked article');
