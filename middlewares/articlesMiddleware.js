@@ -65,6 +65,14 @@ export default class AriclesMiddleware {
       if (foundArticle && foundArticle.title === title) {
         return Response.send(res, STATUS.FORBIDDEN, [], MESSAGE.ARTICLE_EXIST, false);
       }
+      const categoryFound = await models.ArticleCategory.findOne({
+        where: {
+          id: categoryId
+        }
+      });
+      if (!categoryFound) {
+        return Response.send(res, STATUS.BAD_REQUEST, [], 'category does not exist', false);
+      }
       const slug = slugify(`${title}-${uuid()}`, {
         remove: /[*+~.()'"!:@]/g,
         replacement: '-',

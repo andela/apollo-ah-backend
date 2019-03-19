@@ -173,6 +173,26 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
   });
 
   describe('POST: /api/v1/articles', () => {
+    describe('create an article without a valid category', () => {
+      it('Should return an error if category does not exist', (done) => {
+        const article = { ...dummyArticle, categoryId: 10000 };
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('category does not exist');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
     describe('create an article with a body of numbers', () => {
       it('Should return an error', (done) => {
         const article = { ...dummyArticle };
