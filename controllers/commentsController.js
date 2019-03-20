@@ -80,7 +80,7 @@ export default class CommentsController {
       } = paginationHelper.getResourcesAsPages(req, comments);
       return Response.send(res, code, data, 'comments successfully fetched', status);
     } catch (error) {
-      console.log(error);
+      Logger.log(error);
       return Response.send(res, STATUS.BAD_REQUEST, error, 'Server error', false);
     }
   }
@@ -107,7 +107,6 @@ export default class CommentsController {
         raw: true
       });
       const count = await models.CommentHistory.count({ where: { commentId: id } });
-      console.log(count);
       // limiting the comment history to 5
       if (count < 5) {
         const oldMessage = oldCommentData.body;
