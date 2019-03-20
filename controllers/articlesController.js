@@ -1,11 +1,10 @@
-import sequelize from 'sequelize';
+
 import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 
 const { Article, Bookmark } = models;
-const { Op } = sequelize.Sequelize;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -75,7 +74,7 @@ export default class ArticlesController {
     try {
       // TODO: Implement search algorithm here
       const { offset, limit } = req.body;
-      const { otherQuery, tagQuery } = ArticlesController.formatSearchQuery(req.query);
+      const { otherQuery, tagQuery } = articleHelpers.formatSearchQuery(req.query);
 
       const articles = await models.Article.findAndCountAll({
         limit,
@@ -121,52 +120,6 @@ export default class ArticlesController {
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
-  }
-
-  /**
-   * Formats the query parameters into a sequelize readable object for search and filtering data
-   * @static
-   * @param {object} query An object containing the search terms
-   * @returns {object} The sequalize formated query
-   */
-  static formatSearchQuery(query) {
-    const { author, tag, q } = query;
-
-    let otherQuery = {};
-
-    const authorQuery = author ? {
-      [Op.or]: {
-        '$User.Profile.username$': {
-          [Op.iLike]: `%${author}%`,
-        },
-        '$User.Profile.firstname$': {
-          [Op.iLike]: `%${author}%`,
-        },
-        '$User.Profile.lastname$': {
-          [Op.iLike]: `%${author}%`,
-        },
-      }
-    } : {};
-
-    const titleQuery = q ? {
-      [Op.or]: {
-        title: {
-          [Op.iLike]: `%${q}%`,
-        },
-        description: {
-          [Op.iLike]: `%${q}%`,
-        },
-      },
-    } : {};
-
-    const tagQuery = tag ? {
-      tagName: {
-        [Op.iLike]: `%${tag}%`,
-      }
-    } : {};
-
-    otherQuery = { ...authorQuery, ...titleQuery };
-    return { otherQuery, tagQuery };
   }
 
   /**

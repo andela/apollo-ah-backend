@@ -4,10 +4,10 @@ import faker from 'faker';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
+import { auth } from '../../helpers';
 import {
   STATUS, MESSAGE, PAGE_LIMIT, FIELD
 } from '../../../helpers/constants';
-import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
 
