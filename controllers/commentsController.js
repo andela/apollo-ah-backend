@@ -2,6 +2,7 @@ import models from '../models';
 import Response from '../helpers/responseHelper';
 import { STATUS } from '../helpers/constants';
 import paginationHelper from '../helpers/articleHelpers';
+import Logger from '../helpers/logger';
 
 /**
  * Wrapper class for sending comments objects as response.
@@ -64,9 +65,12 @@ export default class CommentsController {
               ]
             },
             as: 'author'
+          },
+          {
+            model: models.CommentHistory,
           }
         ],
-        attributes: { exclude: ['authorId'] },
+        attributes: {},
         limit,
         offset,
         order: [['createdAt']]
@@ -76,6 +80,7 @@ export default class CommentsController {
       } = paginationHelper.getResourcesAsPages(req, comments);
       return Response.send(res, code, data, 'comments successfully fetched', status);
     } catch (error) {
+      console.log(error);
       return Response.send(res, STATUS.BAD_REQUEST, error, 'Server error', false);
     }
   }
@@ -94,6 +99,26 @@ export default class CommentsController {
     const { body } = req.body;
     const { id } = req.params;
 
+    // here we get the commet to be updated and then we create a new comment history for it
+    // with the previous comment then we update the comment data
+    try {
+      const oldCommentData = await models.Comment.findOne({
+        where: { articleId, id, authorId },
+        raw: true
+      });
+      const count = await models.CommentHistory.count({ where: { commentId: id } });
+      console.log(count);
+      // limiting the comment history to 5
+      if (count < 5) {
+        const oldMessage = oldCommentData.body;
+        await models.CommentHistory.create({ body: oldMessage, commentId: id });
+      } else {
+        return Response.send(res, STATUS.BAD_REQUEST, null, 'You can only edit a comment 5 times', false);
+      }
+    } catch (e) {
+      Logger.log(e);
+      return Response.send(res, STATUS.BAD_REQUEST, null, 'Server error', false);
+    }
     try {
       const comment = await models.Comment.update({ body: body.trim(), isAnonymousUser }, {
         where: { articleId, id, authorId },
