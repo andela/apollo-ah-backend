@@ -5,7 +5,7 @@ import chaiHttp from 'chai-http';
 import app from '../../../index';
 import models from '../../../models';
 import {
- STATUS, MESSAGE, PAGE_LIMIT, FIELD 
+  STATUS, MESSAGE, PAGE_LIMIT, FIELD
 } from '../../../helpers/constants';
 import { auth } from '../../helpers';
 
@@ -24,6 +24,7 @@ const dummyArticle = {
   title: 'Hello world',
   description: 'lorem ipsum exists',
   body: faker.lorem.paragraphs(),
+  categoryId: 1,
 };
 
 const createUser = async () => {
@@ -48,6 +49,7 @@ describe('API endpoint: /api/articles (Routes)', () => {
         title: faker.random.words(15),
         description: 'lorem ipsum exists',
         body: faker.lorem.paragraphs(),
+        categoryId: 1,
       };
       chai
         .request(app)
