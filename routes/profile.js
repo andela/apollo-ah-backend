@@ -2,6 +2,8 @@ import express from 'express';
 import profileController from '../controllers/profileController';
 import followersController from '../controllers/followersController';
 import middlewares from '../middlewares';
+import Validator from '../middlewares/validator';
+import Handler from '../middlewares/handleValidation';
 
 const profileRouter = express.Router();
 
@@ -72,8 +74,9 @@ const profileRouter = express.Router();
 profileRouter.post(
   '/profiles',
   middlewares.authenticate,
-  middlewares.validateCreateProfile,
-  profileController.create
+  Validator.validateUpdateProfile(),
+  Handler.handleProfileUpdate,
+  profileController.updateProfile,
 )
 
 /**

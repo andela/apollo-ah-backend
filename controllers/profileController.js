@@ -1,16 +1,17 @@
+import Sequelize from 'sequelize';
 import createError from 'http-errors';
 import models from '../models';
-import { STATUS } from '../helpers/constants';
+import { STATUS, MESSAGE } from '../helpers/constants';
 import Response from '../helpers/responseHelper';
 import Logger from '../helpers/logger';
+
+const { Op } = Sequelize;
 
 const { Profile, User } = models;
 
 const {
   CREATED,
   SERVER_ERROR,
-  UNAUTHORIZED,
-  BAD_REQUEST,
   OK,
   NOT_FOUND,
 } = STATUS;
@@ -31,53 +32,30 @@ class ProfileController {
   * @param  {Object} res - The response object.
   * @returns {Object} - It returns the response object.
   */
-  static async create(req, res) {
-    /** id should be gotten from the token */
-    let {
+  static async updateProfile(req, res) {
+    const {
       firstname, lastname, username, bio, image,
     } = req.body;
-
-    firstname = firstname ? firstname.toLowerCase().toString().replace(/\s+/g, '') : firstname;
-    lastname = lastname ? lastname.toLowerCase().toString().replace(/\s+/g, '') : lastname;
-    username = username ? username.toLowerCase().toString().replace(/\s+/g, '') : username;
-    bio = bio ? bio.toLowerCase().toString().replace(/\s+/g, ' ') : bio;
-    image = image ? image.toLowerCase().toString().replace(/\s+/g, '') : image;
-
+    const userId = req.user.id;
     const requestForm = {
       firstname, lastname, username, bio, image,
     };
-
-
+    const profileExists = await ProfileController.profileUsernameExists(username, userId);
+    if (profileExists !== null) {
+      return Response.send(res, CREATED, {}, MESSAGE.USERNAME_EXITS, true);
+    }
     try {
-      const [profile, success] = await Profile.findOrCreate({
-        where: {
-          userId: req.user.id,
-        },
-        defaults: requestForm,
-      });
-
-      if (success) {
-        return Response.send(res, CREATED, profile, 'Profile created successfully', true);
-      }
-
       await Profile.update(
         req.body,
         {
           where: {
-            userId: req.user.id,
+            userId,
           }
         }
       );
-
-      return Response.send(res, CREATED, requestForm, 'Profile updated successfully', true);
+      return Response.send(res, CREATED, requestForm, MESSAGE.PROFILE_UPDATE_SUCCESSFUL, true);
     } catch (error) {
-      if (error.errors[0].type === 'unique violation') {
-        return Response.send(res, BAD_REQUEST, [], 'This username already exist', false);
-      }
-      if (error.message === 'insert or update on table "profiles" violates foreign key constraint "profiles_userId_fkey"') {
-        return Response.send(res, UNAUTHORIZED, [], 'You have to be signed up to create a profile', false);
-      }
-      return Response.send(res, SERVER_ERROR, error.message, 'Profile update failed, try again later!', false);
+      return Response.send(res, SERVER_ERROR, error.message, MESSAGE.PROFILE_UPDATE_ERROR, false);
     }
   }
 
@@ -97,6 +75,33 @@ class ProfileController {
       Logger.log(error);
     }
     return user !== null;
+  }
+
+  /**
+* Verifies if the username already exists and belongs to user
+*
+* @static
+* @param {string} username The username
+* @param {integer} userId The user Id
+* @returns {boolean} true if username exists and false otherwise
+* @memberof ProfileController
+*/
+  static async profileUsernameExists(username, userId) {
+    let user = null;
+    try {
+      user = await Profile.findOne({
+        where: {
+          username,
+          userId: {
+            [Op.ne]: userId
+          }
+        }
+      });
+    } catch (error) {
+      Logger.log(error);
+    }
+    return user;
+    // return user !== null;
   }
 
   /**
