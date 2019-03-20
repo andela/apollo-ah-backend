@@ -23,7 +23,8 @@ const dummyUser54 = {
 const dummyArticle = {
   title: faker.lorem.sentence(),
   description: faker.lorem.sentence(),
-  body: faker.lorem.paragraphs()
+  body: faker.lorem.paragraphs(),
+  categoryId: 1,
 };
 
 before(async () => {

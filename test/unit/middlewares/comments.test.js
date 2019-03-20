@@ -24,7 +24,8 @@ let dummyUser = {
 const dummyArticle = {
   title: faker.lorem.sentence(),
   description: faker.lorem.sentence(),
-  body: faker.lorem.paragraphs()
+  body: faker.lorem.paragraphs(),
+  categoryId: 1,
 };
 
 const dummyComment = { body: faker.lorem.sentence() };

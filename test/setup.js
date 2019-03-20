@@ -12,7 +12,7 @@ dotenv.config({ path: '.env.test' });
  * @returns {void}
  */
 const initSetup = (done) => {
-  runAll(['migrate', 'seed'])
+  runAll(['migrate', 'seed', 'seed:category'])
     .then(() => done())
     .catch(done);
 };

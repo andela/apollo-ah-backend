@@ -37,6 +37,7 @@ describe('Article Tags', () => {
       title: faker.random.words(15),
       description: 'lorem ipsum exists',
       body: faker.lorem.paragraphs(),
+      categoryId: 1,
       tagList: ['javascript', 'nodejs']
     };
     chai

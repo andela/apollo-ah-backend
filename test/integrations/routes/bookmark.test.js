@@ -21,7 +21,8 @@ const {
 const article = {
   title: faker.lorem.words(),
   description: faker.lorem.words(),
-  body: faker.lorem.words()
+  body: faker.lorem.words(),
+  categoryId: 1,
 };
 
 const createUser = async () => {
