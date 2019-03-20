@@ -37,4 +37,5 @@ deploy:
     master: apollo-ah-backend
   run:
     - "npm run migrate"
+    - "npm run seed:category"
  

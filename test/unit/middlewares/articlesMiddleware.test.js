@@ -36,6 +36,7 @@ const dummyArticle = {
   title: faker.lorem.sentence(),
   description: faker.lorem.sentences(),
   body: faker.lorem.paragraphs(),
+  categoryId: 1,
 };
 
 const createUser = async () => {
@@ -78,7 +79,8 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
       .send({
         title: 'some gibberish',
         description: 'more gibberish',
-        body: faker.lorem.paragraphs()
+        body: faker.lorem.paragraphs(),
+        categoryId: 1,
       })
       .set({ Authorization: `Bearer ${dummyUser2.token}` });
 
@@ -143,6 +145,47 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
             expect(res.body.message).to.equal('body cannot be empty');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
+    describe('create an article without the category', () => {
+      it('Should return an error', (done) => {
+        const article = { ...dummyArticle };
+        article.categoryId = '';
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('category cannot be empty');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
+    describe('create an article without a valid category', () => {
+      it('Should return an error if category does not exist', (done) => {
+        const article = { ...dummyArticle, categoryId: 10000 };
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('category does not exist');
             done();
           });
       });
@@ -281,7 +324,8 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
         const article = {
           title: faker.random.words(),
           description: 'dehjfjdh',
-          body: 'sentence'
+          body: 'sentence',
+          categoryId: 1,
         };
         chai
           .request(app)
@@ -305,7 +349,8 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
         const article = {
           title: faker.random.words(),
           description: 'dehjfjdh',
-          body: 'sentence I make all over again'
+          body: 'sentence I make all over again',
+          categoryId: 1,
         };
         const readTime = articleHelpers.articleReadTime(article.body);
         article.time = readTime;
