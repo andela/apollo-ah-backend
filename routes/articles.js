@@ -9,6 +9,56 @@ import Handler from '../middlewares/handleValidation';
 const articles = express.Router();
 
 /**
+* /api/v1/articles/:
+*  get:
+*    tags:
+*      - Search, Articles
+*    description: Get the list of all articles.
+*                 Optionally filter by title/description, tag or author
+*    produces:
+*       - application/json
+*    parameters:
+*      - name: q
+*        description: If provided, results will be filtered by title and description of articles
+*        in: query
+*        required: false
+*        type: string
+*      - name: tag
+*        description: If provided, results will be filtered by article tags
+*        in: query
+*        required: false
+*        type: string
+*      - name: author
+*        description: If provided, results will be filtered by author
+*        in: query
+*        required: false
+*        type: string
+*      - name: page
+*        description: If provided, returns the the articles in that badge(page)
+*        in: query
+*        required: false
+*        type: integer
+*      - name: size
+*        description: The maximum number of results to return in a single requests. (max =500)
+*        in: query
+*        required: false
+*        type: integer
+*    responses:
+*      200:
+*        description: Articles successfully fetched
+*        schema:
+*          type: object
+*/
+articles.get(
+  '/',
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
+  articlesMiddleware.validatePagination,
+  Validator.sanitizeSearchParam(),
+  articlesController.getAllArticles,
+);
+
+/**
  * @swagger
  * definitions:
  *   Article:
@@ -124,24 +174,6 @@ articles.put('/:articleId', authenticate, articlesMiddleware.validateUpdateArtic
  *           $ref: '#/definitions/Article'
  */
 articles.post('/', authenticate, articlesMiddleware.validateCreateArticle, articlesMiddleware.validateTagList, articlesController.create);
-
-/**
- * @swagger
- * /api/v1/articles:
- *   get:
- *     tags:
- *       - articles
- *     description: Returns all articles
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: Successfully fetched
- *         schema:
- *           $ref: '#/definitions/Article'
- */
-articles.get('/', Validator.validatePaginationLimit(), Handler.handleValidation, articlesMiddleware.validatePagination, articlesController.getAllArticles);
-
 
 /**
  * @swagger

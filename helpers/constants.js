@@ -1,4 +1,4 @@
-export const PAGE_LIMIT = 20;
+export const PAGE_LIMIT = 500;
 
 export const STATUS = {
   OK: 200, // Request OK, indicates a successful request

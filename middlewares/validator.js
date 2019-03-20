@@ -172,4 +172,18 @@ export default class Validator {
         .isBoolean(),
     ];
   }
+
+  /**
+   * Sanitize search parameters to ensure only strings are accepted
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static sanitizeSearchParam() {
+    return [
+      query('q').toString().trim(),
+      query('tag').toString().trim(),
+      query('author').toString().trim(),
+    ];
+  }
 }
