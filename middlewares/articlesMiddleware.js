@@ -27,6 +27,7 @@ export default class AriclesMiddleware {
       title = '',
       description = '',
       body = '',
+      categoryId = '',
     } = req.body;
 
     if (typeof title !== 'string') {
@@ -39,6 +40,13 @@ export default class AriclesMiddleware {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'description must be a string', false);
     }
 
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(categoryId)) {
+      return Response.send(
+        res, STATUS.BAD_REQUEST, {}, 'category type must be an integer', false,
+      );
+    }
+
     if (!title || !title.trim()) {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'title cannot be empty', false);
     }
@@ -48,11 +56,22 @@ export default class AriclesMiddleware {
     if (!description || !description.trim()) {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'description cannot be empty', false);
     }
+    if (!categoryId) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'category cannot be empty', false);
+    }
 
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
         return Response.send(res, STATUS.FORBIDDEN, [], MESSAGE.ARTICLE_EXIST, false);
+      }
+      const categoryFound = await models.ArticleCategory.findOne({
+        where: {
+          id: categoryId
+        }
+      });
+      if (!categoryFound) {
+        return Response.send(res, STATUS.BAD_REQUEST, [], 'category does not exist', false);
       }
       const slug = slugify(`${title}-${uuid()}`, {
         remove: /[*+~.()'"!:@]/g,

@@ -26,14 +26,16 @@ export default class ArticlesController {
     const authorId = req.user.id;
     const { slug } = res.locals;
     const {
-      title, body, description, tagList
+      title, body, description, categoryId, tagList
     } = req.body;
-    const readTime = articleHelpers.articleReadTime(req.body);
-    const content = {
-      title, body, description, slug, authorId, readTime, tagList
-    };
 
+    const readTime = articleHelpers.articleReadTime(req.body);
     try {
+      const categoryFound = await articleHelpers.findArticleCategory(res, categoryId);
+      const { category } = categoryFound;
+      const content = {
+        title, body, description, slug, authorId, readTime, categoryId, tagList
+      };
       const result = await models.Article.create(content, {
         include: [
           {
@@ -43,10 +45,16 @@ export default class ArticlesController {
           }
         ]
       });
+
       const article = JSON.parse(JSON.stringify(result)); // clone result
       article.tagList = article.tagList.map(tag => tag.tagName);
-
-      return Response.send(res, STATUS.CREATED, article, 'article was successfully created');
+      article.category = category;
+      return Response.send(
+        res,
+        STATUS.CREATED,
+        article,
+        'article was successfully created'
+      );
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
@@ -97,6 +105,12 @@ export default class ArticlesController {
             where: {
               ...tagQuery
             }
+          },
+          {
+            model: models.ArticleCategory,
+            as: 'articleCategory',
+            attributes: { exclude: ['id'] },
+            required: true,
           }
         ],
       });
@@ -168,7 +182,13 @@ export default class ArticlesController {
     const { slug } = req.params;
     try {
       const article = await models.Article.findOne({
-        where: { slug: slug.trim() }
+        where: { slug: slug.trim() },
+        include: [{
+          model: models.ArticleCategory,
+          as: 'articleCategory',
+          attributes: { exclude: ['id'] },
+          required: true,
+        }]
       });
       if (!article) {
         return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);
