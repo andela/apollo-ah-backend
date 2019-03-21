@@ -132,20 +132,6 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
         done();
       });
   });
-
-  it('Should delete a comment', (done) => {
-    chai
-      .request(app)
-      .delete(`/api/v1/articles/${newSlug}/comments/${commentId}`)
-      .set({ Authorization: `Bearer ${authToken}` })
-      .end((err, res) => {
-        expect(res).to.have.status(STATUS.OK);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
-        expect(res.body.message).to.equal('comment was successfully deleted');
-        done();
-      });
-  });
 });
 
 describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => {
@@ -187,6 +173,50 @@ describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => 
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
         expect(res.body.message).to.equal('likes successfully fetched');
+        done();
+      });
+  });
+});
+
+describe('API endpoint: /api/articles/:slug/comments/:id/dislikes (Routes)', () => {
+  it('Should dislike a comment', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/dislikes`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('successfully disliked comment');
+        done();
+      });
+  });
+
+  it('Should un-dislike a comment', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/dislikes`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body.message).to.equal('successfully un-disliked comment');
+        done();
+      });
+  });
+
+  it('Should get all dislikes', (done) => {
+    chai
+      .request(app)
+      .get(`/api/v1/articles/${newSlug}/comments/${newCommentId}/dislikes`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body.message).to.equal('dislikes successfully fetched');
         done();
       });
   });

@@ -181,6 +181,38 @@ comments.post(
 
 /**
  * @swagger
+ * /api/v1/articles/:slug/comments/:commentId/dislikes:
+ *   post:
+ *     tags:
+ *       - comments
+ *     description: Adds a new dislike to a comment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: slug for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: commentId
+ *         description: id for the comment
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: successfully disliked comment
+ *         schema:
+ *           $ref: '#/definitions/Comments'
+ */
+comments.post(
+  '/:slug/comments/:commentId/dislikes',
+  authenticate,
+  commentLikeController.dislikeComment,
+);
+
+/**
+ * @swagger
  * /api/v1/articles/:slug/comments/:commentId/likes:
  *   get:
  *     tags:
@@ -210,6 +242,39 @@ comments.get(
   '/:slug/comments/:commentId/likes',
   authenticate,
   commentLikeController.getCommentLikes,
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/comments/:commentId/dislikes:
+ *   get:
+ *     tags:
+ *       - comments
+ *     description: Returns all dislikes
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: slug for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: commentId
+ *         description: id for the comment
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: likes successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Comments'
+ */
+
+comments.get(
+  '/:slug/comments/:commentId/dislikes',
+  authenticate,
+  commentLikeController.getCommentDislikes,
 );
 
 export default comments;

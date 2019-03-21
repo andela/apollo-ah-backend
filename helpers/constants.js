@@ -1,4 +1,4 @@
-export const PAGE_LIMIT = 20;
+export const PAGE_LIMIT = 500;
 
 export const STATUS = {
   OK: 200, // Request OK, indicates a successful request
@@ -72,7 +72,10 @@ export const MESSAGE = {
   PAGE_LIMIT_EXCEEDED: `The maximum size for the page limit is ${PAGE_LIMIT}`,
   PAGE_LIMIT_INVALID: 'The page limit must be a number',
   PROFILE_UPDATE_SUCCESSFUL: 'Profile updated successfully',
-  PROFILE_UPDATE_ERROR: 'Update was not successful'
+  PROFILE_UPDATE_ERROR: 'Update was not successful',
+
+  CATEGORY_INVALID: 'Category must be a number',
+  VALIDATE_ERROR: 'Validation error occurred',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

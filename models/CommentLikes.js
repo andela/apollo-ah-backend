@@ -17,6 +17,9 @@ const CommentLike = (sequelize, DataTypes) => {
     commentId: {
       type: DataTypes.INTEGER,
     },
+    like: {
+      type: DataTypes.BOOLEAN,
+    }
   }, {});
   CommentLikeSchema.associate = (models) => {
     CommentLikeSchema.belongsTo(models.Comment, {

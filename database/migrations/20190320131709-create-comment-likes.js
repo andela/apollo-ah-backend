@@ -33,6 +33,9 @@ export function up(queryInterface, Sequelize) {
         key: 'id',
       }
     },
+    like: {
+      type: Sequelize.BOOLEAN
+    },
   });
 }
 export function down(queryInterface, Sequelize) {

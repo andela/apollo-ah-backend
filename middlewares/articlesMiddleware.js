@@ -214,8 +214,9 @@ export default class AriclesMiddleware {
    * @memberof AriclesMiddleware
    */
   static validateTagList(request, response, next) {
-    const { tagList } = request.body;
+    let { tagList } = request.body;
     if (tagList) { // convert value to key:value pair
+      tagList = [...new Set(tagList)];
       request.body.tagList = tagList.map(tag => ({ tagName: tag }));
     } else {
       request.body.tagList = [];

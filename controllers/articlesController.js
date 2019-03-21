@@ -1,12 +1,11 @@
+
 import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
-
-const { ArticleCategory } = models;
+import Logger from '../helpers/logger';
 
 const { Article, Bookmark } = models;
-
 
 /**
  * Wrapper class for sending article objects as response.
@@ -76,23 +75,62 @@ export default class ArticlesController {
     try {
       // TODO: Implement search algorithm here
       const { offset, limit } = req.body;
+      const {
+        categoryQuery, titleQuery, authorQuery, tagQuery
+      } = articleHelpers.formatSearchQuery(req.query);
+
       const articles = await models.Article.findAndCountAll({
         limit,
         offset,
         order: [['createdAt', 'DESC']],
-        include: [{
-          model: ArticleCategory,
-          as: 'articleCategory',
-          attributes: { exclude: ['id'] },
-          required: true,
-        }]
+        distinct: true,
+        where: {
+          ...titleQuery,
+        },
+        include: [
+          {
+            model: models.User,
+            attributes: {
+              exclude: ['email', 'password', 'updatedAt', 'isConfirmed', 'createdAt', 'deletedAt'],
+            },
+            include: [{
+              model: models.Profile,
+              attributes: ['firstname', 'lastname', 'username', 'bio', 'image'],
+              where: {
+                ...authorQuery,
+              },
+              required: true,
+            }],
+          },
+          {
+            model: models.Tag,
+            as: 'tagList',
+            attributes: {
+              exclude: [''],
+            },
+            required: tagQuery.tagName !== undefined,
+            where: {
+              ...tagQuery,
+            }
+          },
+          {
+            model: models.ArticleCategory,
+            as: 'articleCategory',
+            attributes: { exclude: ['id'] },
+            required: true,
+            where: {
+              ...categoryQuery,
+            }
+          }
+        ],
       });
       const {
         code, data, message, status
       } = articleHelpers.getResourcesAsPages(req, articles);
       return Response.send(res, code, data, message, status);
     } catch (error) {
-      return Response.send(res, STATUS.BAD_REQUEST, error, false);
+      Logger.log(error);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 
@@ -111,7 +149,7 @@ export default class ArticlesController {
       const article = await models.Article.findOne({
         where: { slug: slug.trim() },
         include: [{
-          model: ArticleCategory,
+          model: models.ArticleCategory,
           as: 'articleCategory',
           attributes: { exclude: ['id'] },
           required: true,
