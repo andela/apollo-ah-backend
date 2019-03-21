@@ -1,6 +1,7 @@
 // import createError from 'http-errors';
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
+import jwt from 'jsonwebtoken';
 import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
 import models from '../models';
@@ -105,7 +106,14 @@ export default class AriclesMiddleware {
         res, STATUS.BAD_REQUEST, [], 'slug is not a string', false,
       );
     }
-    if (req.session && req.session.email) res.locals.email = req.session.email;
+
+    if (req.headers && req.headers.authorization) {
+      const payload = req.headers.authorization.split(' ');
+      const token = payload[1];
+      const { user } = jwt.verify(token, process.env.APP_KEY);
+      if (!user) return next();
+      res.locals.userId = user.id;
+    }
     return next();
   }
 
@@ -215,8 +223,9 @@ export default class AriclesMiddleware {
    * @memberof AriclesMiddleware
    */
   static validateTagList(request, response, next) {
-    const { tagList } = request.body;
+    let { tagList } = request.body;
     if (tagList) { // convert value to key:value pair
+      tagList = [...new Set(tagList)];
       request.body.tagList = tagList.map(tag => ({ tagName: tag }));
     } else {
       request.body.tagList = [];

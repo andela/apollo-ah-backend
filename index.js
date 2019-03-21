@@ -33,7 +33,7 @@ app.use(morgan(':remote-addr - ":method :url :status ":user-agent"', {
 }));
 
 const sessOptions = {
-  secret: process.env.COOKIE_SECRET,
+  secret: 'authorshaven',
   cookie: { maxAge: 60 * 1000 * 60 * 24 * 31, secure: true },
   resave: false,
   saveUninitialized: false,

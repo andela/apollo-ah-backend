@@ -90,5 +90,56 @@ export default {
       };
     }
     return result;
-  }
+  },
+  /**
+   * Formats the query parameters into a sequelize readable object for search and filtering data
+   * @static
+   * @param {object} query An object containing the search terms
+   * @returns {object} The sequalize formated query
+   */
+  formatSearchQuery: (query) => {
+    const {
+      author, tag, q, categoryId
+    } = query;
+
+    const authorQuery = author ? {
+      [Op.or]: {
+        '$User.Profile.username$': {
+          [Op.iLike]: `%${author}%`,
+        },
+        '$User.Profile.firstname$': {
+          [Op.iLike]: `%${author}%`,
+        },
+        '$User.Profile.lastname$': {
+          [Op.iLike]: `%${author}%`,
+        },
+      }
+    } : {};
+
+    const titleQuery = q ? {
+      [Op.or]: {
+        title: {
+          [Op.iLike]: `%${q}%`,
+        },
+        description: {
+          [Op.iLike]: `%${q}%`,
+        },
+      },
+    } : {};
+
+    const tagQuery = tag ? {
+      tagName: {
+        [Op.iLike]: `%${tag}%`,
+      }
+    } : {};
+
+    const categoryQuery = categoryId ? {
+      id: {
+        [Op.eq]: parseInt(categoryId, 10),
+      }
+    } : {};
+    return {
+      categoryQuery, authorQuery, tagQuery, titleQuery
+    };
+  },
 };
