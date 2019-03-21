@@ -1,4 +1,4 @@
-import { body, query } from 'express-validator/check';
+import { body, query, param } from 'express-validator/check';
 import { MESSAGE, FIELD, PAGE_LIMIT } from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
@@ -170,6 +170,55 @@ export default class Validator {
         .isBoolean(),
       body('canNotify', 'A valid value is required').exists()
         .isBoolean(),
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRoleData() {
+    return [
+      body('title')
+        .trim()
+        .not().isEmpty()
+        .withMessage('title field must not be empty'),
+      body('create')
+        .optional()
+        .isBoolean()
+        .withMessage('create value must true or false'),
+      body('read')
+        .optional()
+        .isBoolean()
+        .withMessage('read value must true or false'),
+      body('update')
+        .optional()
+        .isBoolean()
+        .withMessage('update value must true or false'),
+      body('delete')
+        .optional()
+        .isBoolean()
+        .withMessage('delete value must true or false'),
+      body('global')
+        .optional()
+        .isBoolean()
+        .withMessage('global value must true or false'),
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRoleId() {
+    return [
+      param('roleId')
+        .isInt()
+        .withMessage('roleId parameter must be an integer'),
     ];
   }
 }

@@ -19,7 +19,8 @@ let authToken;
 const dummyUser5 = {
   email: faker.internet.email(),
   password: 'i2345678',
-  username: faker.name.firstName()
+  username: faker.name.firstName(),
+  roleId: 2,
 };
 
 const article = {

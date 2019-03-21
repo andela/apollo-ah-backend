@@ -1,7 +1,4 @@
 import faker from 'faker';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const users = {
   dummyUser: {
@@ -9,24 +6,28 @@ const users = {
     password: 'password',
     username: 'feji2017',
     isConfirmed: false,
+    roleId: 2,
   },
   dummyUser2: {
     email: 'white@gmail.com',
     password: 'password',
     username: 'whyte123',
     isConfirmed: false,
+    roleId: 2,
   },
   dummyUser3: {
     email: 'valentine@andela.com',
     password: 'password',
     username: 'val123',
     isConfirmed: false,
+    roleId: 2,
   },
   dummyUser4: {
     email: 'andra@gmail.com',
     password: 'password',
     username: 'andra2018',
     isConfirmed: false,
+    roleId: 2,
   },
 };
 

@@ -25,11 +25,13 @@ export default {
     return queryInterface.bulkInsert('Users', [
       {
         email: faker.internet.email(),
-        password
+        password,
+        roleId: 1
       },
       {
         email: faker.internet.email(),
-        password
+        password,
+        roleId: 2
       }
     ], {})
       .then(() => (

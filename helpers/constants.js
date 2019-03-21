@@ -60,6 +60,13 @@ export const MESSAGE = {
 
   PAGE_LIMIT_EXCEEDED: `The maximum size for the page limit is ${PAGE_LIMIT}`,
   PAGE_LIMIT_INVALID: 'The page limit must be a number',
+
+  RESOURCE_NOT_FOUND: 'Resource not found',
+  ACCESS_FORBIDDEN: 'Access is forbidden',
+  INVALID_CREDENTIALS: 'Email or password is incorrect',
+
+  CREATE_SUCCESS: 'Successfully created',
+  UPDATE_SUCCESS: 'Successfully updated',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
