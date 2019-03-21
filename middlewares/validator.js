@@ -179,11 +179,16 @@ export default class Validator {
    * @returns {array} The array of express validator chains
    * @memberof Validator
    */
-  static sanitizeSearchParam() {
+  static validateSearchParam() {
     return [
       query('q').toString().trim(),
       query('tag').toString().trim(),
       query('author').toString().trim(),
+      query('categoryId')
+        .optional()
+        .trim()
+        .isFloat()
+        .withMessage(MESSAGE.CATEGORY_INVALID)
     ];
   }
 }

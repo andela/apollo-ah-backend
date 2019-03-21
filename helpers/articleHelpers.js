@@ -98,9 +98,9 @@ export default {
    * @returns {object} The sequalize formated query
    */
   formatSearchQuery: (query) => {
-    const { author, tag, q } = query;
-
-    let otherQuery = {};
+    const {
+      author, tag, q, categoryId
+    } = query;
 
     const authorQuery = author ? {
       [Op.or]: {
@@ -133,7 +133,13 @@ export default {
       }
     } : {};
 
-    otherQuery = { ...authorQuery, ...titleQuery };
-    return { otherQuery, tagQuery };
+    const categoryQuery = categoryId ? {
+      id: {
+        [Op.eq]: parseInt(categoryId, 10),
+      }
+    } : {};
+    return {
+      categoryQuery, authorQuery, tagQuery, titleQuery
+    };
   },
 };

@@ -60,6 +60,9 @@ export const MESSAGE = {
 
   PAGE_LIMIT_EXCEEDED: `The maximum size for the page limit is ${PAGE_LIMIT}`,
   PAGE_LIMIT_INVALID: 'The page limit must be a number',
+
+  CATEGORY_INVALID: 'Category must be a number',
+  VALIDATE_ERROR: 'Validation error occurred',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

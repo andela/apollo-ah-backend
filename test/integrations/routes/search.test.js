@@ -7,12 +7,16 @@ import models from '../../../models';
 import {
   STATUS, MESSAGE, PAGE_LIMIT, FIELD
 } from '../../../helpers/constants';
-import { model } from 'mongoose';
+import Logger from '../../../helpers/logger';
 
 chai.use(chaiHttp);
 
 
-describe.only('GET: /api/v1/articles', () => {
+describe('GET: /api/v1/articles', () => {
+  const title = faker.lorem.words(3);
+  const firstname = faker.name.firstName();
+  const tagName = faker.lorem.word();
+  const categoryId = 1;
   before(async () => {
     try {
       const { dataValues: { id } } = await models.User.create({
@@ -21,22 +25,37 @@ describe.only('GET: /api/v1/articles', () => {
         username: faker.internet.userName(),
       });
       await models.Profile.create({
-        firstname: faker.name.firstName(),
+        firstname,
         lastname: faker.name.lastName(),
         username: faker.internet.userName(),
         userId: id,
-        bio: faker.lorem.word(),
+        bio: faker.lorem.words(5),
       });
-      await models.Article.create({
-        title: faker.lorem.words(3),
-        description: faker.lorem.words(4),
-        body: faker.lorem.sentences(5),
-        categoryId: 1,
-        authorId: id,
-        slug: faker.random.word(),
-      });
+      await models.Article.create(
+        {
+          title,
+          description: title,
+          body: faker.lorem.sentences(5),
+          categoryId,
+          authorId: id,
+          slug: faker.random.words(10),
+          tagList: {
+            tagName
+          },
+        },
+        {
+          include: [
+            {
+              model: models.Tag,
+              as: 'tagList',
+              through: { attributes: [] }
+            }
+          ]
+        }
+
+      );
     } catch (error) {
-      console.log(error);
+      Logger.log(error);
     }
   });
   it('Should return  error if size parameter is not a number', (done) => {
@@ -70,7 +89,7 @@ describe.only('GET: /api/v1/articles', () => {
         expect(res).to.have.status(STATUS.BAD_REQUEST);
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').equal(STATUS.BAD_REQUEST);
-        expect(res.body).to.haveOwnProperty('message').equal('Validation error occurred');
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.VALIDATE_ERROR);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data')
           .to.be.an('array')
@@ -83,7 +102,7 @@ describe.only('GET: /api/v1/articles', () => {
         done();
       });
   });
-  it.only(`Should return first ${PAGE_LIMIT} articles if size parameter is not provided`, (done) => {
+  it(`Should return first ${PAGE_LIMIT} articles if size parameter is not provided`, (done) => {
     chai
       .request(app)
       .get('/api/v1/articles')
@@ -107,7 +126,6 @@ describe.only('GET: /api/v1/articles', () => {
     chai
       .request(app)
       .get('/api/v1/articles')
-      .set({ Authorization: `Bearer ${authToken}` })
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
@@ -215,6 +233,155 @@ describe.only('GET: /api/v1/articles', () => {
         expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
+        done();
+      });
+  });
+
+  it('Should find articles that match the given title', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ q: title })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(true);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+        expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+        expect(res.body.data).to.haveOwnProperty('page').to.be.an('object');
+        done();
+      });
+  });
+  it('Should find articles that match the given author', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ author: firstname })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(true);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+        expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+        expect(res.body.data).to.haveOwnProperty('page').to.be.an('object');
+        done();
+      });
+  });
+  it('Should find articles that match the given tag', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ tag: tagName })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(true);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+        expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+        expect(res.body.data).to.haveOwnProperty('page').to.be.an('object');
+        done();
+      });
+  });
+  it('Should find articles that match the category', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ categoryId })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(true);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+        expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+        expect(res.body.data).to.haveOwnProperty('page').to.be.an('object');
+        done();
+      });
+  });
+
+  it('Should not find any articles if title or discription does not match any record', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ q: `${title} with extra text` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array');
+        done();
+      });
+  });
+  it('Should not find any articles if author does not match any record', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ author: `${firstname} with extra text` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array');
+        done();
+      });
+  });
+  it('Should not find any articles if tag does not match any record', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ tag: `${tagName} with extra text` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array');
+        done();
+      });
+  });
+  it('Should not find any articles if category does not match any record', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ categoryId: Number.MAX_SAFE_INTEGER })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array');
+        done();
+      });
+  });
+  it('Should retun error is categoryId is not a number', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ categoryId: 'NOT_A_NUMBER' })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.BAD_REQUEST);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.VALIDATE_ERROR);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array')
+          .to.deep.include({
+            field: 'categoryId',
+            message: MESSAGE.CATEGORY_INVALID,
+          });
         done();
       });
   });

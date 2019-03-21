@@ -12,7 +12,7 @@ dotenv.config({ path: '.env.test' });
  * @returns {void}
  */
 const initSetup = (done) => {
-  runAll(['migrate', 'seed', 'seed:category'])
+  runAll(['migrate', 'seed:category', 'seed'])
     .then(() => done())
     .catch(done);
 };
@@ -24,7 +24,7 @@ const initSetup = (done) => {
  * @returns {void}
  */
 const tearDown = (done) => {
-  runAll(['migrate:reset'])
+  runAll(['migrate:refresh'])
     .then(() => done())
     .catch(done);
 };

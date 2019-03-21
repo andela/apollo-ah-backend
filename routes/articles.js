@@ -51,10 +51,10 @@ const articles = express.Router();
 */
 articles.get(
   '/',
+  Validator.validateSearchParam(),
   Validator.validatePaginationLimit(),
   Handler.handleValidation,
   articlesMiddleware.validatePagination,
-  Validator.sanitizeSearchParam(),
   articlesController.getAllArticles,
 );
 

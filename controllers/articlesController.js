@@ -3,6 +3,7 @@ import models from '../models';
 import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
+import Logger from '../helpers/logger';
 
 const { Article, Bookmark } = models;
 
@@ -74,7 +75,9 @@ export default class ArticlesController {
     try {
       // TODO: Implement search algorithm here
       const { offset, limit } = req.body;
-      const { otherQuery, tagQuery } = articleHelpers.formatSearchQuery(req.query);
+      const {
+        categoryQuery, titleQuery, authorQuery, tagQuery
+      } = articleHelpers.formatSearchQuery(req.query);
 
       const articles = await models.Article.findAndCountAll({
         limit,
@@ -82,7 +85,7 @@ export default class ArticlesController {
         order: [['createdAt', 'DESC']],
         distinct: true,
         where: {
-          ...otherQuery,
+          ...titleQuery,
         },
         include: [
           {
@@ -93,16 +96,21 @@ export default class ArticlesController {
             include: [{
               model: models.Profile,
               attributes: ['firstname', 'lastname', 'username', 'bio', 'image'],
+              where: {
+                ...authorQuery,
+              },
+              required: true,
             }],
           },
           {
             model: models.Tag,
             as: 'tagList',
             attributes: {
-              exclude: ['tagName'],
+              exclude: [''],
             },
+            required: tagQuery.tagName !== undefined,
             where: {
-              ...tagQuery
+              ...tagQuery,
             }
           },
           {
@@ -110,6 +118,9 @@ export default class ArticlesController {
             as: 'articleCategory',
             attributes: { exclude: ['id'] },
             required: true,
+            where: {
+              ...categoryQuery,
+            }
           }
         ],
       });
@@ -118,6 +129,7 @@ export default class ArticlesController {
       } = articleHelpers.getResourcesAsPages(req, articles);
       return Response.send(res, code, data, message, status);
     } catch (error) {
+      Logger.log(error);
       return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
