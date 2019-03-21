@@ -24,7 +24,7 @@ const initSetup = (done) => {
  * @returns {void}
  */
 const tearDown = (done) => {
-  runAll(['migrate:refresh'])
+  runAll(['migrate:reset'])
     .then(() => done())
     .catch(done);
 };
