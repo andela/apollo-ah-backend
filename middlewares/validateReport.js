@@ -4,7 +4,6 @@ import { STATUS } from '../helpers/constants';
 import models from '../models';
 
 const { reports, Article } = models;
-// console.log(reports);
 
 /**
  * @description - This function validates input for article report type

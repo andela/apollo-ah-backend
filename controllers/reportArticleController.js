@@ -20,7 +20,7 @@ export default class ReportArticleController {
    * @param {res} res - the resposne object
    * @returns {object} the reported article object
    */
-  static async report(req, res) {
+  static async reportArticle(req, res) {
     const userId = req.user.id;
     const { articleId } = req.params;
     const { body: { reportType, comment } } = req;
@@ -44,7 +44,7 @@ export default class ReportArticleController {
    * @param {function} res the resposne object
    * @returns {object} the reported article object
    */
-  static async getAll(req, res) {
+  static async getAllReportedArticle(req, res) {
     try {
       const getReportedArticles = await reports.findAndCountAll();
       if (getReportedArticles.count >= 1) {
@@ -63,7 +63,7 @@ export default class ReportArticleController {
    * @param {function} res the resposne object
    * @returns {object} the reported article object
    */
-  static async getOne(req, res) {
+  static async getOneReportedArticle(req, res) {
     try {
       const getReportedArticle = await reports.findAndCountAll({
         where: {

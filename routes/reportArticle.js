@@ -52,7 +52,7 @@ router.post('/:articleId/report',
   checkArticle,
   validateReportType,
   reportOnce,
-  reportArticleController.report);
+  reportArticleController.reportArticle);
 
 /**
  * @swagger
@@ -72,7 +72,7 @@ router.post('/:articleId/report',
 router.get('/:articleId/report',
   authenticate,
   checkArticle,
-  reportArticleController.getOne);
+  reportArticleController.getOneReportedArticle);
 
 /**
  * @swagger
@@ -93,6 +93,6 @@ router.get('/:articleId/report',
 router.get('/reports',
   authenticate,
   checkArticle,
-  reportArticleController.getAll);
+  reportArticleController.getAllReportedArticle);
 
 export default router;
