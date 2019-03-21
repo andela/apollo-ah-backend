@@ -5,7 +5,7 @@ import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 import Logger from '../helpers/logger';
 
-const { Article, Bookmark } = models;
+const { Article, Bookmark, ratings } = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -121,6 +121,10 @@ export default class ArticlesController {
             where: {
               ...categoryQuery,
             }
+          },
+          {
+            model: ratings,
+            attributes: ['stars', 'userId']
           }
         ],
       });

@@ -60,6 +60,7 @@ const Article = (sequelize, DataTypes) => {
       otherKey: 'tagName',
       as: 'tagList'
     });
+    ArticleSchema.hasMany(models.ratings, { foreignKey: 'articleId' });
   };
   return ArticleSchema;
 };

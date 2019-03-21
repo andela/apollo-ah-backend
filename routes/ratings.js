@@ -40,7 +40,7 @@ const router = express.Router();
  *     produces:
  *       - application/json
  *     responses:
- *       200:
+ *       201:
  *         description: Success
  *         schema:
  *           $ref: '#/definitions/Article'
