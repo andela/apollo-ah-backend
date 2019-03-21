@@ -71,12 +71,10 @@ describe('GET: /api/v1/articles', () => {
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data')
           .to.be.an('array')
-          .to.deep.include(
-            {
-              field: FIELD.PAGINATION_LIMIT,
-              message: MESSAGE.PAGE_LIMIT_INVALID,
-            }
-          );
+          .to.deep.include({
+            field: FIELD.PAGINATION_LIMIT,
+            message: MESSAGE.PAGE_LIMIT_INVALID,
+          });
         done();
       });
   });
@@ -93,12 +91,10 @@ describe('GET: /api/v1/articles', () => {
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data')
           .to.be.an('array')
-          .to.deep.include(
-            {
-              field: FIELD.PAGINATION_LIMIT,
-              message: MESSAGE.PAGE_LIMIT_EXCEEDED,
-            }
-          );
+          .to.deep.include({
+            field: FIELD.PAGINATION_LIMIT,
+            message: MESSAGE.PAGE_LIMIT_EXCEEDED,
+          });
         done();
       });
   });

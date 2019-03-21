@@ -67,12 +67,15 @@ export default class Handler {
   static handleValidation(req, res, next) {
     const errors = validationResult(req).formatWith(expressValidatorFormater);
     if (!errors.isEmpty()) {
-      return Response.send(res, 400,
+      return Response.send(
+        res,
+        400,
         errors.array(
           { onlyFirstError: true }
         ),
         MESSAGE.VALIDATE_ERROR,
-        false);
+        false
+      );
     }
     next();
   }
