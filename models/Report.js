@@ -1,5 +1,5 @@
 /**
- * A model class representing article rating
+ * A model class representing article reporting
  *
  * @param {Sequelize} sequelize - Sequelize object
  * @param {Sequelize.DataTypes} DataTypes - A convinient object holding data types
@@ -7,9 +7,14 @@
  */
 const ReportArticle = (sequelize, DataTypes) => {
   const ReportSchema = sequelize.define('reports', {
-    body: {
-      type: DataTypes.INTEGER,
+    reportType: {
+      type: DataTypes.ENUM,
+      values: ['spam', 'plagiarism', 'rules violation', 'others'],
       allowNull: false,
+    },
+    comment: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   }, {});
   ReportSchema.associate = (models) => {

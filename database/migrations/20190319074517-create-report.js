@@ -22,8 +22,14 @@ export default {
         key: 'id'
       },
     },
-    body: {
-      type: Sequelize.STRING
+    reportType: {
+      type: Sequelize.ENUM,
+      values: ['spam', 'plagiarism', 'rules violation', 'others'],
+      allowNull: false,
+    },
+    comment: {
+      type: Sequelize.STRING,
+      allowNull: true,
     },
     createdAt: {
       allowNull: false,

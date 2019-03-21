@@ -30,7 +30,7 @@ const router = express.Router();
 router.use('/users', users);
 router.use(profile);
 router.use('/auth', authRoute);
-router.use('/articles', articles);
+router.use('/articles', reportRoute, articles);
 router.use('/setting', settingRouter);
 router.use('/bookmarks', bookmark);
 router.use('/tags', tags);
