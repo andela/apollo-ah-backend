@@ -86,6 +86,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body.data.articles[0]).to.haveOwnProperty('CommentHistories');
         expect(res.body.message).to.equal('comments successfully fetched');
         done();
       });
@@ -103,6 +104,100 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('comment successfully updated');
+        done();
+      });
+  });
+
+  it('Should update a comment2', (done) => {
+    const comment = { body: faker.lorem.sentence() };
+    chai
+      .request(app)
+      .put(`/api/v1/articles/${newSlug}/comments/${commentId}`)
+      .send(comment)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('comment successfully updated');
+        done();
+      });
+  });
+
+  it('Should update a comment3', (done) => {
+    const comment = { body: faker.lorem.sentence() };
+    chai
+      .request(app)
+      .put(`/api/v1/articles/${newSlug}/comments/${commentId}`)
+      .send(comment)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('comment successfully updated');
+        done();
+      });
+  });
+
+  it('Should update a comment4', (done) => {
+    const comment = { body: faker.lorem.sentence() };
+    chai
+      .request(app)
+      .put(`/api/v1/articles/${newSlug}/comments/${commentId}`)
+      .send(comment)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('comment successfully updated');
+        done();
+      });
+  });
+
+  it('Should update a comment5', (done) => {
+    const comment = { body: faker.lorem.sentence() };
+    chai
+      .request(app)
+      .put(`/api/v1/articles/${newSlug}/comments/${commentId}`)
+      .send(comment)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('comment successfully updated');
+        done();
+      });
+  });
+
+  it('Should not edit a comment after 5 edits', (done) => {
+    const comment = { body: faker.lorem.sentence() };
+    chai
+      .request(app)
+      .put(`/api/v1/articles/${newSlug}/comments/${commentId}`)
+      .send(comment)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.BAD_REQUEST);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+        done();
+      });
+  });
+
+  it('Should get all comments with their history', (done) => {
+    chai
+      .request(app)
+      .get(`/api/v1/articles/${newSlug}/comments`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body.data.articles[0]).to.haveOwnProperty('CommentHistories');
+        expect(res.body.message).to.equal('comments successfully fetched');
         done();
       });
   });
