@@ -105,6 +105,7 @@ export default class AriclesMiddleware {
         res, STATUS.BAD_REQUEST, [], 'slug is not a string', false,
       );
     }
+    if (req.session && req.session.email) res.locals.email = req.session.email;
     return next();
   }
 

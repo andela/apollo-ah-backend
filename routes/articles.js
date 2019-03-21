@@ -44,7 +44,7 @@ const articles = express.Router();
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.get('/:slug', authenticate, articlesMiddleware.validateGetOneArticle, articlesController.getOne);
+articles.get('/:slug', articlesMiddleware.validateGetOneArticle, articlesController.getOne);
 
 /**
  * @swagger

@@ -31,14 +31,15 @@ app.use(morgan(':remote-addr - ":method :url :status ":user-agent"', {
   stream: logger.stream(),
   skip: () => !isProduction
 }));
-app.use(
-  session({
-    secret: 'authorshaven',
-    cookie: { maxAge: 60000 },
-    resave: false,
-    saveUninitialized: false
-  })
-);
+
+const sessOptions = {
+  secret: process.env.COOKIE_SECRET,
+  cookie: { maxAge: 60 * 1000 * 60 * 24 * 31, secure: true },
+  resave: false,
+  saveUninitialized: false,
+};
+
+app.use(session(sessOptions));
 
 const { User } = models;
 

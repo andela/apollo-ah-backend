@@ -171,6 +171,7 @@ class UsersController {
       const token = await generateToken(payload);
 
       // respond with token
+      request.session.email = email;
       return response
         .status(200)
         .json({ token, id: user.id });
