@@ -49,6 +49,7 @@ export default (sequelize, DataTypes) => {
     User.hasOne(models.Profile, { foreignKey: 'userId' });
     User.hasMany(models.Article, { foreignKey: 'authorId' });
     User.hasMany(models.Bookmark, { foreignKey: 'userId' });
+    User.hasMany(models.CommentLike, { foreignKey: 'userId' });
     User.belongsToMany(models.User, {
       foreignKey: 'userId',
       as: 'followers',

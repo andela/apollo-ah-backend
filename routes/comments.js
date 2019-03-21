@@ -5,6 +5,7 @@ import commentsController from '../controllers/commentsController';
 import Validator from '../middlewares/validator';
 import Handler from '../middlewares/handleValidation';
 import commentPagination from '../middlewares/articlesMiddleware';
+import commentLikeController from '../controllers/commentLikesController';
 
 const comments = express.Router();
 /**
@@ -145,5 +146,70 @@ comments.put('/:slug/comments/:id', authenticate, commentsMiddleware.validateUpd
  *           $ref: '#/definitions/Comments'
  */
 comments.delete('/:slug/comments/:id', authenticate, commentsMiddleware.validateDeleteComment, commentsController.deleteComment);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/comments/:commentId/likes:
+ *   post:
+ *     tags:
+ *       - comments
+ *     description: Adds a new like to a comment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: slug for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: commentId
+ *         description: id for the comment
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       201:
+ *         description: successfully liked comment
+ *         schema:
+ *           $ref: '#/definitions/Comments'
+ */
+comments.post(
+  '/:slug/comments/:commentId/likes',
+  authenticate,
+  commentLikeController.like,
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/comments/:commentId/likes:
+ *   get:
+ *     tags:
+ *       - comments
+ *     description: Returns all likes
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: slug for the article
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: commentId
+ *         description: id for the comment
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: likes successfully fetched
+ *         schema:
+ *           $ref: '#/definitions/Comments'
+ */
+
+comments.get(
+  '/:slug/comments/:commentId/likes',
+  authenticate,
+  commentLikeController.getCommentLikes,
+);
 
 export default comments;

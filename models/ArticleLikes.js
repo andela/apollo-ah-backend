@@ -3,7 +3,7 @@
  *
  * @param {Sequelize} sequelize - Sequelize object
  * @param {Sequelize.DataTypes} DataTypes - A convinient object holding data types
- * @return {Sequelize.Model} - User model
+ * @return {Sequelize.Model} - ArticleLike model
  */
 
 const ArticleLike = (sequelize, DataTypes) => {

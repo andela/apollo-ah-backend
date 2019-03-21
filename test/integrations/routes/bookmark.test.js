@@ -27,9 +27,8 @@ const article = {
 
 const createUser = async () => {
   try {
-    const user = await models.User.create(dummyUser4);
-    dummyUser4 = user;
-    return dummyUser4;
+    const { dataValues: { id } } = await models.User.create(dummyUser4);
+    dummyUser4.id = id;
   } catch (error) {
     return error;
   }
@@ -40,7 +39,7 @@ describe('/Bookmark articles', () => {
   let articleId;
   before(async () => {
     try {
-      createUser();
+      await createUser();
       const authpayload = await chai.request(app)
         .post('/api/v1/users/login')
         .send(dummyUser4);
