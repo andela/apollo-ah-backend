@@ -38,6 +38,12 @@ const Comment = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       as: 'author'
     });
+    // models.Comment.belongsToMany(models.User, {
+    //   through: models.CommentLike,
+    //   as: 'likes',
+    //   foreignKey: 'commentId'
+    // });
+    CommentSchema.hasMany(models.CommentLike, { foreignKey: 'commentId' });
   };
   return CommentSchema;
 };
