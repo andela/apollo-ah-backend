@@ -9,7 +9,7 @@ describe('API endpoint: /api/auth', () => {
     it('should redirect to facebook authentication page', async () => {
       const response = await chai.request(app)
         .get('/api/v1/auth/facebook');
-      expect(response.res.connection.servername).to.equal('m.facebook.com');
+      expect(response.res.connection.servername).to.contain('facebook.com');
       expect(response.statusCode).to.equal(200);
       expect(response.res.statusMessage).to.equal('OK');
       // eslint-disable-next-line no-unused-expressions

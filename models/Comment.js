@@ -33,17 +33,17 @@ const Comment = (sequelize, DataTypes) => {
       targetKey: 'id',
       foreignKey: 'articleId'
     });
+
     models.Comment.belongsTo(models.User, {
       foreignKey: 'authorId',
       onDelete: 'CASCADE',
       as: 'author'
     });
-    // models.Comment.belongsToMany(models.User, {
-    //   through: models.CommentLike,
-    //   as: 'likes',
-    //   foreignKey: 'commentId'
-    // });
     CommentSchema.hasMany(models.CommentLike, { foreignKey: 'commentId' });
+
+    models.Comment.hasMany(models.CommentHistory, {
+      foreignKey: 'commentId',
+    });
   };
   return CommentSchema;
 };
