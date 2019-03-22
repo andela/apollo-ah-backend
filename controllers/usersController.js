@@ -32,6 +32,8 @@ class UsersController {
 
     try {
       const user = await User.create(body);
+      const role = await models.Role.findOne({ where: { name: 'user' } });
+      await user.setRole(role);
       const token = await generateToken({ user });
       // generate confirm token
       const confirmToken = await generateToken({ email: user.email });

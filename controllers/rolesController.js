@@ -44,7 +44,14 @@ class RolesController {
    */
   static async getAllRoles(request, response, next) {
     try {
-      const roles = await models.Role.findAll();
+      const roles = await models.Role.findAll({
+        include: {
+          model: models.Permission,
+          as: 'permissions',
+          through: { attributes: [] }
+        }
+      });
+
       return Response.send(response, STATUS.OK, roles, '');
     } catch (error) {
       next(error);
@@ -92,6 +99,33 @@ class RolesController {
         returning: true
       });
       return Response.send(response, STATUS.OK, role, MESSAGE.UPDATE_SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Assign permission(s) to a specific role
+   *
+   * @static
+   * @param {Request} request - Request object
+   * @param {Response} response - Response object
+   * @param {Function} next - Express next function
+   * @returns {void}
+   *
+   * @memberof RolesController
+   */
+  static async assignPermision(request, response, next) {
+    const { body: { permissionList } } = request;
+    const { roleId } = request.params;
+    try {
+      const role = await models.Role.findByPk(roleId);
+      const permissions = await models.Permission.findAll({
+        where: { name: permissionList }
+      });
+
+      const [result] = await role.setPermissions(permissions);
+      return Response.send(response, STATUS.OK, result);
     } catch (error) {
       next(error);
     }

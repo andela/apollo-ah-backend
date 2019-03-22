@@ -42,11 +42,7 @@ export default (sequelize, DataTypes) => {
     deletedAt: {
       allowNull: true,
       type: DataTypes.DATE,
-    },
-    roleId: {
-      type: DataTypes.INTEGER,
-      defaultValue: 2
-    },
+    }
   }, {});
 
   User.associate = (models) => {
@@ -64,9 +60,10 @@ export default (sequelize, DataTypes) => {
       through: models.UserFollowers
     });
     User.hasMany(models.Comment, { foreignKey: 'authorId', as: 'authors' });
-    User.belongsTo(models.Role, {
-      foreignKey: 'roleId',
-      as: 'role'
+    User.belongsToMany(models.Role, {
+      foreignKey: 'userId',
+      as: 'role',
+      through: 'UserRoles'
     });
     User.hasMany(models.History, { foreignKey: 'userId' });
   };

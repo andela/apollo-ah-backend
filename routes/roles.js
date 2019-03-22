@@ -11,18 +11,10 @@ const router = express.Router();
  * definitions:
  *   Role:
  *     properties:
- *       title:
+ *       id:
+ *         type: integer
+ *       name:
  *         type: string
- *       create:
- *         type: boolean
- *       read:
- *         type: boolean
- *       update:
- *         type: boolean
- *       delete:
- *         type: boolean
- *       global:
- *         type: boolean
  */
 
 /**
@@ -87,31 +79,11 @@ router.get(
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: title
- *         description: Role's title
+ *       - name: name
+ *         description: Role name
  *         in: body
  *         required: true
- *         type: boolean
- *       - name: create
- *         description: Role's create right
- *         in: body
- *         type: boolean
- *       - name: read
- *         description: Role's read right
- *         in: body
- *         type: boolean
- *       - name: update
- *         description: Role's update right
- *         in: body
- *         type: boolean
- *       - name: delete
- *         description: Role's delete right
- *         in: body
- *         type: boolean
- *       - name: global
- *         description: Role's global access right
- *         in: body
- *         type: boolean
+ *         type: string
  *     responses:
  *       201:
  *         description: Successfuly created a new role
@@ -142,31 +114,11 @@ router.post(
  *         in: query
  *         required: true
  *         type: integer
- *       - name: title
- *         description: Role's title
+ *       - name: name
+ *         description: Role name
  *         in: body
  *         required: true
  *         type: string
- *       - name: create
- *         description: Role's create right
- *         in: body
- *         type: boolean
- *       - name: read
- *         description: Role's read right
- *         in: body
- *         type: boolean
- *       - name: update
- *         description: Role's update right
- *         in: body
- *         type: boolean
- *       - name: delete
- *         description: Role's delete right
- *         in: body
- *         type: boolean
- *       - name: global
- *         description: Role's global access right
- *         in: body
- *         type: boolean
  *     responses:
  *       200:
  *         description: Successfuly updated role
@@ -181,6 +133,37 @@ router.patch(
   middlewares.authenticate,
   middlewares.permit('admin'),
   RolesController.updateRole
+);
+
+/**
+ * @swagger
+ * /api/v1/users:
+ *   post:
+ *     tags:
+ *       - permission
+ *     description: Assign permission to role
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: permissionList
+ *         description: List of permissions
+ *         in: body
+ *         required: true
+ *         type: array
+ *     responses:
+ *       201:
+ *         description: Successfuly assigned permission
+ *         schema:
+ *           $ref: '#/definitions/Role'
+ */
+router.post(
+  '/:roleId/permissions',
+  Validator.validateRoleId(),
+  Validator.validateRolePermission(),
+  ValidatorHandler.handleValidation,
+  middlewares.authenticate,
+  middlewares.permit('admin'),
+  RolesController.assignPermision
 );
 
 export default router;

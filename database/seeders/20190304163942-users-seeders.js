@@ -11,31 +11,30 @@ export default {
    * @return {void}
    */
   up: (queryInterface, sequelize) => {
-    const profile1 = {
+    const profile = {
       firstname: faker.name.firstName(),
       lastname: faker.name.lastName(),
       bio: faker.random.words(),
-      userId: 1,
-      username: faker.internet.userName(),
+      username: faker.internet.userName().toLowerCase(),
       image: faker.image.imageUrl()
     };
-
     const password = '$2a$10$/RAAxAh65nDlKdDtp00gB.noVOtvyktM4nSHR1rfZwJIvqsM35rtW'; // secret
 
     return queryInterface.bulkInsert('Users', [
       {
-        email: faker.internet.email(),
+        email: 'admin@admin.com',
         password,
-        roleId: 1
       },
       {
-        email: faker.internet.email(),
+        email: 'user@user.com',
         password,
-        roleId: 2
       }
     ], {})
       .then(() => (
-        queryInterface.bulkInsert('Profiles', [profile1])
+        queryInterface.bulkInsert('Profiles', [
+          { ...profile, userId: 1, username: 'admin' },
+          { ...profile, userId: 2 }
+        ])
       ))
       .catch(error => logger.log(error));
   },

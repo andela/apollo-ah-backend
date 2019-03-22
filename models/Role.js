@@ -7,34 +7,23 @@
  */
 export default (sequelize, DataTypes) => {
   const Role = sequelize.define('Role', {
-    title: {
+    name: {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    create: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    read: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    update: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    delete: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    global: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-  }, {});
+  }, { timestamps: false });
 
   Role.associate = (models) => {
-    Role.hasMany(models.User, { foreignKey: 'roleId' });
+    Role.belongsToMany(models.User, {
+      foreignKey: 'roleId',
+      as: 'users',
+      through: 'UserRoles'
+    });
+    Role.belongsToMany(models.Permission, {
+      foreignKey: 'roleId',
+      as: 'permissions',
+      through: 'RolePermissions'
+    });
   };
 
   return Role;

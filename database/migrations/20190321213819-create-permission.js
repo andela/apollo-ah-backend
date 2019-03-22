@@ -1,6 +1,6 @@
 export default {
   up: (queryInterface, Sequelize) => (
-    queryInterface.createTable('Roles', {
+    queryInterface.createTable('Permissions', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -8,11 +8,9 @@ export default {
         type: Sequelize.INTEGER
       },
       name: {
-        allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       }
     })
   ),
-
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Roles')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Permissions')
 };

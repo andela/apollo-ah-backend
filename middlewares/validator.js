@@ -200,30 +200,28 @@ export default class Validator {
    */
   static validateRoleData() {
     return [
-      body('title')
+      body('name')
         .trim()
         .not().isEmpty()
-        .withMessage('title field must not be empty'),
-      body('create')
-        .optional()
-        .isBoolean()
-        .withMessage('create value must true or false'),
-      body('read')
-        .optional()
-        .isBoolean()
-        .withMessage('read value must true or false'),
-      body('update')
-        .optional()
-        .isBoolean()
-        .withMessage('update value must true or false'),
-      body('delete')
-        .optional()
-        .isBoolean()
-        .withMessage('delete value must true or false'),
-      body('global')
-        .optional()
-        .isBoolean()
-        .withMessage('global value must true or false'),
+        .withMessage('name field must not be empty')
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRolePermission() {
+    return [
+      body('permissionList')
+        .custom((value, { req }) => {
+          if (!Array.isArray(value)) {
+            throw new Error('permissionList must be an array');
+          }
+          return value;
+        })
     ];
   }
 
