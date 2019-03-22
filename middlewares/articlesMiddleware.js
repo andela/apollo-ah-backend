@@ -1,6 +1,7 @@
 // import createError from 'http-errors';
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
+import jwt from 'jsonwebtoken';
 import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
 import models from '../models';
@@ -104,6 +105,14 @@ export default class AriclesMiddleware {
       return Response.send(
         res, STATUS.BAD_REQUEST, [], 'slug is not a string', false,
       );
+    }
+
+    if (req.headers && req.headers.authorization) {
+      const payload = req.headers.authorization.split(' ');
+      const token = payload[1];
+      const { user } = jwt.verify(token, process.env.APP_KEY);
+      if (!user) return next();
+      res.locals.userId = user.id;
     }
     return next();
   }
