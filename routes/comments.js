@@ -176,7 +176,7 @@ comments.delete('/:slug/comments/:id', authenticate, commentsMiddleware.validate
 comments.post(
   '/:slug/comments/:commentId/likes',
   authenticate,
-  commentLikeController.like,
+  commentLikeController.likeComment,
 );
 
 /**

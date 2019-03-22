@@ -29,7 +29,7 @@ class CommentLikeController {
     * @param  {Object} res - The response object.
     * @returns {Object} - It returns the response object.
     */
-  static async like(req, res) {
+  static async likeComment(req, res) {
     const { slug, commentId } = req.params;
     const userId = req.user.id;
 
@@ -58,7 +58,7 @@ class CommentLikeController {
         }
       });
 
-      if (likeFound && likeFound.like === true) {
+      if (likeFound && likeFound.like) {
         await CommentLike.destroy(
           {
             where: {
@@ -70,7 +70,7 @@ class CommentLikeController {
         return Response.send(res, OK, [], 'successfully unliked comment', true);
       }
 
-      if (likeFound && likeFound.like === false) {
+      if (likeFound && !likeFound.like) {
         const updatedLike = await CommentLike.update(
           { like: true, userId, commentId },
           {
@@ -136,7 +136,7 @@ class CommentLikeController {
         }
       });
 
-      if (likeFound && likeFound.like === true) {
+      if (likeFound && likeFound.like) {
         const updatedLike = await CommentLike.update(
           { like: false, userId, commentId },
           {
@@ -149,7 +149,7 @@ class CommentLikeController {
         return Response.send(res, OK, updatedLike, 'successfully disliked comment', true);
       }
 
-      if (likeFound && likeFound.like === false) {
+      if (likeFound && !likeFound.like) {
         await CommentLike.destroy(
           {
             where: {
