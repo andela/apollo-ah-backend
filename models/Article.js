@@ -14,7 +14,10 @@ const Article = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true
       },
-      slug: DataTypes.STRING,
+      slug: {
+        type: DataTypes.STRING,
+        unique: true
+      },
       body: {
         type: DataTypes.TEXT,
         allowNull: false
@@ -58,6 +61,7 @@ const Article = (sequelize, DataTypes) => {
       otherKey: 'tagName',
       as: 'tagList'
     });
+    ArticleSchema.hasMany(models.ratings, { foreignKey: 'articleId' });
     ArticleSchema.hasMany(models.History, { foreignKey: 'articleId' });
   };
   return ArticleSchema;

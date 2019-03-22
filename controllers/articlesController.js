@@ -8,7 +8,7 @@ import statsHelper from '../helpers/statsHelper';
 
 // const { ArticleCategory } = models;
 
-const { Article, Bookmark } = models;
+const { Article, Bookmark, ratings } = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -124,6 +124,10 @@ export default class ArticlesController {
             where: {
               ...categoryQuery,
             }
+          },
+          {
+            model: ratings,
+            attributes: ['stars', 'userId']
           }
         ],
       });
