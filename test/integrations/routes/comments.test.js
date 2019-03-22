@@ -108,7 +108,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       });
   });
 
-  it('Should update a comment2', (done) => {
+  it('Should update a comment the second time', (done) => {
     const comment = { body: faker.lorem.sentence() };
     chai
       .request(app)
@@ -124,7 +124,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       });
   });
 
-  it('Should update a comment3', (done) => {
+  it('Should update a comment the third time', (done) => {
     const comment = { body: faker.lorem.sentence() };
     chai
       .request(app)
@@ -140,7 +140,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       });
   });
 
-  it('Should update a comment4', (done) => {
+  it('Should update a comment the fourth time', (done) => {
     const comment = { body: faker.lorem.sentence() };
     chai
       .request(app)
@@ -156,7 +156,7 @@ describe('API endpoint: /api/articles/:slug/comments (Routes)', () => {
       });
   });
 
-  it('Should update a comment5', (done) => {
+  it('Should update a comment the fifth time', (done) => {
     const comment = { body: faker.lorem.sentence() };
     chai
       .request(app)
