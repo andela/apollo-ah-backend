@@ -50,16 +50,13 @@ export default class ArticleRatingController {
       });
       if (getRatings.count >= 1) {
         const averageRatings = getAverageRatings(getRatings, getRatings.count);
-        console.log(averageRatings);
         const finalRatings = Object.assign({}, getRatings, {
           averageRatings
         });
-        console.log(finalRatings);
         return Response.send(res, STATUS.OK, finalRatings, 'success');
       }
       return Response.send(res, STATUS.NOT_FOUND, [], 'No ratings for this article');
     } catch (err) {
-      console.log(err);
       return Response.send(res, STATUS.SERVER_ERROR, err, 'failed');
     }
   }
