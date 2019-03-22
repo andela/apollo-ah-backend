@@ -71,11 +71,11 @@ class CommentLikeController {
       }
 
       if (likeFound && likeFound.like === false) {
-        const updatedLike = await ArticleLike.update(
-          { like: true, userId, articleId },
+        const updatedLike = await CommentLike.update(
+          { like: true, userId, commentId },
           {
             where: {
-              articleId,
+              commentId,
               userId
             }
           }
@@ -98,16 +98,16 @@ class CommentLikeController {
     }
   }
 
-    /**
-    * @description dislike a user's comment.
-    * @function dislikeComment
-    * @memberof CommentLikeController
-    * @static
-    * @param  {Object} req - The request object.
-    * @param  {Object} res - The response object.
-    * @returns {Object} - It returns the response object.
-    */
-   static async dislikeComment(req, res) {
+  /**
+  * @description dislike a user's comment.
+  * @function dislikeComment
+  * @memberof CommentLikeController
+  * @static
+  * @param  {Object} req - The request object.
+  * @param  {Object} res - The response object.
+  * @returns {Object} - It returns the response object.
+  */
+  static async dislikeComment(req, res) {
     const { slug, commentId } = req.params;
     const userId = req.user.id;
 
@@ -137,11 +137,11 @@ class CommentLikeController {
       });
 
       if (likeFound && likeFound.like === true) {
-        const updatedLike = await ArticleLike.update(
-          { like: false, userId, articleId },
+        const updatedLike = await CommentLike.update(
+          { like: false, userId, commentId },
           {
             where: {
-              articleId,
+              commentId,
               userId
             }
           }
@@ -197,25 +197,25 @@ class CommentLikeController {
     }
   }
 
-    /**
-  * @description get all dislikes for a specific comment.
-  * @function getCommentDislikes
-  * @memberof CommentLikeController
-  * @static
-  * @param  {Object} req - The request object.
-  * @param  {Object} res - The response object.
-  * @returns {Object} - It returns the response object.
-  */
- static async getCommentDislikes(req, res) {
-  const { commentId } = req.params;
-  try {
-    const commentLikes = await CommentLike.findAll({
-      where: { commentId, like: false },
-    });
-    return Response.send(res, OK, commentLikes, 'dislikes successfully fetched', true);
-  } catch (error) {
-    return Response.send(res, SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
+  /**
+* @description get all dislikes for a specific comment.
+* @function getCommentDislikes
+* @memberof CommentLikeController
+* @static
+* @param  {Object} req - The request object.
+* @param  {Object} res - The response object.
+* @returns {Object} - It returns the response object.
+*/
+  static async getCommentDislikes(req, res) {
+    const { commentId } = req.params;
+    try {
+      const commentLikes = await CommentLike.findAll({
+        where: { commentId, like: false },
+      });
+      return Response.send(res, OK, commentLikes, 'dislikes successfully fetched', true);
+    } catch (error) {
+      return Response.send(res, SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
+    }
   }
-}
 }
 export default CommentLikeController;
