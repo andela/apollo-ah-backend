@@ -1,4 +1,4 @@
-export const PAGE_LIMIT = 20;
+export const PAGE_LIMIT = 500;
 
 export const STATUS = {
   OK: 200, // Request OK, indicates a successful request
@@ -67,6 +67,8 @@ export const MESSAGE = {
 
   CREATE_SUCCESS: 'Successfully created',
   UPDATE_SUCCESS: 'Successfully updated',
+  CATEGORY_INVALID: 'Category must be a number',
+  VALIDATE_ERROR: 'Validation error occurred',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

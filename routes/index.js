@@ -4,11 +4,14 @@ import profile from './profile';
 import authRoute from './auth';
 import articles from './articles';
 import settingRouter from './settings';
+import ratings from './ratings';
 import bookmark from './bookmarks';
 import tags from './tags';
 import notificationsRouter from './notifications';
 import comments from './comments';
 import roles from './roles';
+import stats from './stats';
+
 
 const router = express.Router();
 
@@ -31,10 +34,12 @@ router.use(profile);
 router.use('/auth', authRoute);
 router.use('/articles', articles);
 router.use('/setting', settingRouter);
+router.use('/articles', ratings);
 router.use('/bookmarks', bookmark);
 router.use('/tags', tags);
 router.use('/notification', notificationsRouter);
 router.use('/articles', comments);
 router.use('/roles', roles);
+router.use('/users', stats);
 
 export default router;

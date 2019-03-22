@@ -14,7 +14,10 @@ const Article = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true
       },
-      slug: DataTypes.STRING,
+      slug: {
+        type: DataTypes.STRING,
+        unique: true
+      },
       body: {
         type: DataTypes.TEXT,
         allowNull: false
@@ -45,6 +48,7 @@ const Article = (sequelize, DataTypes) => {
       foreignKey: 'authorId'
     });
     ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
+    ArticleSchema.hasMany(models.Comment, { foreignKey: 'articleId' });
     ArticleSchema.belongsTo(models.ArticleCategory, {
       targetKey: 'id',
       as: 'articleCategory',
@@ -57,6 +61,8 @@ const Article = (sequelize, DataTypes) => {
       otherKey: 'tagName',
       as: 'tagList'
     });
+    ArticleSchema.hasMany(models.ratings, { foreignKey: 'articleId' });
+    ArticleSchema.hasMany(models.History, { foreignKey: 'articleId' });
   };
   return ArticleSchema;
 };
