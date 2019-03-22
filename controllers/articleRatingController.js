@@ -18,7 +18,7 @@ export default class ArticleRatingController {
    * @param {res} res - the resposne object
    * @returns {object} the rated article object
    */
-  static async create(req, res) {
+  static async rateArticle(req, res) {
     const userId = req.user.id;
     const { articleId } = req.params;
     const { body: { stars } } = req;
@@ -41,7 +41,7 @@ export default class ArticleRatingController {
    * @param {function} res the resposne object
    * @returns {object} the rated article object
    */
-  static async get(req, res) {
+  static async getOneRatedArticle(req, res) {
     try {
       const getRatings = await ratings.findAndCountAll({
         where: {
@@ -50,13 +50,16 @@ export default class ArticleRatingController {
       });
       if (getRatings.count >= 1) {
         const averageRatings = getAverageRatings(getRatings, getRatings.count);
+        console.log(averageRatings);
         const finalRatings = Object.assign({}, getRatings, {
           averageRatings
         });
+        console.log(finalRatings);
         return Response.send(res, STATUS.OK, finalRatings, 'success');
       }
       return Response.send(res, STATUS.NOT_FOUND, [], 'No ratings for this article');
     } catch (err) {
+      console.log(err);
       return Response.send(res, STATUS.SERVER_ERROR, err, 'failed');
     }
   }

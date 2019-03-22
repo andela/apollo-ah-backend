@@ -50,7 +50,7 @@ router.post('/:articleId/ratings',
   authenticate,
   checkArticle,
   validateRatings,
-  articleRatings.create);
+  articleRatings.rateArticle);
 
 /**
  * @swagger
@@ -69,6 +69,6 @@ router.post('/:articleId/ratings',
  */
 router.get('/:articleId/ratings',
   checkArticle,
-  articleRatings.get);
+  articleRatings.getOneRatedArticle);
 
 export default router;
