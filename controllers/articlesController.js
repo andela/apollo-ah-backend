@@ -4,6 +4,9 @@ import Response from '../helpers/responseHelper';
 import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 import Logger from '../helpers/logger';
+import statsHelper from '../helpers/statsHelper';
+
+// const { ArticleCategory } = models;
 
 const { Article, Bookmark } = models;
 
@@ -144,6 +147,7 @@ export default class ArticlesController {
    * @returns {function} an array of Articles object
    */
   static async getOne(req, res) {
+    const { userId } = res.locals;
     const { slug } = req.params;
     try {
       const article = await models.Article.findOne({
@@ -158,6 +162,7 @@ export default class ArticlesController {
       if (!article) {
         return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);
       }
+      if (userId) await statsHelper.confirmUser(userId, article.id, article.categoryId);
       return Response.send(res, STATUS.OK, article, 'article was successfully fetched', true);
     } catch (error) {
       return Response.send(res, STATUS.BAD_REQUEST, error, 'server error', false);
