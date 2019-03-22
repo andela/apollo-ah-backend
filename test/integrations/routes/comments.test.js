@@ -253,7 +253,7 @@ describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => 
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
-        expect(res.body.message).to.equal('successfully unliked comment');
+        expect(res.body.message).to.equal('successfully disliked comment');
         done();
       });
   });
