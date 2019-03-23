@@ -216,6 +216,8 @@ export default class Validator {
   static validateRolePermission() {
     return [
       body('permissionList')
+        .not().isEmpty()
+        .withMessage('permissionList must not be empty')
         .custom((value, { req }) => {
           if (!Array.isArray(value)) {
             throw new Error('permissionList must be an array');

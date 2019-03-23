@@ -108,5 +108,35 @@ describe('Role Based Access Control', () => {
           done();
         });
     });
+    it('Should throw an error when permissionList is not supplied', (done) => {
+      const { id } = dummyRole;
+      chai
+        .request(app)
+        .post(`/api/v1/roles/${id}/permissions`)
+        .send({})
+        .set({ Authorization: `Bearer ${adminToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal('permissionList must not be empty');
+          done();
+        });
+    });
+    it('Should throw an error when permissionList is invalid', (done) => {
+      const { id } = dummyRole;
+      chai
+        .request(app)
+        .post(`/api/v1/roles/${id}/permissions`)
+        .send({ permissionList: 'create;read' })
+        .set({ Authorization: `Bearer ${adminToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal('permissionList must be an array');
+          done();
+        });
+    });
   });
 });
