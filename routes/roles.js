@@ -20,7 +20,7 @@ const router = express.Router();
 /**
  * @swagger
  * /api/v1/roles:
- *   post:
+ *   get:
  *     tags:
  *       - roles
  *     description: Fetch a list of all roles
@@ -42,7 +42,7 @@ router.get(
 /**
  * @swagger
  * /api/v1/roles/:roleId:
- *   post:
+ *   get:
  *     tags:
  *       - roles
  *     description: Fetch a specified role
@@ -102,7 +102,7 @@ router.post(
 /**
  * @swagger
  * /api/v1/roles/:roleId:
- *   post:
+ *   patch:
  *     tags:
  *       - update role
  *     description: Update a role
