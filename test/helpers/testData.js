@@ -1,7 +1,4 @@
 import faker from 'faker';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const users = {
   dummyUser: {

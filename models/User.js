@@ -60,6 +60,11 @@ export default (sequelize, DataTypes) => {
       through: models.UserFollowers
     });
     User.hasMany(models.Comment, { foreignKey: 'authorId', as: 'authors' });
+    User.belongsToMany(models.Role, {
+      foreignKey: 'userId',
+      as: 'role',
+      through: 'UserRoles'
+    });
     User.hasMany(models.History, { foreignKey: 'userId' });
   };
 
