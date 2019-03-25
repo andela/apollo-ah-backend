@@ -39,6 +39,8 @@ const Comment = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       as: 'author'
     });
+    CommentSchema.hasMany(models.CommentLike, { foreignKey: 'commentId' });
+
     models.Comment.hasMany(models.CommentHistory, {
       foreignKey: 'commentId',
     });

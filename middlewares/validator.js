@@ -19,7 +19,7 @@ export default class Validator {
       ...Validator.validateEmail(),
       ...Validator.verifyEmailExists(),
       ...Validator.validatePassword(),
-      ...Validator.validateUsername()
+      ...Validator.validateUsername(),
     ];
   }
 
@@ -33,6 +33,22 @@ export default class Validator {
     return [
       ...Validator.validateEmail(),
       ...Validator.verifyEmailExists(true),
+    ];
+  }
+
+  /**
+ * Validates profile update parameters
+ * @static
+ * @returns {array} The array of express validator chains
+ * @memberof Validator
+ */
+  static validateUpdateProfile() {
+    return [
+      ...Validator.validateUpdateUsername(),
+      ...Validator.validateFirstname(),
+      ...Validator.validateLastname(),
+      ...Validator.validateBio(),
+      ...Validator.validateImageURL()
     ];
   }
 
@@ -97,6 +113,92 @@ export default class Validator {
             return Promise.reject(MESSAGE.USERNAME_EXITS);
           }
         }),
+    ];
+  }
+
+  /**
+   * Validates username for profile update
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateUpdateUsername() {
+    return [
+      body(FIELD.USERNAME)
+        .trim()
+        .not().isEmpty()
+        .withMessage(MESSAGE.USERNAME_EMPTY)
+    ];
+  }
+
+  /**
+ * Validates firstname
+ * @static
+ * @returns {array} The array of express validator chains
+ * @memberof Validator
+ */
+  static validateFirstname() {
+    return [
+      body(FIELD.FIRSTNAME)
+        .trim()
+        .blacklist(' ')
+        .not()
+        .isEmpty()
+        .withMessage(MESSAGE.FIRSTNAME_EMPTY)
+        .matches(/^[A-Za-z]+$/)
+        .withMessage(MESSAGE.FIRST_NOT_ALPHANUMERIC)
+    ];
+  }
+
+  /**
+* Validates lastname
+* @static
+* @returns {array} The array of express validator chains
+* @memberof Validator
+*/
+  static validateLastname() {
+    return [
+      body(FIELD.LASTNAME)
+        .trim()
+        .blacklist(' ')
+        .not()
+        .isEmpty()
+        .withMessage(MESSAGE.LASTNAME_EMPTY)
+        .matches(/^[A-Za-z]+$/)
+        .withMessage(MESSAGE.FIRST_NOT_ALPHANUMERIC)
+    ];
+  }
+
+  /**
+* Validates bio
+* @static
+* @returns {array} The array of express validator chains
+* @memberof Validator
+*/
+  static validateBio() {
+    return [
+      body(FIELD.BIO)
+        .trim()
+        .not().isEmpty()
+        .withMessage(MESSAGE.BIO_EMPTY)
+        .isLength({ max: 255 })
+        .withMessage(MESSAGE.BIO_TOO_LONG)
+    ];
+  }
+
+  /**
+* Validates image
+* @static
+* @returns {array} The array of express validator chains
+* @memberof Validator
+*/
+  static validateImageURL() {
+    return [
+      body(FIELD.IMAGE)
+        .trim()
+        .blacklist(' ')
+        .matches(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/)
+        .withMessage(MESSAGE.IMAGE_NOT_VALID)
     ];
   }
 

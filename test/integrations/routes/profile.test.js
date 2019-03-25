@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../../../index';
-import { STATUS } from '../../../helpers/constants';
+import { STATUS, MESSAGE } from '../../../helpers/constants';
 import models from '../../../models';
 import { users } from '../../helpers/testData';
 
@@ -76,9 +76,12 @@ describe('Testing user profile feature', () => {
       .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('firstname');
-        expect(res.body.data[0].errors.firstname).to.be.equals('Firstname is required');
+        expect(res.body).to.have.property('status').equal(false);
+        expect(res.body).to.have.property('code').equal(400);
+        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data[0].field).to.be.equals('firstname');
+        expect(res.body.data[0].message).to.be.equals('Firstname is required');
         done();
       });
   });
@@ -91,9 +94,12 @@ describe('Testing user profile feature', () => {
       .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('lastname');
-        expect(res.body.data[0].errors.lastname).to.be.equals('Lastname is required');
+        expect(res.body).to.have.property('status').equal(false);
+        expect(res.body).to.have.property('code').equal(400);
+        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data[0].field).to.be.equals('lastname');
+        expect(res.body.data[0].message).to.be.equals('Lastname is required');
         done();
       });
   });
@@ -106,9 +112,12 @@ describe('Testing user profile feature', () => {
       .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('username');
-        expect(res.body.data[0].errors.username).to.be.equals('username field cannot be emnpty');
+        expect(res.body).to.have.property('status').equal(false);
+        expect(res.body).to.have.property('code').equal(400);
+        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data[0].field).to.be.equals('username');
+        expect(res.body.data[0].message).to.be.equals('Username is required');
         done();
       });
   });
@@ -121,9 +130,12 @@ describe('Testing user profile feature', () => {
       .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('bio');
-        expect(res.body.data[0].errors.bio).to.be.equals('Please provide a brief description about yourself');
+        expect(res.body).to.have.property('status').equal(false);
+        expect(res.body).to.have.property('code').equal(400);
+        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data[0].field).to.be.equals('bio');
+        expect(res.body.data[0].message).to.be.equals('Bio is required');
         done();
       });
   });
@@ -136,9 +148,12 @@ describe('Testing user profile feature', () => {
       .set('Authorization', `Bearer ${dummyUser3.token}`)
       .end((err, res) => {
         expect(res.status).eql(BAD_REQUEST);
-        expect(res.body.data[0]).to.have.property('errors');
-        expect(res.body.data[0].errors).to.have.property('image');
-        expect(res.body.data[0].errors.image).to.be.equals('image URL is not valid');
+        expect(res.body).to.have.property('status').equal(false);
+        expect(res.body).to.have.property('code').equal(400);
+        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data[0].field).to.be.equals('image');
+        expect(res.body.data[0].message).to.be.equals('image URL is not valid');
         done();
       });
   });

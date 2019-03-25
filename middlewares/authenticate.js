@@ -27,6 +27,7 @@ function authenticate(request, response, next) {
 
     const { user } = decoded;
     request.user = user || decoded;
+    response.locals.userId = request.user.id;
     return next();
   });
 }

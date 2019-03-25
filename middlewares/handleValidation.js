@@ -22,6 +22,18 @@ export default class Handler {
   }
 
   /**
+ * Validates the profile update parameters
+ *
+ * @param {object} request The request object
+ * @param {object} response The response object
+ * @param {function} next The next function to transfer control to the next middleware
+ * @returns {void}
+ */
+  static handleProfileUpdate(request, response, next) {
+    Handler.handle(request, response, next, MESSAGE.PROFILE_UPDATE_ERROR);
+  }
+
+  /**
    * Validates the recover password parameters
    *
    * @param {object} request The request object

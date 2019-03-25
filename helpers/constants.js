@@ -36,13 +36,21 @@ export const MESSAGE = {
   EMAIL_EXISTS: 'The email address already exists. If you are registered, proceed to login instead',
   EMAIL_NOT_EXISTS: 'The email address is not registered. Please try again',
 
+  FIRSTNAME_EMPTY: 'Firstname is required',
+  FIRST_NOT_ALPHANUMERIC: 'Firstname should contain only alphabets',
+
+  IMAGE_NOT_VALID: 'image URL is not valid',
+
   USERNAME_EMPTY: 'Username is required',
-  USERNAME_EXITS: 'The username is already taken, try another one',
+  USERNAME_EXITS: 'This username is already taken, try another one',
   USERNAME_NOT_ALPHANUMERIC: 'Username should contain only letters and numbers',
 
   ACCOUNT_CONFIRM: 'Your account has been successfully confirmed',
 
+  LASTNAME_EMPTY: 'Lastname is required',
+  LASTNAME_NOT_ALPHANUMERIC: 'Lastname should contain only alphabets',
   LOGIN_SUCCESSFUL: 'Login successful',
+
 
   WELCOME_MESSAGE: 'Welcome to Author Haven API',
   ROUTE_NOT_FOUND: 'Provided route is invalid.',
@@ -58,8 +66,13 @@ export const MESSAGE = {
   ARTICLES_NOT_FOUND: 'No article found.',
   ARTICLES_FOUND: 'Articles successfully fetched',
 
+  BIO_EMPTY: 'Bio is required',
+  BIO_TOO_LONG: 'Bio must not exceed 255 characters',
+
   PAGE_LIMIT_EXCEEDED: `The maximum size for the page limit is ${PAGE_LIMIT}`,
   PAGE_LIMIT_INVALID: 'The page limit must be a number',
+  PROFILE_UPDATE_SUCCESSFUL: 'Profile updated successfully',
+  PROFILE_UPDATE_ERROR: 'Update was not successful',
 
   RESOURCE_NOT_FOUND: 'Resource not found',
   ACCESS_FORBIDDEN: 'Access is forbidden',
@@ -74,6 +87,10 @@ export const MESSAGE = {
 export const TOKEN_VALIDITY = 604800; // 7 days
 
 export const FIELD = {
+  FIRSTNAME: 'firstname',
+  LASTNAME: 'lastname',
+  BIO: 'bio',
+  IMAGE: 'image',
   USERNAME: 'username',
   PASSWORD: 'password',
   EMAIL: 'email',
