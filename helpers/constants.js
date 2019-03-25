@@ -74,6 +74,12 @@ export const MESSAGE = {
   PROFILE_UPDATE_SUCCESSFUL: 'Profile updated successfully',
   PROFILE_UPDATE_ERROR: 'Update was not successful',
 
+  RESOURCE_NOT_FOUND: 'Resource not found',
+  ACCESS_FORBIDDEN: 'Access is forbidden',
+  INVALID_CREDENTIALS: 'Email or password is incorrect',
+
+  CREATE_SUCCESS: 'Successfully created',
+  UPDATE_SUCCESS: 'Successfully updated',
   CATEGORY_INVALID: 'Category must be a number',
   VALIDATE_ERROR: 'Validation error occurred',
 };

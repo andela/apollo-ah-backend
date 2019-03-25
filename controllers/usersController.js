@@ -32,6 +32,8 @@ class UsersController {
 
     try {
       const user = await User.create(body);
+      const role = await models.Role.findOne({ where: { name: 'user' } });
+      await user.setRole(role);
       const token = await generateToken({ user });
       // generate confirm token
       const confirmToken = await generateToken({ email: user.email });
@@ -159,15 +161,24 @@ class UsersController {
     const { body: { email, password } } = request;
 
     try {
-      const user = await User.findOne({ where: { email } });
+      const user = await User.findOne({
+        where: { email },
+        raw: true,
+      });
 
       // validate user password
-      if (user && !User.comparePassword(user, password)) {
-        throw createError(401, 'Invalid credentials');
+      if (!user || (user && !User.comparePassword(user, password))) {
+        return Response.send(
+          response,
+          STATUS.UNATHORIZED,
+          [],
+          MESSAGE.INVALID_CREDENTIALS,
+          false
+        );
       }
 
       // generate token from user payload
-      const payload = user.dataValues;
+      const payload = user;
       const token = await generateToken(payload);
 
       // respond with token

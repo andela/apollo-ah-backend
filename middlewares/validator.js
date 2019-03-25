@@ -1,4 +1,4 @@
-import { body, query } from 'express-validator/check';
+import { body, query, param } from 'express-validator/check';
 import { MESSAGE, FIELD, PAGE_LIMIT } from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
@@ -291,6 +291,55 @@ export default class Validator {
         .trim()
         .isFloat()
         .withMessage(MESSAGE.CATEGORY_INVALID)
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRoleData() {
+    return [
+      body('name')
+        .trim()
+        .not().isEmpty()
+        .withMessage('name field must not be empty')
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRolePermission() {
+    return [
+      body('permissionList')
+        .not().isEmpty()
+        .withMessage('permissionList must not be empty')
+        .custom((value, { req }) => {
+          if (!Array.isArray(value)) {
+            throw new Error('permissionList must be an array');
+          }
+          return value;
+        })
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateRoleId() {
+    return [
+      param('roleId')
+        .isInt()
+        .withMessage('roleId parameter must be an integer'),
     ];
   }
 }

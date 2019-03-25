@@ -18,7 +18,6 @@
     "mocha": "mocha",
     "mocha:watch": "npm run mocha -- -w",
     "seed": "sequelize db:seed:all --seeders-path database/seeders",
-    "seed:category": "sequelize db:seed:all --seeders-path database/seeders/categorySeed",
     "seed:undo": "sequelize db:seed:undo:all",
     "sequelize": "sequelize",
     "start": "node dist/bin/www.js",
