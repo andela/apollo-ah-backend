@@ -18,13 +18,13 @@ let authpayload;
 let authpayload2;
 let articlePayload;
 
-let dummyUser = {
+const dummyUser = {
   email: faker.internet.email(),
   password: 'i2345678',
   username: 'error-test'
 };
 
-let dummyUser2 = {
+const dummyUser2 = {
   email: faker.internet.email(),
   password: 'p98765435667',
   username: 'murderer-inc'
@@ -42,7 +42,7 @@ const dummyArticle = {
 const createUser = async () => {
   try {
     const user = await models.User.create(dummyUser);
-    dummyUser = user;
+    dummyUser.id = user.id;
     return dummyUser;
   } catch (error) {
     return error;
@@ -52,7 +52,7 @@ const createUser = async () => {
 const createUser2 = async () => {
   try {
     const user = await models.User.create(dummyUser2);
-    dummyUser2 = user;
+    dummyUser2.id = user.id;
     return dummyUser2;
   } catch (error) {
     return error;
@@ -61,14 +61,13 @@ const createUser2 = async () => {
 
 describe('API endpoint: /api/articles (Middleware test)', () => {
   before(async () => {
-    models.sequelize.sync();
-    createUser();
+    await createUser();
     authpayload = await chai.request(app)
       .post('/api/v1/users/login')
       .send(dummyUser);
     dummyUser.token = authpayload.body.token;
 
-    createUser2();
+    await createUser2();
     authpayload2 = await chai.request(app)
       .post('/api/v1/users/login')
       .send(dummyUser2);
@@ -85,7 +84,6 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
       .set({ Authorization: `Bearer ${dummyUser2.token}` });
 
     dummyArticle2 = articlePayload.body.data;
-    // return dummyUser;
   });
 
   describe('POST: /api/v1/articles', () => {

@@ -1,11 +1,22 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../index';
+import models from '../../../models';
+import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
 
 describe('Report Article API endpoint', () => {
-  const token = process.env.JWT_TOKEN;
+  let authToken;
+
+  before(async () => {
+    const user = await models.User.findByPk(2, { raw: true });
+    user.password = 'secret';
+    const response = await auth(user);
+    authToken = response.body.token;
+  });
+
+  // const token = process.env.JWT_TOKEN;
   describe('/reporting article Post Endpoint', () => {
     it('should report an article with report-type of "spam"', async () => {
       const reportArticle = {
@@ -13,7 +24,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/2/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(201);
       expect(res.body.data).to.be.an('object');
@@ -27,7 +38,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/3/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(201);
       expect(res.body.data).to.be.an('object');
@@ -41,7 +52,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/2/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(400);
       expect(res.body.data).to.be.an('array');
@@ -55,7 +66,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/2/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(403);
       expect(res.body.data).to.be.an('object');
@@ -69,7 +80,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/2/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(400);
       expect(res.body.data).to.be.an('array');
@@ -83,7 +94,7 @@ describe('Report Article API endpoint', () => {
       };
       const res = await chai.request(app)
         .post('/api/v1/articles/4/report')
-        .set({ Authorization: `Bearer ${token}` })
+        .set({ Authorization: `Bearer ${authToken}` })
         .send(reportArticle);
       expect(res.body.code).to.equal(201);
       expect(res.body.data).to.be.an('object');
@@ -96,7 +107,7 @@ describe('Report Article API endpoint', () => {
     it('should get a reported article', async () => {
       const res = await chai.request(app)
         .get('/api/v1/articles/2/report')
-        .set({ Authorization: `Bearer ${token}` });
+        .set({ Authorization: `Bearer ${authToken}` });
       expect(res.body.code).to.equal(200);
       expect(res.body.message).to.equal('success');
       expect(res.body.status).to.equal(true);
@@ -105,7 +116,7 @@ describe('Report Article API endpoint', () => {
     it('should return error for non-existing article', async () => {
       const res = await chai.request(app)
         .get('/api/v1/articles/b/report')
-        .set({ Authorization: `Bearer ${token}` });
+        .set({ Authorization: `Bearer ${authToken}` });
       expect(res.body.code).to.equal(404);
       expect(res.body.message).to.equal('ARTICLE NOT FOUND');
       expect(res.body.status).to.equal('Failure');
