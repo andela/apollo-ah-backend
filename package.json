@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "bin/dist/www.js",
   "scripts": {
-    "build": "babel . --ignore node_modules,database -d dist",
+    "build": "babel . --ignore node_modules,database,test -d dist",
     "clean": "rimraf dist",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "dev": "node -r dotenv/config -r @babel/register bin/www.js",

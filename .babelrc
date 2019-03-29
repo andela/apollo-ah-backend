@@ -4,7 +4,6 @@
     ".github",
     "node_modules",
     "public",
-    "view",
-    "test"
+    "view"
   ]
 }
