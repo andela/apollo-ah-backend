@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import methodOveride from 'method-override';
 import createError from 'http-errors';
 import passport from 'passport';
+import path from 'path';
 import logger from './helpers/logger';
 import { MESSAGE } from './helpers/constants';
 import exceptionHandler from './middlewares/exceptionHandler';
@@ -14,19 +15,16 @@ import models from './models/index';
 import routes from './routes';
 
 const isProduction = process.env.NODE_ENV === 'production';
-// Routes
-
 
 // Create global app object
 const app = express();
-
 
 logger.config();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOveride());
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, './public')));
 app.use(morgan(':remote-addr - ":method :url :status ":user-agent"', {
   stream: logger.stream(),
   skip: () => !isProduction
