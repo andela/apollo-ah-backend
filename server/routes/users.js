@@ -54,10 +54,12 @@ const router = express.Router();
  *         schema:
  *           $ref: '#/definitions/User'
  */
-router.post('/',
+router.post(
+  '/',
   Validator.validateRegistration(),
   Handler.handleRegistration,
-  UsersController.register);
+  UsersController.register
+);
 
 /**
  * @swagger

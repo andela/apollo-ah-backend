@@ -5,7 +5,10 @@ import chaiHttp from 'chai-http';
 import app from '../../../server';
 import models from '../../../server/models';
 import {
-  STATUS, MESSAGE, PAGE_LIMIT, FIELD
+  STATUS,
+  MESSAGE,
+  PAGE_LIMIT,
+  FIELD
 } from '../../../server/helpers/constants';
 import Logger from '../../../server/helpers/logger';
 
