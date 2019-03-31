@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import NotificationsController from '../../controllers/notificationsController';
-import models from '../../models/index';
+import NotificationsController from '../../server/controllers/notificationsController';
+import models from '../../server/models';
 
 describe('Notifications Tests', () => {
   it('should send users test notification', async () => {

@@ -46,11 +46,13 @@ const router = express.Router();
  *           $ref: '#/definitions/Article'
  */
 
-router.post('/:articleId/ratings',
+router.post(
+  '/:articleId/ratings',
   authenticate,
   checkArticle,
   validateRatings,
-  articleRatings.rateArticle);
+  articleRatings.rateArticle
+);
 
 /**
  * @swagger
@@ -67,8 +69,10 @@ router.post('/:articleId/ratings',
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-router.get('/:articleId/ratings',
+router.get(
+  '/:articleId/ratings',
   checkArticle,
-  articleRatings.getOneRatedArticle);
+  articleRatings.getOneRatedArticle
+);
 
 export default router;

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import Mail from '../../helpers/sendMail';
-import Logger from '../../helpers/logger';
+import Mail from '../../server/helpers/sendMail';
+import Logger from '../../server/helpers/logger';
 
 describe('Mail class', () => {
   it('should send a mail to a user with valid data', async () => {

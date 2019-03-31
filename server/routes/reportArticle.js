@@ -47,12 +47,14 @@ const router = express.Router();
  *           $ref: '#/definitions/Article'
  */
 
-router.post('/:articleId/report',
+router.post(
+  '/:articleId/report',
   authenticate,
   checkArticle,
   validateReportType,
   reportOnce,
-  reportArticleController.reportArticle);
+  reportArticleController.reportArticle
+);
 
 /**
  * @swagger

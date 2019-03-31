@@ -1,5 +1,5 @@
 import express from 'express';
-import passport from '../auth/passport';
+import passport from '../config/passport';
 import authController from '../controllers/authController';
 
 

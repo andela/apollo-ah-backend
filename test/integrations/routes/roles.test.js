@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../../../index';
-import models from '../../../models';
-import { STATUS, MESSAGE } from '../../../helpers/constants';
+import app from '../../../server';
+import models from '../../../server/models';
+import { STATUS, MESSAGE } from '../../../server/helpers/constants';
 import { auth } from '../../helpers';
 
 chai.use(chaiHttp);

@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import { generateOrFindUser } from '../../../auth/passport';
+import { generateOrFindUser } from '../../../server/config/passport';
 
 chai.use(chaiHttp);
 describe('social authentication', () => {
