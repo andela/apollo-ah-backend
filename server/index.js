@@ -24,7 +24,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOveride());
-app.use(express.static(path.join(__dirname, './public')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(morgan(':remote-addr - ":method :url :status ":user-agent"', {
   stream: logger.stream(),
   skip: () => !isProduction

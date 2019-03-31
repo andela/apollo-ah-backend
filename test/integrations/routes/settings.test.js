@@ -2,8 +2,8 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import logger from '../../../helpers/logger';
-import app from '../../../index';
+import logger from '../../../server/helpers/logger';
+import app from '../../../server';
 
 chai.use(chaiHttp);
 let userToken;

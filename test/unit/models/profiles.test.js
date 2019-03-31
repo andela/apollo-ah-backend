@@ -1,8 +1,8 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import models from '../../../models';
-import ProfileController from '../../../controllers/profileController';
+import models from '../../../server/models';
+import ProfileController from '../../../server/controllers/profileController';
 
 chai.use(chaiHttp);
 

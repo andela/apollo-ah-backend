@@ -2,12 +2,12 @@
 import chai, { expect } from 'chai';
 import faker from 'faker';
 import chaiHttp from 'chai-http';
-import app from '../../../index';
-import models from '../../../models';
+import app from '../../../server';
+import models from '../../../server/models';
 import {
   STATUS, MESSAGE, PAGE_LIMIT, FIELD
-} from '../../../helpers/constants';
-import Logger from '../../../helpers/logger';
+} from '../../../server/helpers/constants';
+import Logger from '../../../server/helpers/logger';
 
 chai.use(chaiHttp);
 

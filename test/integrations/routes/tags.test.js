@@ -2,9 +2,9 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import app from '../../../index';
-import models from '../../../models';
-import { STATUS } from '../../../helpers/constants';
+import app from '../../../server';
+import models from '../../../server/models';
+import { STATUS } from '../../../server/helpers/constants';
 import { auth } from '../../helpers';
 
 chai.use(chaiHttp);

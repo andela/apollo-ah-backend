@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import jwt from 'jsonwebtoken';
 import faker from 'faker';
-import app from '../../../index';
-import models from '../../../models';
-import { STATUS, MESSAGE, FIELD } from '../../../helpers/constants';
-import { env } from '../../../helpers/utils';
+import app from '../../../server';
+import models from '../../../server/models';
+import { STATUS, MESSAGE, FIELD } from '../../../server/helpers/constants';
+import { env } from '../../../server/helpers/utils';
 
 chai.use(chaiHttp);
 describe('Forgot password endpoint', () => {

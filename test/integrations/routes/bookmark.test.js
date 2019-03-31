@@ -3,9 +3,9 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import models from '../../../models';
-import { STATUS } from '../../../helpers/constants';
-import app from '../../../index';
+import models from '../../../server/models';
+import { STATUS } from '../../../server/helpers/constants';
+import app from '../../../server';
 import { users } from '../../helpers/testData';
 
 const { dummyUser4 } = users;

@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import models from '../../../models/index';
+import models from '../../../server/models/index';
 
 chai.use(chaiHttp);
 
