@@ -29,7 +29,7 @@ export default class ArticlesController {
     const authorId = req.user.id;
     const { slug } = res.locals;
     const {
-      title, body, description, categoryId, tagList
+      title, body, description, categoryId, tagList, image = '',
     } = req.body;
 
     const readTime = articleHelpers.articleReadTime(req.body);
@@ -37,7 +37,7 @@ export default class ArticlesController {
       const categoryFound = await articleHelpers.findArticleCategory(res, categoryId);
       const { category } = categoryFound;
       const content = {
-        title, body, description, slug, authorId, readTime, categoryId, tagList
+        title, body, description, slug, authorId, readTime, categoryId, tagList, image
       };
       const result = await models.Article.create(content, {
         include: [

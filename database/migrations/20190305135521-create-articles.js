@@ -45,6 +45,9 @@ export default {
       allowNull: true,
       type: Sequelize.DATE
     },
+    image: {
+      type: Sequelize.STRING
+    },
   }),
   down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
 };

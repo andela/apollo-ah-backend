@@ -147,7 +147,11 @@ export default class AriclesMiddleware {
         return Response.send(res, STATUS.FORBIDDEN, [], 'you do not have the right to update this article', false);
       }
       if (title) {
-        const slug = slugify(`${title}-${uuid()}`, '-');
+        const slug = slugify(`${title}-${uuid()}`, {
+          remove: /[*+~.()'"!:@]/g,
+          replacement: '-',
+          lower: true
+        });
         res.locals.slug = slug;
       }
       // res.locals.article = foundArticle;
