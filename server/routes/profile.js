@@ -94,7 +94,6 @@ profileRouter.post(
  *         schema:
  *           $ref: '#/definitions/Profile'
  */
-
   .get(
     '/profiles',
     middlewares.authenticate,
@@ -116,7 +115,6 @@ profileRouter.post(
  *         schema:
  *           $ref: '#/definitions/Profile'
  */
-
   .get(
     '/profiles/:username',
     middlewares.authenticate,
