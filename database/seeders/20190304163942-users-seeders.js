@@ -1,5 +1,5 @@
 import faker from 'faker';
-import logger from '../../helpers/logger';
+import logger from '../../server/helpers/logger';
 
 export default {
   /**

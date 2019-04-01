@@ -1,1 +1,1 @@
-web: npm run start
+web: node dist/bin/www.js

@@ -2,9 +2,9 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
-import app from '../../../index';
-import { STATUS, MESSAGE } from '../../../helpers/constants';
-import models from '../../../models';
+import app from '../../../server';
+import { STATUS, MESSAGE } from '../../../server/helpers/constants';
+import models from '../../../server/models';
 import { users } from '../../helpers/testData';
 
 const { dummyUser2 } = users;

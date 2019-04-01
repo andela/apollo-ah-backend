@@ -2,9 +2,9 @@
 import chai, { expect } from 'chai';
 import faker from 'faker';
 import chaiHttp from 'chai-http';
-import app from '../../../index';
-import logger from '../../../helpers/logger';
-import { STATUS } from '../../../helpers/constants';
+import app from '../../../server';
+import logger from '../../../server/helpers/logger';
+import { STATUS } from '../../../server/helpers/constants';
 
 logger.log('The test is running');
 chai.use(chaiHttp);
