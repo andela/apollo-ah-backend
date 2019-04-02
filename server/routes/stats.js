@@ -40,6 +40,11 @@ const comments = express.Router();
  *         schema:
  *           $ref: '#/definitions/Stats'
  */
-comments.get('/:id/stats', authenticate, statsMiddleware.getUserStats, statsController.sendUserStats);
+comments.get(
+  '/:id/stats',
+  authenticate,
+  statsMiddleware.getUserStats,
+  statsController.sendUserStats
+);
 
 export default comments;

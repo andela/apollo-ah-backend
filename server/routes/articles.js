@@ -94,7 +94,11 @@ articles.get(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.get('/:slug', articlesMiddleware.validateGetOneArticle, articlesController.getOne);
+articles.get(
+  '/:slug',
+  articlesMiddleware.validateGetOneArticle,
+  articlesController.getOne
+);
 
 /**
  * @swagger
@@ -117,7 +121,12 @@ articles.get('/:slug', articlesMiddleware.validateGetOneArticle, articlesControl
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.delete('/:articleId', authenticate, articlesMiddleware.validateDeleteArticle, articlesController.delete);
+articles.delete(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateDeleteArticle,
+  articlesController.delete
+);
 
 /**
  * @swagger
@@ -140,7 +149,12 @@ articles.delete('/:articleId', authenticate, articlesMiddleware.validateDeleteAr
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.put('/:articleId', authenticate, articlesMiddleware.validateUpdateArticle, articlesController.update);
+articles.put(
+  '/:articleId',
+  authenticate,
+  articlesMiddleware.validateUpdateArticle,
+  articlesController.update
+);
 
 /**
  * @swagger
@@ -173,7 +187,12 @@ articles.put('/:articleId', authenticate, articlesMiddleware.validateUpdateArtic
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-articles.post('/', authenticate, articlesMiddleware.validateCreateArticle, articlesMiddleware.validateTagList, articlesController.create);
+articles.post(
+  '/', authenticate,
+  articlesMiddleware.validateCreateArticle,
+  articlesMiddleware.validateTagList,
+  articlesController.create
+);
 
 /**
  * @swagger
