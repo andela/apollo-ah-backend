@@ -37,7 +37,8 @@ const Article = (sequelize, DataTypes) => {
       deletedAt: {
         allowNull: true,
         type: DataTypes.DATE,
-      }
+      },
+      image: DataTypes.STRING
     },
     {}
   );
