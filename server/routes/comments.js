@@ -56,7 +56,12 @@ const comments = express.Router();
  *         schema:
  *           $ref: '#/definitions/Comments'
  */
-comments.post('/:slug/comments/', authenticate, commentsMiddleware.validateCreateCommentInput, commentsController.createComment);
+comments.post(
+  '/:slug/comments/',
+  authenticate,
+  commentsMiddleware.validateCreateCommentInput,
+  commentsController.createComment
+);
 
 /**
  * @swagger
@@ -79,7 +84,14 @@ comments.post('/:slug/comments/', authenticate, commentsMiddleware.validateCreat
  *         schema:
  *           $ref: '#/definitions/Comments'
  */
-comments.get('/:slug/comments/', Validator.validatePaginationLimit(), Handler.handleValidation, commentPagination.validatePagination, commentsMiddleware.validateGetAllComments, commentsController.getAllComments);
+comments.get(
+  '/:slug/comments/',
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
+  commentPagination.validatePagination,
+  commentsMiddleware.validateGetAllComments,
+  commentsController.getAllComments
+);
 
 /**
  * @swagger
@@ -117,7 +129,12 @@ comments.get('/:slug/comments/', Validator.validatePaginationLimit(), Handler.ha
  *         schema:
  *           $ref: '#/definitions/Comments'
  */
-comments.put('/:slug/comments/:id', authenticate, commentsMiddleware.validateUpdateComment, commentsController.updateComment);
+comments.put(
+  '/:slug/comments/:id',
+  authenticate,
+  commentsMiddleware.validateUpdateComment,
+  commentsController.updateComment
+);
 
 /**
  * @swagger
@@ -145,7 +162,12 @@ comments.put('/:slug/comments/:id', authenticate, commentsMiddleware.validateUpd
  *         schema:
  *           $ref: '#/definitions/Comments'
  */
-comments.delete('/:slug/comments/:id', authenticate, commentsMiddleware.validateDeleteComment, commentsController.deleteComment);
+comments.delete(
+  '/:slug/comments/:id',
+  authenticate,
+  commentsMiddleware.validateDeleteComment,
+  commentsController.deleteComment
+);
 
 /**
  * @swagger

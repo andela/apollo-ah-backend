@@ -9,7 +9,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "dev": "node -r dotenv/config -r @babel/register server/bin/www.js",
     "db:create": "sequelize db:create --env",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run build && npm run migrate",
     "make:migration": "sequelize migration:create --name",
     "make:model": "sequelize model:create --name",
     "make:seed": "sequelize seed:create --name",

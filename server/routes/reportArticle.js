@@ -71,10 +71,12 @@ router.post(
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-router.get('/:articleId/report',
+router.get(
+  '/:articleId/report',
   authenticate,
   checkArticle,
-  reportArticleController.getOneReportedArticle);
+  reportArticleController.getOneReportedArticle
+);
 
 /**
  * @swagger
@@ -91,10 +93,11 @@ router.get('/:articleId/report',
  *         schema:
  *           $ref: '#/definitions/Article'
  */
-
-router.get('/reports',
+router.get(
+  '/reports',
   authenticate,
   checkArticle,
-  reportArticleController.getAllReportedArticle);
+  reportArticleController.getAllReportedArticle
+);
 
 export default router;
