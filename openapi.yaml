@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: Author's Haven API
+  description: Author's Haven API.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/
+    description: Development Server
+paths:
+  /:
+    get:
+      summary: This is the page served by the browser.
+      description: Author's Haven's homepage.
+      responses:
+        '200':    # status code
+          description: A welcome message in JSON
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string

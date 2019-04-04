@@ -1,0 +1,14 @@
+require('@babel/register');
+require("@babel/polyfill");
+
+const dotenv = require('dotenv');
+
+const env = process.env.NODE_ENV || 'development';
+
+// load .env file for development environment
+if (env === 'development') dotenv.config();
+
+// load .env.test file for test environment
+if (env === 'test') dotenv.config({ path: '.env.test' });
+
+module.exports = require('../config/database').default

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andela/apollo-ah-backend.svg?branch=staging)](https://travis-ci.org/andela/apollo-ah-backend) [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com) [![Coverage Status](https://coveralls.io/repos/github/andela/apollo-ah-backend/badge.svg?branch=staging)](https://coveralls.io/github/andela/apollo-ah-backend) 
+
 Authors Haven - A Social platform for the creative at heart.
 =======
 
@@ -5,6 +7,103 @@ Authors Haven - A Social platform for the creative at heart.
 Create a community of like minded authors to foster inspiration and innovation
 by leveraging the modern web.
 
+---
+
+## Set up
+>The following information explains how to set up this project locally.
+
+If you don't have ```node.js``` installed, please follow this link to [download node.js](https://nodejs.org/en/)
+
+Please follow this link and download PostgreSQL if you don't have it installed yet [download PostgreSQL](https://www.postgresql.org/download/)
+
+Download the repo by clicking the green ```clone or download``` button above. If you chose the download option, unzip your files into a folder. If you chose the clone option, then run ```git clone 'the-url-copied-by-clicking-the-green-button'```
+
+Please note: This information assumes a basic understanding of node, git and PostgreSQL
+
+> You can follow this tutorial to create a Postgres database:
+
+.. For mac, use this [link](https://www.codementor.io/engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb)
+
+.. For windows, use this link [link](https://www.microfocus.com/documentation/idol/IDOL_12_0/MediaServer/Guides/html/English/Content/Getting_Started/Configure/_TRN_Set_up_PostgreSQL.htm)
+
+
+> A few things to note before running the npm install command.
+
+You need to provide values for the enviroment variables in the ```.env``` and the ```.env.test``` file. eg: ```DB_PASSWORD=authorshavenDB``` see the enviroment variables section below for all required details
+
+
+> Run the following commands in your terminal:
+
+```
+# Change directory to clone or zipped folder
+cd apollo-ah-backend (or the name of the folder you zipped the files in)
+
+# Switch to staging branch
+git checkout staging
+
+# Copy and create new files
+cp .env.example .env
+copy .env.example .env (for windows)
+
+
+# To create environment variables
+cp .env.example .env.test
+copy .env.example .env.test (for windows)
+
+# see the 'few things to note' section from above and provide data for all non-filled slot
+
+# Install package modules
+npm install
+
+# Setup database
+npm run migrate
+npm run seed
+
+# To run test
+npm run test
+
+# Start up the server
+npm run start
+
+```
+
+> Environment variables (Provide details only for the empty data slots)
+
+```
+NODE_ENV=development
+APP_KEY=secret
+
+# Database configuration
+DB_CONNECTION=postgres
+DB_DATABASE=authorshaven
+DB_USERNAME=postgres
+DB_PASSWORD=
+DB_HOST=localhost
+DB_PORT=5432
+
+# Email configuration
+APP_MAIL=
+MAIL_HOST=
+MAIL_PORT=
+MAIL_SECURE=
+MAIL_USER=
+MAIL_PASS=
+
+# Social Authentication configuration.
+FACEBOOK_APP_ID=
+FACEBOOK_APP_SECRET=
+FACEBOOK_CALLBACK_URL=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_CALLBACK_URL=
+
+# sessions details
+COOKIE_SECRET=
+
+
+API_DOMAIN=localhost:3000
+```
 ---
 
 ## API Spec
