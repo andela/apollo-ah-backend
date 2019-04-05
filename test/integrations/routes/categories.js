@@ -5,7 +5,7 @@ import app from '../../../server';
 
 chai.use(chaiHttp);
 
-describe.only('Categories tests', () => {
+describe('Categories tests', () => {
   it('should get all the article categories', async () => {
     const response = await chai
       .request(app)
