@@ -42,5 +42,4 @@ const Profile = (sequelize, DataTypes) => {
   };
   return ProfileSchema;
 };
-
 export default Profile;
