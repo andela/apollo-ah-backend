@@ -52,12 +52,14 @@ class UsersController {
       user.lastname = '';
       user.gender = '';
       user.bio = '';
+      user.image = `${env('API_DOMAIN')}/avatar.png`;
       user.username = request.body.username.toLowerCase();
       user.userId = user.id;
       await models.Profile.create(user);
       // create a user default settings
       await models.Setting.create({ userId: user.userId });
-      Response.send(response, STATUS.CREATED, { token, id: user.id });
+      const profile = { username: user.username, image: user.image };
+      Response.send(response, STATUS.CREATED, { token, id: user.id, profile });
       await Mail.sendMail(data);
       return;
     } catch (error) {
@@ -164,6 +166,14 @@ class UsersController {
       const user = await User.findOne({
         where: { email },
         raw: true,
+        include: [
+          {
+            model: models.Profile,
+            attributes: {
+              exclude: ['userId', 'createdAt', 'id'],
+            }
+          }
+        ]
       });
 
       // validate user password
@@ -181,10 +191,22 @@ class UsersController {
       const payload = user;
       const token = await generateToken(payload);
 
+      const profile = {
+        email: user.email,
+        isConfirmed: user.isConfirmed,
+        createdAt: user.createdAt,
+        deletedAt: user.deletedAt,
+        firstname: user['Profile.firstname'],
+        lastname: user['Profile.lastname'],
+        bio: user['Profile.bio'],
+        image: user['Profile.image'],
+        updatedAt: user['Profile.updatedAt'],
+        username: user['Profile.username'],
+      };
       // respond with token
       return response
         .status(200)
-        .json({ token, id: user.id });
+        .json({ token, id: user.id, profile });
     } catch (error) {
       return next(error);
     }
