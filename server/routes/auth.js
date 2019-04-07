@@ -1,7 +1,9 @@
 import express from 'express';
 import passport from '../config/passport';
 import authController from '../controllers/authController';
-
+import socialCreate from '../middlewares/socialCreate';
+import ValidatorHandler from '../middlewares/handleValidation';
+import Validator from '../middlewares/validator';
 
 const router = express.Router();
 
@@ -111,6 +113,14 @@ router.get(
 router.get(
   '/twitter/redirect',
   passport.authenticate('twitter', { failureRedirect: '/' }),
+  authController.socialAuth
+);
+
+router.post(
+  '/social',
+  Validator.validateSocial(),
+  ValidatorHandler.handleValidation,
+  socialCreate,
   authController.socialAuth
 );
 
