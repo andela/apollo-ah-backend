@@ -12,7 +12,7 @@ import reportRoute from './reportArticle';
 import comments from './comments';
 import roles from './roles';
 import stats from './stats';
-
+import categoriesRouter from './categories';
 
 const router = express.Router();
 
@@ -43,5 +43,6 @@ router.use('/articles', reportRoute);
 router.use('/articles', comments);
 router.use('/roles', roles);
 router.use('/users', stats);
+router.use('/categories', categoriesRouter);
 
 export default router;
