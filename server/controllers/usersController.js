@@ -31,7 +31,7 @@ class UsersController {
     const { body } = request;
 
     try {
-      const user = await User.create(body);
+      const user = await User.create(body, { raw: true });
       const role = await models.Role.findOne({ where: { name: 'user' } });
       await user.setRole(role);
       const token = await generateToken({ user });
@@ -50,7 +50,6 @@ class UsersController {
       };
       user.firstname = '';
       user.lastname = '';
-      user.gender = '';
       user.bio = '';
       user.image = `${env('API_DOMAIN')}/avatar.png`;
       user.username = request.body.username.toLowerCase();
@@ -58,8 +57,7 @@ class UsersController {
       await models.Profile.create(user);
       // create a user default settings
       await models.Setting.create({ userId: user.userId });
-      const profile = { username: user.username, image: user.image };
-      Response.send(response, STATUS.CREATED, { token, id: user.id, profile });
+      Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
       return;
     } catch (error) {
@@ -166,16 +164,10 @@ class UsersController {
       const user = await User.findOne({
         where: { email },
         raw: true,
-        include: [
-          {
-            model: models.Profile,
-            attributes: {
-              exclude: ['userId', 'createdAt', 'id'],
-            }
-          }
-        ]
+        include: [{
+          model: models.Profile,
+        }]
       });
-
       // validate user password
       if (!user || (user && !User.comparePassword(user, password))) {
         return Response.send(
@@ -186,27 +178,12 @@ class UsersController {
           false
         );
       }
-
       // generate token from user payload
-      const payload = user;
-      const token = await generateToken(payload);
-
-      const profile = {
-        email: user.email,
-        isConfirmed: user.isConfirmed,
-        createdAt: user.createdAt,
-        deletedAt: user.deletedAt,
-        firstname: user['Profile.firstname'],
-        lastname: user['Profile.lastname'],
-        bio: user['Profile.bio'],
-        image: user['Profile.image'],
-        updatedAt: user['Profile.updatedAt'],
-        username: user['Profile.username'],
-      };
+      const token = await generateToken(user);
       // respond with token
       return response
         .status(200)
-        .json({ token, id: user.id, profile });
+        .json({ token, id: user.id });
     } catch (error) {
       return next(error);
     }
