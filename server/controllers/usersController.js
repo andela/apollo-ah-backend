@@ -31,7 +31,7 @@ class UsersController {
     const { body } = request;
 
     try {
-      const user = await User.create(body);
+      const user = await User.create(body, { raw: true });
       const role = await models.Role.findOne({ where: { name: 'user' } });
       await user.setRole(role);
       const token = await generateToken({ user });
@@ -50,8 +50,8 @@ class UsersController {
       };
       user.firstname = '';
       user.lastname = '';
-      user.gender = '';
       user.bio = '';
+      user.image = `${env('API_DOMAIN')}/avatar.png`;
       user.username = request.body.username.toLowerCase();
       user.userId = user.id;
       await models.Profile.create(user);
@@ -164,8 +164,10 @@ class UsersController {
       const user = await User.findOne({
         where: { email },
         raw: true,
+        include: [{
+          model: models.Profile,
+        }]
       });
-
       // validate user password
       if (!user || (user && !User.comparePassword(user, password))) {
         return Response.send(
@@ -176,11 +178,8 @@ class UsersController {
           false
         );
       }
-
       // generate token from user payload
-      const payload = user;
-      const token = await generateToken(payload);
-
+      const token = await generateToken(user);
       // respond with token
       return response
         .status(200)
