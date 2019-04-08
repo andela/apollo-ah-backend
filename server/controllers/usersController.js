@@ -38,7 +38,7 @@ class UsersController {
       // generate confirm token
       const confirmToken = await generateToken({ email: user.email });
       // generate confirm link
-      const confrimLink = `${env('API_DOMAIN')}/api/v1/users/confirm_account?token=${confirmToken}`;
+      const confrimLink = `${env('WEB_APP')}?token=${confirmToken}`;
       // send the user a mail
       const data = {
         email: user.email,
