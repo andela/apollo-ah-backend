@@ -357,7 +357,7 @@ export default class Validator {
       ...Validator.validateEmail(),
       body('socialId')
         .isInt()
-        .withMessage('socialId must be a string'),
+        .withMessage('socialId must be an integer'),
       body('socialType')
         .not().isEmpty()
         .withMessage('A valid service provider is required')

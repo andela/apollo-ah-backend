@@ -7,7 +7,7 @@ import models from '../models';
  * @param {Request} request Request object
  * @param {Response} response Response object
  * @param {Function} next call to next middleware
- * @returns {(Error|Function)} Proceeds to the next middleware else throws http error
+ * @returns {Function} Proceeds to the next middleware else throws http error
  */
 async function socialCreate(request, response, next) {
   const { firstname, lastname, email } = request.body;
