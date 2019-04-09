@@ -36,15 +36,15 @@ class UsersController {
       await user.setRole(role);
       const token = await generateToken({ user });
       // generate confirm token
-      const confirmToken = await generateToken({ email: user.email });
+      const confirmationToken = await generateToken({ email: user.email });
       // generate confirm link
-      const confrimLink = `${env('API_DOMAIN')}/api/v1/users/confirm_account?token=${confirmToken}`;
+      const confrimationLink = `${env('WEB_APP')}?token=${confirmationToken}`;
       // send the user a mail
       const data = {
         email: user.email,
         subject: 'Account confirmation',
         mailContext: {
-          link: confrimLink
+          link: confrimationLink
         },
         template: 'signup'
       };
