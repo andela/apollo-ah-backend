@@ -14,6 +14,7 @@ const {
   SERVER_ERROR,
   OK,
   NOT_FOUND,
+  FORBIDDEN,
 } = STATUS;
 
 /** profile controller class */
@@ -42,7 +43,7 @@ class ProfileController {
     };
     const profileExists = await ProfileController.profileUsernameExists(username, userId);
     if (profileExists !== null) {
-      return Response.send(res, CREATED, {}, MESSAGE.USERNAME_EXITS, true);
+      return Response.send(res, FORBIDDEN, {}, MESSAGE.USERNAME_EXITS, true);
     }
     try {
       await Profile.update(
