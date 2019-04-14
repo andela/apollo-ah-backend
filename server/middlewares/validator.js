@@ -342,32 +342,4 @@ export default class Validator {
         .withMessage('roleId parameter must be an integer'),
     ];
   }
-
-  /**
-   * Validates payload for social oauth
-   *
-   * @static
-   * @returns {array} - The array of express validator chains
-   * @memberof Validator
-   */
-  static validateSocial() {
-    return [
-      ...Validator.validateFirstname(),
-      ...Validator.validateLastname(),
-      ...Validator.validateEmail(),
-      body('socialId')
-        .isInt()
-        .withMessage('socialId must be an integer'),
-      body('socialType')
-        .not().isEmpty()
-        .withMessage('A valid service provider is required')
-        .custom((provider, { req }) => {
-          const allowedProviders = ['facebook', 'google', 'twitter'];
-          if (allowedProviders.indexOf(provider) === -1) {
-            throw new Error('Invalid service provider');
-          }
-          return provider;
-        }),
-    ];
-  }
 }

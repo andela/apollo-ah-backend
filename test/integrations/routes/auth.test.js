@@ -1,9 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import faker from 'faker';
 import app from '../../../server';
-import { STATUS } from '../../../server/helpers/constants';
 
 chai.use(chaiHttp);
 
@@ -67,53 +65,6 @@ describe('API endpoint: /api/auth', () => {
       expect(response.res.connection.servername).to.equal(undefined);
       expect(response.statusCode).to.equal(404);
       expect(response.res.statusMessage).to.equal('Not Found');
-    });
-  });
-
-  describe('API endpoint: auth/social', () => {
-    it('should register user and respond with user payload', (done) => {
-      const payload = {
-        firstname: faker.name.firstName(),
-        lastname: faker.name.lastName(),
-        email: faker.internet.email(),
-        socialType: 'facebook',
-        socialId: 3212313213,
-      };
-
-      chai
-        .request(app)
-        .post('/api/v1/auth/social')
-        .send(payload)
-        .end((err, res) => {
-          expect(err).to.be.null;
-          expect(res).to.have.status(STATUS.OK);
-          expect(res.body)
-            .to.haveOwnProperty('user')
-            .to.have.keys(['id', 'email', 'token']);
-          done();
-        });
-    });
-    it('should return an error if payload is invalid', (done) => {
-      const payload = {
-        firstname: faker.name.firstName(),
-        lastname: faker.name.lastName(),
-        email: 'invalid email',
-        socialType: 'invalid provider',
-        socialId: 'invalid',
-      };
-
-      chai
-        .request(app)
-        .post('/api/v1/auth/social')
-        .send(payload)
-        .end((err, res) => {
-          expect(res).to.have.status(STATUS.BAD_REQUEST);
-          expect(res.body)
-            .to.haveOwnProperty('data')
-            .to.be.an('array')
-            .to.be.lengthOf(3);
-          done();
-        });
     });
   });
 });
