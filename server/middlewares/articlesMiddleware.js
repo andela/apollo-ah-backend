@@ -74,8 +74,8 @@ export default class AriclesMiddleware {
       if (!categoryFound) {
         return Response.send(res, STATUS.BAD_REQUEST, [], 'category does not exist', false);
       }
-      const slug = slugify(`${title}-${uuid()}`, {
-        remove: /[*+~.()'"!:@]/g,
+      const trimmedTitle = title.replace(/[^a-z0-9]/gi, '');
+      const slug = slugify(`${trimmedTitle}-${uuid()}`, {
         replacement: '-',
         lower: true
       });
@@ -147,8 +147,8 @@ export default class AriclesMiddleware {
         return Response.send(res, STATUS.FORBIDDEN, [], 'you do not have the right to update this article', false);
       }
       if (title) {
-        const slug = slugify(`${title}-${uuid()}`, {
-          remove: /[*+~.()'"!:@]/g,
+        const trimmedTitle = title.replace(/[^a-z0-9]/gi, '');
+        const slug = slugify(`${trimmedTitle}-${uuid()}`, {
           replacement: '-',
           lower: true
         });
