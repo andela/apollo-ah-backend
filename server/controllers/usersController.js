@@ -31,10 +31,9 @@ class UsersController {
     const { body } = request;
 
     try {
-      const user = await User.create(body, { raw: true });
+      const user = await User.create(body);
       const role = await models.Role.findOne({ where: { name: 'user' } });
       await user.setRole(role);
-      const token = await generateToken({ user });
       // generate confirm token
       const confirmationToken = await generateToken({ email: user.email });
       // generate confirm link
@@ -57,6 +56,7 @@ class UsersController {
       await models.Profile.create(user);
       // create a user default settings
       await models.Setting.create({ userId: user.userId });
+      const token = await generateToken({ user });
       Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
       return;
