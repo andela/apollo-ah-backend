@@ -1,9 +1,13 @@
 import express from 'express';
 import passport from '../config/passport';
 import authController from '../controllers/authController';
-
+import { env } from '../helpers/utils';
 
 const router = express.Router();
+
+const failureRedirect = () => ({
+  failureRedirect: `${env('CLIENT_REDIRECT_URL')}?failure=true`
+});
 
 /**
  * @swagger
@@ -53,7 +57,7 @@ router.get(
 
 router.get(
   '/facebook/redirect',
-  passport.authenticate('facebook', { failureRedirect: '/' }),
+  passport.authenticate('facebook', failureRedirect()),
   authController.socialAuth
 );
 
@@ -84,7 +88,7 @@ router.get(
 
 router.get(
   '/google/redirect',
-  passport.authenticate('google', { failureRedirect: '/' }),
+  passport.authenticate('google', failureRedirect()),
   authController.socialAuth
 );
 
@@ -110,7 +114,7 @@ router.get(
 
 router.get(
   '/twitter/redirect',
-  passport.authenticate('twitter', { failureRedirect: '/' }),
+  passport.authenticate('twitter', failureRedirect()),
   authController.socialAuth
 );
 
