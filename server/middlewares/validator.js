@@ -45,10 +45,6 @@ export default class Validator {
   static validateUpdateProfile() {
     return [
       ...Validator.validateUpdateUsername(),
-      ...Validator.validateFirstname(),
-      ...Validator.validateLastname(),
-      ...Validator.validateBio(),
-      ...Validator.validateImageURL()
     ];
   }
 
