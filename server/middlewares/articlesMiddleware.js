@@ -61,6 +61,10 @@ export default class AriclesMiddleware {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'category cannot be empty', false);
     }
 
+    if (description.length > 255) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description can only be 255 characters maximum', false);
+    }
+
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
