@@ -5,10 +5,10 @@ import articleHelpers from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 import Logger from '../helpers/logger';
 import statsHelper from '../helpers/statsHelper';
+import dataProvider from '../helpers/nestedDataProvider';
 
-// const { ArticleCategory } = models;
 
-const { Article, Bookmark, ratings } = models;
+const { Article, Bookmark } = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -90,46 +90,7 @@ export default class ArticlesController {
         where: {
           ...titleQuery,
         },
-        include: [
-          {
-            model: models.User,
-            attributes: {
-              exclude: ['email', 'password', 'updatedAt', 'isConfirmed', 'createdAt', 'deletedAt'],
-            },
-            include: [{
-              model: models.Profile,
-              attributes: ['firstname', 'lastname', 'username', 'bio', 'image'],
-              where: {
-                ...authorQuery,
-              },
-              required: true,
-            }],
-          },
-          {
-            model: models.Tag,
-            as: 'tagList',
-            attributes: {
-              exclude: [''],
-            },
-            required: tagQuery.tagName !== undefined,
-            where: {
-              ...tagQuery,
-            }
-          },
-          {
-            model: models.ArticleCategory,
-            as: 'articleCategory',
-            attributes: { exclude: ['id'] },
-            required: true,
-            where: {
-              ...categoryQuery,
-            }
-          },
-          {
-            model: ratings,
-            attributes: ['stars', 'userId']
-          }
-        ],
+        include: dataProvider(categoryQuery, authorQuery, tagQuery),
       });
       const {
         code, data, message, status
@@ -156,12 +117,7 @@ export default class ArticlesController {
     try {
       const article = await models.Article.findOne({
         where: { slug: slug.trim() },
-        include: [{
-          model: models.ArticleCategory,
-          as: 'articleCategory',
-          attributes: { exclude: ['id'] },
-          required: true,
-        }]
+        include: dataProvider(),
       });
       if (!article) {
         return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);

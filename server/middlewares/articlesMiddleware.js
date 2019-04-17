@@ -61,6 +61,10 @@ export default class AriclesMiddleware {
       return Response.send(res, STATUS.BAD_REQUEST, [], 'category cannot be empty', false);
     }
 
+    if (description.length > 255) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'description can only be 255 characters maximum', false);
+    }
+
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
       if (foundArticle && foundArticle.title === title) {
@@ -74,8 +78,8 @@ export default class AriclesMiddleware {
       if (!categoryFound) {
         return Response.send(res, STATUS.BAD_REQUEST, [], 'category does not exist', false);
       }
-      const slug = slugify(`${title}-${uuid()}`, {
-        remove: /[*+~.()'"!:@]/g,
+      const trimmedTitle = title.replace(/[^a-z0-9]/gi, '');
+      const slug = slugify(`${trimmedTitle}-${uuid()}`, {
         replacement: '-',
         lower: true
       });
@@ -147,8 +151,8 @@ export default class AriclesMiddleware {
         return Response.send(res, STATUS.FORBIDDEN, [], 'you do not have the right to update this article', false);
       }
       if (title) {
-        const slug = slugify(`${title}-${uuid()}`, {
-          remove: /[*+~.()'"!:@]/g,
+        const trimmedTitle = title.replace(/[^a-z0-9]/gi, '');
+        const slug = slugify(`${trimmedTitle}-${uuid()}`, {
           replacement: '-',
           lower: true
         });

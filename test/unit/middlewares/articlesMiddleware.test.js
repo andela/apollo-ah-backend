@@ -233,6 +233,27 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
   });
 
   describe('POST: /api/v1/articles', () => {
+    describe('create an article with a lengthy description', () => {
+      it('Should return an error', (done) => {
+        const article = { ...dummyArticle };
+        article.description = 'After the success of Peloton’s stationary bike — it has sold hundreds of thousands, though the company won’t provide specifics — Peloton is aggressively expanding to become a full-body, full-service fitness and technology company, and it’s forcing the rest of the industry to follow suit or fall behind.';
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('description can only be 255 characters maximum');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
     describe('create an article with a description of numbers', () => {
       it('Should return an error', (done) => {
         const article = { ...dummyArticle };

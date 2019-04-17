@@ -68,42 +68,6 @@ describe('Testing user profile feature', () => {
       });
   });
 
-  it('should return an error if firstname is not provided', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profiles')
-      .send({ ...profile, firstname: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
-      .end((err, res) => {
-        expect(res.status).eql(BAD_REQUEST);
-        expect(res.body).to.have.property('status').equal(false);
-        expect(res.body).to.have.property('code').equal(400);
-        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
-        expect(res.body).to.have.property('data');
-        expect(res.body.data[0].field).to.be.equals('firstname');
-        expect(res.body.data[0].message).to.be.equals('Firstname is required');
-        done();
-      });
-  });
-
-  it('should return an error if lastname is not provided', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profiles')
-      .send({ ...profile, lastname: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
-      .end((err, res) => {
-        expect(res.status).eql(BAD_REQUEST);
-        expect(res.body).to.have.property('status').equal(false);
-        expect(res.body).to.have.property('code').equal(400);
-        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
-        expect(res.body).to.have.property('data');
-        expect(res.body.data[0].field).to.be.equals('lastname');
-        expect(res.body.data[0].message).to.be.equals('Lastname is required');
-        done();
-      });
-  });
-
   it('should return error if username is not provided', (done) => {
     chai
       .request(app)
@@ -118,42 +82,6 @@ describe('Testing user profile feature', () => {
         expect(res.body).to.have.property('data');
         expect(res.body.data[0].field).to.be.equals('username');
         expect(res.body.data[0].message).to.be.equals('Username is required');
-        done();
-      });
-  });
-
-  it('should throw an error if bio is not provided', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profiles')
-      .send({ ...profile, bio: '' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
-      .end((err, res) => {
-        expect(res.status).eql(BAD_REQUEST);
-        expect(res.body).to.have.property('status').equal(false);
-        expect(res.body).to.have.property('code').equal(400);
-        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
-        expect(res.body).to.have.property('data');
-        expect(res.body.data[0].field).to.be.equals('bio');
-        expect(res.body.data[0].message).to.be.equals('Bio is required');
-        done();
-      });
-  });
-
-  it('should throw an error if image url is invalid', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/profiles')
-      .send({ ...profile, image: 'hffhh.cam' })
-      .set('Authorization', `Bearer ${dummyUser3.token}`)
-      .end((err, res) => {
-        expect(res.status).eql(BAD_REQUEST);
-        expect(res.body).to.have.property('status').equal(false);
-        expect(res.body).to.have.property('code').equal(400);
-        expect(res.body).to.have.property('message').equal(MESSAGE.PROFILE_UPDATE_ERROR);
-        expect(res.body).to.have.property('data');
-        expect(res.body.data[0].field).to.be.equals('image');
-        expect(res.body.data[0].message).to.be.equals('image URL is not valid');
         done();
       });
   });
