@@ -6,7 +6,7 @@ import { env, validateConfigVariable } from '../helpers/utils';
 import logger from '../helpers/logger';
 import models from '../models';
 
-const { User } = models;
+const { User, Profile } = models;
 
 // Ensure that ENV config variables is set
 validateConfigVariable([
@@ -34,13 +34,23 @@ validateConfigVariable([
 
 export const generateOrFindUser = async (accessToken, refreshToken, profile, done) => {
   if (profile.emails[0]) {
+    const email = profile.emails[0].value;
     try {
-      await User.findOrCreate({ where: { email: profile.emails[0].value } })
+      await User.findOrCreate({ where: { email } })
       /* the "spread" divides the array that findOrCreate method returns
         into 2 parts and passes them as
         arguments to the callback function,
         which treats them as "user" and "created". */
-        .spread((user, created) => {
+        .spread(async (user, created) => {
+          // create user profile
+          const [firstname, lastname] = profile.displayName.split(' ');
+          user.firstname = firstname;
+          user.lastname = lastname;
+          user.image = profile.photos[0].value;
+          user.userId = user.id;
+          user.bio = '';
+          user.username = email;
+          await Profile.create(user);
           done(null, user);
         });
     } catch (err) {

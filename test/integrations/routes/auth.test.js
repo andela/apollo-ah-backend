@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server';
