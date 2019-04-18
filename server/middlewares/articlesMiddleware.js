@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // import createError from 'http-errors';
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
@@ -31,38 +32,36 @@ export default class AriclesMiddleware {
       categoryId = '',
     } = req.body;
 
-    if (typeof title !== 'string') {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'title must be a string', false);
+
+    if (!title) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot be empty', false);
     }
-    if (typeof body !== 'string') {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'body must be a string', false);
+    if (!isNaN(title)) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot contain only numbers or spaces', false);
     }
-    if (typeof description !== 'string') {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'description must be a string', false);
+    if (!description) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide a short description for this article', false);
+    }
+    if (!isNaN(description)) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'The description of this article cannot contain only numbers or spaces', false);
+    }
+    if (description.length > 255) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'Description cannot be more than 255 characters', false);
+    }
+    if (!body) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide the details for this article', false);
+    }
+    if (!isNaN(body)) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'The article detail cannot contain only numbers or spaces', false);
+    }
+    if (!categoryId) {
+      return Response.send(res, STATUS.BAD_REQUEST, [], 'You have not selected a category for this article', false);
     }
 
-    // eslint-disable-next-line no-restricted-globals
     if (isNaN(categoryId)) {
       return Response.send(
         res, STATUS.BAD_REQUEST, {}, 'category type must be an integer', false,
       );
-    }
-
-    if (!title || !title.trim()) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'title cannot be empty', false);
-    }
-    if (!body || !body.trim()) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'body cannot be empty', false);
-    }
-    if (!description || !description.trim()) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'description cannot be empty', false);
-    }
-    if (!categoryId) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'category cannot be empty', false);
-    }
-
-    if (description.length > 255) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'description can only be 255 characters maximum', false);
     }
 
     try {
