@@ -197,36 +197,22 @@ export default class ArticlesController {
     let articleId;
 
     try {
-      const articleFound = await Article.findOne({
-        where: {
-          slug
-        }
-      });
+      const articleFound = await Article.findOne({ where: { slug } });
 
       if (!articleFound) return Response.send(res, STATUS.NOT_FOUND, [], 'This article does not exist', false);
       articleId = articleFound.id;
-      const bookmarkExist = await Bookmark.findOne({
-        where: {
-          articleId,
-          userId,
-        }
-      });
+      const bookmarkExist = await Bookmark.findOne({ where: { articleId, userId, } });
 
       if (bookmarkExist) {
-        await Bookmark.destroy(
-          {
-            where: {
-              articleId,
-              userId
-            }
-          }
-        );
-        return Response.send(res, STATUS.OK, [], 'successfully unbookmarked this article', true);
+        const unbookmarked = bookmarkExist.dataValues;
+        await Bookmark.destroy({
+          where: { articleId, userId },
+          returning: true,
+        });
+        return Response.send(res, STATUS.OK, unbookmarked, 'successfully unbookmarked this article', true);
       }
 
-      const newBookmark = await Bookmark.create(
-        { userId, articleId }
-      );
+      const newBookmark = await Bookmark.create({ userId, articleId });
       return Response.send(res, STATUS.CREATED, newBookmark, 'successfully bookmarked this article', true);
     } catch (error) {
       return Response.send(res, STATUS.SERVER_ERROR, error.message, 'sorry! something went wrong', false);
