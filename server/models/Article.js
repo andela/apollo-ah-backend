@@ -64,6 +64,10 @@ const Article = (sequelize, DataTypes) => {
     });
     ArticleSchema.hasMany(models.ratings, { foreignKey: 'articleId' });
     ArticleSchema.hasMany(models.History, { foreignKey: 'articleId' });
+    ArticleSchema.hasMany(models.ArticleClap, {
+      foreignKey: 'articleId',
+      as: 'claps'
+    });
   };
   return ArticleSchema;
 };

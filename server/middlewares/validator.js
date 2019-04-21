@@ -1,5 +1,10 @@
 import { body, query, param } from 'express-validator/check';
-import { MESSAGE, FIELD, PAGE_LIMIT } from '../helpers/constants';
+import {
+  MESSAGE,
+  FIELD,
+  PAGE_LIMIT,
+  CLAPS_LIMIT
+} from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
 /**
@@ -336,6 +341,20 @@ export default class Validator {
       param('roleId')
         .isInt()
         .withMessage('roleId parameter must be an integer'),
+    ];
+  }
+
+  /**
+   * Validates input data for roles
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateClaps() {
+    return [
+      body('claps')
+        .isInt({ max: CLAPS_LIMIT })
+        .withMessage('Claps must not exceed 100'),
     ];
   }
 }

@@ -67,6 +67,7 @@ export default (sequelize, DataTypes) => {
       through: 'UserRoles'
     });
     User.hasMany(models.History, { foreignKey: 'userId' });
+    User.hasMany(models.ArticleClap, { foreignKey: 'userId' });
   };
 
   /**

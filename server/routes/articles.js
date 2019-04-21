@@ -2,6 +2,7 @@ import express from 'express';
 import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import ArticleLikeController from '../controllers/articleLikesController';
+import ClapsController from '../controllers/clapsController';
 import authenticate from '../middlewares/authenticate';
 import Validator from '../middlewares/validator';
 import Handler from '../middlewares/handleValidation';
@@ -266,6 +267,63 @@ articles.post(
   '/:slug/bookmarks',
   authenticate,
   articlesController.bookmarkArticle
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps:
+ *   post:
+ *     tags:
+ *       - applause, claps
+ *     description: Create or update an article claps
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: claps
+ *         description: Total number of claps
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.post(
+  '/:slug/claps',
+  Validator.validateClaps(),
+  Handler.handleValidation,
+  authenticate,
+  ClapsController.articleClap
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps:
+ *   get:
+ *     tags:
+ *       - applause, claps
+ *     description: Fetch an article claps
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.get(
+  '/:slug/claps',
+  authenticate,
+  ClapsController.getArticleClaps
 );
 
 export default articles;

@@ -1,4 +1,5 @@
 export const PAGE_LIMIT = 500;
+export const CLAPS_LIMIT = 100;
 
 export const STATUS = {
   OK: 200, // Request OK, indicates a successful request
@@ -82,6 +83,8 @@ export const MESSAGE = {
   UPDATE_SUCCESS: 'Successfully updated',
   CATEGORY_INVALID: 'Category must be a number',
   VALIDATE_ERROR: 'Validation error occurred',
+
+  SUCCESS_MESSAGE: 'Operation was successful',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

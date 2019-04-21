@@ -13,7 +13,7 @@ const exceptionHandler = (err, req, res, next) => {
   const { message } = err;
   const error = req.app.get('env') === 'development' ? err : {};
   const statusCode = err.status || 500;
-  ResponseHandler.send(res, statusCode, error, message, false);
+  return ResponseHandler.send(res, statusCode, error, message, false);
 };
 
 export default exceptionHandler;
