@@ -20,7 +20,7 @@ class ClapsController {
    *
    * @memberof ClapsController
    */
-  static async articleClap(request, response, next) {
+  static async clapArticle(request, response, next) {
     const {
       user: { id: userId },
       params: { slug },

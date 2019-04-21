@@ -298,7 +298,7 @@ articles.post(
   Validator.validateClaps(),
   Handler.handleValidation,
   authenticate,
-  ClapsController.articleClap
+  ClapsController.clapArticle
 );
 
 /**
