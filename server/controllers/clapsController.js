@@ -74,7 +74,8 @@ class ClapsController {
 
     try {
       if (userId) {
-        result = await ClapsController.getClapsByUser(article, userId);
+        const claps = await ClapsController.getClapsByUser(article, userId);
+        result = claps || { claps: 0 };
       } else {
         result = await article.getClaps();
       }

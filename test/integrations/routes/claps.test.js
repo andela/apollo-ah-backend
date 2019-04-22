@@ -9,6 +9,7 @@ import { auth } from '../../helpers';
 chai.use(chaiHttp);
 
 describe('Article claps endpoint: /api/articles/:slug/claps', () => {
+  let userId;
   let userToken;
   let article;
   let articleSlug;
@@ -19,6 +20,7 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
     const user = await models.User.findByPk(2, { raw: true });
     user.password = 'secret';
     const response = await auth(user);
+    userId = response.body.id;
     userToken = response.body.token;
 
     // Get article belonging to user
@@ -192,7 +194,23 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
-    it("Should return an article's claps by authenticated user", (done) => {
+    it("Should return an article's claps by user id", (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}/claps/${userId}`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
+            .to.haveOwnProperty('data')
+            .to.haveOwnProperty('claps')
+            .to.equal(30);
+          done();
+        });
+    });
+    it('Should default to 0 claps for users without claps', (done) => {
       chai
         .request(app)
         .get(`/api/v1/articles/${articleSlug}/claps/7`)
@@ -202,7 +220,9 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
           expect(res.body)
-            .to.haveOwnProperty('data');
+            .to.haveOwnProperty('data')
+            .to.haveOwnProperty('claps')
+            .to.equal(0);
           done();
         });
     });
