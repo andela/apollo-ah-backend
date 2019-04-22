@@ -8,7 +8,7 @@ import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
 
-describe.only('Article claps endpoint: /api/articles/:slug/claps', () => {
+describe('Article claps endpoint: /api/articles/:slug/claps', () => {
   let userToken;
   let article;
   let articleSlug;
