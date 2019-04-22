@@ -68,12 +68,12 @@ class ClapsController {
    * @memberof ClapsController
    */
   static async getArticleClaps(request, response, next) {
-    const { query: { include } } = request;
+    const { params: { userId } } = request;
+    const { article } = response.locals;
     let result;
 
     try {
-      const { article, userId } = response.locals;
-      if (include === 'user') {
+      if (userId) {
         result = await ClapsController.getClapsByUser(article, userId);
       } else {
         result = await article.getClaps();

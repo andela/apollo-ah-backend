@@ -8,7 +8,7 @@ import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
 
-describe('Article claps endpoint: /api/articles/:slug/claps', () => {
+describe.only('Article claps endpoint: /api/articles/:slug/claps', () => {
   let userToken;
   let article;
   let articleSlug;
@@ -42,7 +42,7 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
     articleSlug = article.slug;
   });
 
-  describe('PUT: /api/v1/articles/:slug', () => {
+  describe('POST: /api/v1/articles/:slug', () => {
     it('Should perform an article clap', (done) => {
       chai
         .request(app)
@@ -81,7 +81,7 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
-    it('throws validation error for invalid claps param', (done) => {
+    it('throws validation error when claps is not provided', (done) => {
       chai
         .request(app)
         .post(`/api/v1/articles/${articleSlug}/claps`)
@@ -93,7 +93,23 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           expect(res.body).to.be.an('object');
           expect(res.body.data[0])
             .to.haveOwnProperty('message')
-            .to.equal(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`);
+            .to.equal('Claps must not be empty');
+          done();
+        });
+    });
+    it('throws validation error for invalid claps param', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${articleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ claps: 'invalid' })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal('Claps must be a valid integer');
           done();
         });
     });
@@ -109,7 +125,7 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           expect(res.body).to.be.an('object');
           expect(res.body.data[0])
             .to.haveOwnProperty('message')
-            .to.equal(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`);
+            .to.equal(`Claps must not exceed ${CLAPS_LIMIT}`);
           done();
         });
     });
@@ -129,14 +145,45 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
+    it('Should throw validation error when claps is empty', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${articleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ claps: '' })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal('Claps must not be empty');
+          done();
+        });
+    });
+    it('Should throw validation error when claps is not a valid integer', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${articleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ claps: 'NOT VALID' })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal('Claps must be a valid integer');
+          done();
+        });
+    });
   });
 
-  describe('GET: /api/v1/articles/:slug', () => {
+  describe('GET: /api/v1/articles/:slug/claps', () => {
     it("Should return a single article's claps", (done) => {
       chai
         .request(app)
         .get(`/api/v1/articles/${articleSlug}/claps`)
-        .set({ Authorization: `Bearer ${userToken}` })
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(STATUS.OK);
@@ -148,16 +195,30 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
     it("Should return an article's claps by authenticated user", (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/${articleSlug}/claps?include=user`)
+        .get(`/api/v1/articles/${articleSlug}/claps/7`)
         .set({ Authorization: `Bearer ${userToken}` })
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(STATUS.OK);
           expect(res.body).to.be.an('object');
           expect(res.body)
+            .to.haveOwnProperty('data');
+          done();
+        });
+    });
+    it('Should return an error if userId is not an integer', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}/claps/NOT_VALID`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((err, res) => {
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
             .to.haveOwnProperty('data')
-            .to.haveOwnProperty('claps')
-            .to.equal(30);
+            .to.be.an('array');
+          expect(res.body.data[0]).to.haveOwnProperty('message')
+            .to.equal('User Id must be a valid integer');
           done();
         });
     });

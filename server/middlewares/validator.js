@@ -345,7 +345,7 @@ export default class Validator {
   }
 
   /**
-   * Validates input data for roles
+   * Validates input data for claps
    * @static
    * @returns {array} The array of express validator chains
    * @memberof Validator
@@ -353,8 +353,27 @@ export default class Validator {
   static validateClaps() {
     return [
       body('claps')
+        .not().isEmpty()
+        .withMessage('Claps must not be empty')
+        .isInt()
+        .withMessage('Claps must be a valid integer')
         .isInt({ max: CLAPS_LIMIT })
-        .withMessage(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`),
+        .withMessage(`Claps must not exceed ${CLAPS_LIMIT}`),
+    ];
+  }
+
+  /**
+   * Validates input data for claps using the userId
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateClapsByUser() {
+    return [
+      param('userId')
+        .not().isEmpty()
+        .isInt()
+        .withMessage('User Id must be a valid integer')
     ];
   }
 }
