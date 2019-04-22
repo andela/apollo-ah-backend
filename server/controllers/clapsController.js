@@ -21,18 +21,10 @@ class ClapsController {
    * @memberof ClapsController
    */
   static async clapArticle(request, response, next) {
-    const {
-      user: { id: userId },
-      params: { slug },
-      body: { claps },
-    } = request;
+    const { body: { claps } } = request;
     let statusCode = STATUS.CREATED;
     try {
-      const article = await models.Article.findOne({ where: { slug } });
-      if (!article) {
-        throw createError(STATUS.NOT_FOUND, MESSAGE.RESOURCE_NOT_FOUND);
-      }
-
+      const { article, userId } = response.locals;
       const [applause, created] = await models.ArticleClap.findOrCreate({
         where: {
           userId,
@@ -56,8 +48,8 @@ class ClapsController {
         statusCode = STATUS.OK;
       }
 
-      article.dataValues.claps = await article.getClaps({ raw: true })
-        .reduce((accumalator, current) => accumalator + current.claps, 0);
+      const squashClaps = (accumalator, current) => accumalator + current.claps;
+      article.dataValues.claps = await article.getClaps({ raw: true }).reduce(squashClaps, 0);
       return ResponseHandler.send(response, statusCode, article, MESSAGE.SUCCESS_MESSAGE);
     } catch (error) {
       return next(createError(error));
@@ -76,19 +68,11 @@ class ClapsController {
    * @memberof ClapsController
    */
   static async getArticleClaps(request, response, next) {
-    const {
-      params: { slug },
-      query: { include },
-      user: { id: userId },
-    } = request;
+    const { query: { include } } = request;
     let result;
 
     try {
-      const article = await models.Article.findOne({ where: { slug } });
-      if (!article) {
-        throw createError(STATUS.NOT_FOUND, MESSAGE.RESOURCE_NOT_FOUND);
-      }
-
+      const { article, userId } = response.locals;
       if (include === 'user') {
         result = await ClapsController.getClapsByUser(article, userId);
       } else {

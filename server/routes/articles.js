@@ -298,6 +298,8 @@ articles.post(
   Validator.validateClaps(),
   Handler.handleValidation,
   authenticate,
+  articlesMiddleware.validateArticle,
+  articlesMiddleware.validateClapAccess,
   ClapsController.clapArticle
 );
 
@@ -323,6 +325,7 @@ articles.post(
 articles.get(
   '/:slug/claps',
   authenticate,
+  articlesMiddleware.validateArticle,
   ClapsController.getArticleClaps
 );
 

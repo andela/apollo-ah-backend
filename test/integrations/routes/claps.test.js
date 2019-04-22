@@ -3,24 +3,40 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server';
 import models from '../../../server/models';
-import { STATUS, MESSAGE } from '../../../server/helpers/constants';
+import { STATUS, MESSAGE, CLAPS_LIMIT } from '../../../server/helpers/constants';
 import { auth } from '../../helpers';
 
 chai.use(chaiHttp);
 
 describe('Article claps endpoint: /api/articles/:slug/claps', () => {
   let userToken;
+  let article;
   let articleSlug;
+  let ownArticleSlug;
 
   before(async () => {
+    const { Op } = models.Sequelize;
     const user = await models.User.findByPk(2, { raw: true });
     user.password = 'secret';
     const response = await auth(user);
     userToken = response.body.token;
+
     // Get article belonging to user
-    const article = await models.Article.findOne({
+    article = await models.Article.findOne({
       where: { authorId: user.id },
-      limt: 1,
+      // limit: 1,
+      raw: true,
+    });
+    ownArticleSlug = article.slug;
+
+    // Get article not belonging to user
+    article = await models.Article.findOne({
+      where: {
+        authorId: {
+          [Op.not]: user.id
+        }
+      },
+      // limt: 1,
       raw: true,
     });
     articleSlug = article.slug;
@@ -65,7 +81,23 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
-    it('Should throw validation error when claps exceeds 100', (done) => {
+    it('throws validation error for invalid claps param', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${articleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({})
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body.data[0])
+            .to.haveOwnProperty('message')
+            .to.equal(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`);
+          done();
+        });
+    });
+    it('throws validation error when claps exceeds 100', (done) => {
       chai
         .request(app)
         .post(`/api/v1/articles/${articleSlug}/claps`)
@@ -77,14 +109,30 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           expect(res.body).to.be.an('object');
           expect(res.body.data[0])
             .to.haveOwnProperty('message')
-            .to.equal('Claps must not exceed 100');
+            .to.equal(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`);
+          done();
+        });
+    });
+    it('throws forbidden error when user tries to clap owned article', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${ownArticleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ claps: 20 })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.FORBIDDEN);
+          expect(res.body).to.be.an('object');
+          expect(res.body.data)
+            .to.haveOwnProperty('message')
+            .to.equal(MESSAGE.CLAP_FORBIDDEN);
           done();
         });
     });
   });
 
   describe('GET: /api/v1/articles/:slug', () => {
-    it("Should return a single article's total claps", (done) => {
+    it("Should return a single article's claps", (done) => {
       chai
         .request(app)
         .get(`/api/v1/articles/${articleSlug}/claps`)
@@ -97,7 +145,7 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
-    it("Should return an article's claps with users", (done) => {
+    it("Should return an article's claps by authenticated user", (done) => {
       chai
         .request(app)
         .get(`/api/v1/articles/${articleSlug}/claps?include=user`)

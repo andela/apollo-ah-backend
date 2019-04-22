@@ -354,7 +354,7 @@ export default class Validator {
     return [
       body('claps')
         .isInt({ max: CLAPS_LIMIT })
-        .withMessage('Claps must not exceed 100'),
+        .withMessage(`Claps must be a number and should not exceed ${CLAPS_LIMIT}`),
     ];
   }
 }

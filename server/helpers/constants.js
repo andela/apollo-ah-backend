@@ -85,6 +85,8 @@ export const MESSAGE = {
   VALIDATE_ERROR: 'Validation error occurred',
 
   SUCCESS_MESSAGE: 'Operation was successful',
+
+  CLAP_FORBIDDEN: 'Sorry you cannot clap an article created by you',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
