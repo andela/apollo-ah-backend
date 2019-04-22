@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-globals */
-// import createError from 'http-errors';
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
 import jwt from 'jsonwebtoken';
@@ -7,6 +5,7 @@ import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
 import models from '../models';
 import { STATUS, MESSAGE, PAGE_LIMIT } from '../helpers/constants';
+import { testInput, testCategoryId } from '../helpers/regex';
 
 /**
  * Wrapper class for validating requests.
@@ -33,36 +32,19 @@ export default class AriclesMiddleware {
     } = req.body;
 
 
-    if (!title) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot be empty', false);
-    }
-    if (!isNaN(title)) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot contain only numbers or spaces', false);
-    }
-    if (!description) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide a short description for this article', false);
-    }
-    if (!isNaN(description)) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'The description of this article cannot contain only numbers or spaces', false);
-    }
-    if (description.length > 255) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'Description cannot be more than 255 characters', false);
-    }
-    if (!body) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide the details for this article', false);
-    }
-    if (!isNaN(body)) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'The article detail cannot contain only numbers or spaces', false);
-    }
-    if (!categoryId) {
-      return Response.send(res, STATUS.BAD_REQUEST, [], 'You have not selected a category for this article', false);
-    }
-
-    if (isNaN(categoryId)) {
+    if (!title) return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot be empty', false);
+    if (!testInput(title)) return Response.send(res, STATUS.BAD_REQUEST, [], 'The title of an article cannot contain only numbers or spaces', false);
+    if (!description) return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide a short description for this article', false);
+    if (!testInput(description)) return Response.send(res, STATUS.BAD_REQUEST, [], 'The description of this article cannot contain only numbers or spaces', false);
+    if (!body) return Response.send(res, STATUS.BAD_REQUEST, [], 'Please provide the details for this article', false);
+    if (!testInput(body)) return Response.send(res, STATUS.BAD_REQUEST, [], 'The article detail cannot contain only numbers or spaces', false);
+    if (!categoryId) return Response.send(res, STATUS.BAD_REQUEST, [], 'You have not selected a category for this article', false);
+    if (!testCategoryId(categoryId)) {
       return Response.send(
         res, STATUS.BAD_REQUEST, {}, 'category type must be an integer', false,
       );
     }
+    if (description.length > 255) return Response.send(res, STATUS.BAD_REQUEST, [], 'Description cannot be more than 255 characters', false);
 
     try {
       const foundArticle = await articleHelpers.findArticleByAuthorId(authorId, title);
