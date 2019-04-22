@@ -62,6 +62,22 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           done();
         });
     });
+    it('throws forbidden error when user tries to clap owned article', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/${ownArticleSlug}/claps`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ claps: 20 })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(STATUS.FORBIDDEN);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .to.equal(MESSAGE.CLAP_FORBIDDEN);
+          done();
+        });
+    });
     it('Should update (increment) an article claps', (done) => {
       chai
         .request(app)
@@ -126,22 +142,6 @@ describe('Article claps endpoint: /api/articles/:slug/claps', () => {
           expect(res.body.data[0])
             .to.haveOwnProperty('message')
             .to.equal(`Claps must not exceed ${CLAPS_LIMIT}`);
-          done();
-        });
-    });
-    it('throws forbidden error when user tries to clap owned article', (done) => {
-      chai
-        .request(app)
-        .post(`/api/v1/articles/${ownArticleSlug}/claps`)
-        .set({ Authorization: `Bearer ${userToken}` })
-        .send({ claps: 20 })
-        .end((err, res) => {
-          expect(err).to.be.null;
-          expect(res).to.have.status(STATUS.FORBIDDEN);
-          expect(res.body).to.be.an('object');
-          expect(res.body.data)
-            .to.haveOwnProperty('message')
-            .to.equal(MESSAGE.CLAP_FORBIDDEN);
           done();
         });
     });
