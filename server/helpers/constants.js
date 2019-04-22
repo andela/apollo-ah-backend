@@ -85,6 +85,7 @@ export const MESSAGE = {
   VALIDATE_ERROR: 'Validation error occurred',
 
   SUCCESS_MESSAGE: 'Operation was successful',
+  NO_CLAPS_FOUND: 'No claps found'
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

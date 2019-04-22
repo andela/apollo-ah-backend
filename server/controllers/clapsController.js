@@ -76,21 +76,15 @@ class ClapsController {
    * @memberof ClapsController
    */
   static async getArticleClaps(request, response, next) {
-    const {
-      params: { slug },
-      query: { include },
-      user: { id: userId },
-    } = request;
-    let result;
-
+    const { params: { slug, userId } } = request;
+    let result = 0;
     try {
       const article = await models.Article.findOne({ where: { slug } });
       if (!article) {
         throw createError(STATUS.NOT_FOUND, MESSAGE.RESOURCE_NOT_FOUND);
       }
-
-      if (include === 'user') {
-        result = await ClapsController.getClapsByUser(article, userId);
+      if (userId) {
+        result = await ClapsController.getClapsByUser(article, userId) || [];
       } else {
         result = await article.getClaps();
       }

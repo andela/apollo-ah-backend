@@ -322,7 +322,38 @@ articles.post(
  */
 articles.get(
   '/:slug/claps',
+  ClapsController.getArticleClaps
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps/:userId:
+ *   get:
+ *     tags:
+ *       - applause, claps
+ *     description: Fetch an article claps by a specific user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: userId
+ *         description: The userId
+ *         in: query
+ *         required: true
+ *         type: number
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.get(
+  '/:slug/claps/:userId',
   authenticate,
+  Validator.validateClapsByUser(),
+  Handler.handleValidation,
   ClapsController.getArticleClaps
 );
 
