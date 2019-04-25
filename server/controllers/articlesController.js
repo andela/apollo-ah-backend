@@ -8,7 +8,13 @@ import statsHelper from '../helpers/statsHelper';
 import dataProvider from '../helpers/nestedDataProvider';
 
 
-const { Article, Bookmark } = models;
+const {
+  Article,
+  Bookmark,
+  User,
+  Profile,
+  ArticleCategory,
+} = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -243,17 +249,39 @@ export default class ArticlesController {
   static async getBookmarkedArticles(req, res) {
     const userId = req.user.id;
     try {
-      const bookmarkedArticles = await Bookmark.findAll({
+      // TODO: Implement search algorithm here
+      const { offset, limit } = req.body;
+
+      const articles = await models.Bookmark.findAndCountAll({
         where: {
           userId
         },
         include: [{
           model: Article,
-        }]
+          include: [{
+            model: User,
+            include: [{
+              model: Profile,
+            }]
+          },
+          {
+            model: ArticleCategory,
+            as: 'articleCategory'
+          }
+          ]
+        }],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+        distinct: true,
       });
-      return Response.send(res, STATUS.OK, bookmarkedArticles, 'Bookmarked articles', true);
+      const {
+        code, data, message, status
+      } = articleHelpers.getResourcesAsPages(req, articles);
+      return Response.send(res, code, data, message, status);
     } catch (error) {
-      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
+      Logger.log(error);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 }

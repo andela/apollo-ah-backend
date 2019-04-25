@@ -1,5 +1,8 @@
 import express from 'express';
 import articlesController from '../controllers/articlesController';
+import articlesMiddleware from '../middlewares/articlesMiddleware';
+import Validator from '../middlewares/validator';
+import Handler from '../middlewares/handleValidation';
 import middlewares from '../middlewares';
 
 const bookmarkRouter = express.Router();
@@ -30,6 +33,10 @@ const bookmarkRouter = express.Router();
  */
 bookmarkRouter.get(
   '/',
+  Validator.validateSearchParam(),
+  Validator.validatePaginationLimit(),
+  Handler.handleValidation,
+  articlesMiddleware.validatePagination,
   middlewares.authenticate,
   articlesController.getBookmarkedArticles
 );
