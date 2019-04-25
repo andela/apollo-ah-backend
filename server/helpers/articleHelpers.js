@@ -69,7 +69,7 @@ export default {
     const last = Math.ceil(articles.count / limit);
     const currentCount = articles.rows.length;
     let result = {
-      code: STATUS.NOT_FOUND, data: [], message: MESSAGE.ARTICLES_NOT_FOUND, status: false
+      code: STATUS.OK, data: [], message: MESSAGE.ARTICLES_FOUND, status: false
     };
     if (currentCount !== 0) {
       result = {
