@@ -53,10 +53,11 @@ class UsersController {
       user.image = `${env('API_DOMAIN')}/avatar.png`;
       user.username = request.body.username.toLowerCase();
       user.userId = user.id;
-      await models.Profile.create(user);
+      const { dataValues } = await models.Profile.create(user, { raw: false });
       // create a user default settings
       await models.Setting.create({ userId: user.userId });
-      const token = await generateToken({ user });
+      // generate a user token
+      const token = await generateToken({ user: dataValues });
       Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
       return;
