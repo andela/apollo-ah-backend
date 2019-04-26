@@ -57,6 +57,7 @@ class UsersController {
       // create a user default settings
       await models.Setting.create({ userId: user.userId });
       // generate a user token
+      dataValues.id = user.id;
       const token = await generateToken({ user: dataValues });
       Response.send(response, STATUS.CREATED, { token, id: user.id });
       await Mail.sendMail(data);
