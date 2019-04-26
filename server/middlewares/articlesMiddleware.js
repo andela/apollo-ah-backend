@@ -2,6 +2,7 @@
 import slugify from 'slugify';
 import uuid from 'uuid/v4';
 import jwt from 'jsonwebtoken';
+import createError from 'http-errors';
 import articleHelpers from '../helpers/articleHelpers';
 import Response from '../helpers/responseHelper';
 import models from '../models';
@@ -239,5 +240,57 @@ export default class AriclesMiddleware {
       request.body.tagList = [];
     }
     return next();
+  }
+
+  /**
+   * Validate article resource
+   *
+   * @static
+   * @param {object} request - Express Request object
+   * @param {object} response - Express Response object
+   * @param {NextFunction} next - Express nextFunction
+   * @returns {Function} call to next middleware
+   * @memberof AriclesMiddleware
+   */
+  static async validateArticle(request, response, next) {
+    const {
+      params: { slug },
+    } = request;
+
+    try {
+      const article = await models.Article.findOne({ where: { slug } });
+      if (!article) {
+        throw createError(STATUS.NOT_FOUND, MESSAGE.RESOURCE_NOT_FOUND);
+      }
+      response.locals.article = article;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   * Validate clap access
+   *
+   * @static
+   * @param {object} request - Express Request object
+   * @param {object} response - Express Response object
+   * @param {NextFunction} next - Express nextFunction
+   * @returns {Function} call to next middleware
+   * @memberof AriclesMiddleware
+   */
+  static async validateClapAccess(request, response, next) {
+    const { user: { id: userId } } = request;
+
+    try {
+      const { article } = response.locals;
+      if (article.authorId === userId) {
+        throw createError(STATUS.FORBIDDEN, MESSAGE.CLAP_FORBIDDEN);
+      }
+      response.locals.userId = userId;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
   }
 }
