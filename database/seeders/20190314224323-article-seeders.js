@@ -7,6 +7,7 @@ export default {
     body: faker.lorem.words(),
     description: faker.lorem.words(),
     authorId: 1,
+    categoryId: 1,
   },
   {
     title: 'Javascript',
@@ -17,6 +18,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 1,
+    categoryId: 2,
   },
   {
     title: 'NodeJs',
@@ -27,6 +29,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 2,
+    categoryId: 3,
   },
   {
     title: 'ExpressJs',
@@ -37,6 +40,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 2,
+    categoryId: 1,
   },
   {
     title: 'ReactJs',
@@ -47,6 +51,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 1,
+    categoryId: 1,
   },
   {
     title: 'VueJs',
@@ -57,6 +62,7 @@ export default {
     readTime: '2 minutes read',
     updatedAt: new Date(),
     authorId: 2,
+    categoryId: 2,
   }])),
   // eslint-disable-next-line no-unused-expressions
   down: (queryInterface, Sequelize) => queryInterface.bulkDelete('Articles', null, {})

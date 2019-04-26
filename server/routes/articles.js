@@ -2,6 +2,7 @@ import express from 'express';
 import articlesMiddleware from '../middlewares/articlesMiddleware';
 import articlesController from '../controllers/articlesController';
 import ArticleLikeController from '../controllers/articleLikesController';
+import ClapsController from '../controllers/clapsController';
 import authenticate from '../middlewares/authenticate';
 import Validator from '../middlewares/validator';
 import Handler from '../middlewares/handleValidation';
@@ -266,6 +267,97 @@ articles.post(
   '/:slug/bookmarks',
   authenticate,
   articlesController.bookmarkArticle
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps:
+ *   post:
+ *     tags:
+ *       - applause, claps
+ *     description: Create or update an article claps
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: claps
+ *         description: Total number of claps
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.post(
+  '/:slug/claps',
+  Validator.validateClaps(),
+  Handler.handleValidation,
+  authenticate,
+  articlesMiddleware.validateArticle,
+  articlesMiddleware.validateClapAccess,
+  ClapsController.clapArticle
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps:
+ *   get:
+ *     tags:
+ *       - applause, claps
+ *     description: Fetch an article claps by a specific user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.get(
+  '/:slug/claps',
+  articlesMiddleware.validateArticle,
+  ClapsController.getArticleClaps
+);
+
+/**
+ * @swagger
+ * /api/v1/articles/:slug/claps/:userId:
+ *   get:
+ *     tags:
+ *       - applause, claps
+ *     description: Fetch an article claps by a specific user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: slug
+ *         description: Article's slug value
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: userId
+ *         description: The userId
+ *         in: query
+ *         required: true
+ *         type: number
+ *     responses:
+ *       200:
+ *         description: Request was successful
+ */
+articles.get(
+  '/:slug/claps/:userId',
+  Validator.validateClapsByUser(),
+  Handler.handleValidation,
+  articlesMiddleware.validateArticle,
+  ClapsController.getArticleClaps
 );
 
 export default articles;

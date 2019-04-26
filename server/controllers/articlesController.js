@@ -1,7 +1,7 @@
 
 import models from '../models';
 import Response from '../helpers/responseHelper';
-import articleHelpers from '../helpers/articleHelpers';
+import articleHelpers, { squashClaps } from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 import Logger from '../helpers/logger';
 import statsHelper from '../helpers/statsHelper';
@@ -96,8 +96,19 @@ export default class ArticlesController {
         where: {
           ...titleQuery,
         },
-        include: dataProvider(categoryQuery, authorQuery, tagQuery),
+        include: [
+          ...dataProvider(categoryQuery, authorQuery, tagQuery),
+          {
+            model: models.ArticleClap,
+            as: 'claps',
+            attributes: ['userId', 'claps'],
+          }
+        ],
       });
+
+      // Squash article claps to total number of claps
+      articles.rows = squashClaps(articles.rows);
+
       const {
         code, data, message, status
       } = articleHelpers.getResourcesAsPages(req, articles);
@@ -121,13 +132,22 @@ export default class ArticlesController {
     const { userId } = res.locals;
     const { slug } = req.params;
     try {
-      const article = await models.Article.findOne({
+      const result = await models.Article.findOne({
         where: { slug: slug.trim() },
-        include: dataProvider(),
+        include: [
+          ...dataProvider(),
+          {
+            model: models.ArticleClap,
+            as: 'claps',
+            attributes: ['userId', 'claps']
+          }
+        ],
       });
-      if (!article) {
+      if (!result) {
         return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);
       }
+
+      const article = squashClaps(result.toJSON());
       if (userId) await statsHelper.confirmUser(userId, article.id, article.categoryId);
       return Response.send(res, STATUS.OK, article, 'article was successfully fetched', true);
     } catch (error) {
