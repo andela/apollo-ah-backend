@@ -82,16 +82,17 @@ class FollowersController {
   static async validateFollowable(user, username) {
     try {
       const follower = await models.User.findOne({
-        where: { id: user.id }
+        where: { id: user.id },
+        attributes: ['id', 'email']
       });
       const profile = await models.Profile.findOne({ where: { username } });
       if (follower.id === profile.userId) {
         throw createError(STATUS.BAD_REQUEST, MESSAGE.FOLLOW_ERROR);
       }
 
-      const followable = await profile.getUser();
+      const followable = await profile.getUser({ attributes: ['id', 'email', 'deletedAt'] });
       if (followable.deletedAt !== null) {
-        throw createError(STATUS.NOT_FOUND, MESSAGE.FOLLOW_ERROR);
+        throw createError(STATUS.NOT_FOUND, MESSAGE.INACTIVE_ACCOUNT);
       }
 
       return { followable, follower };
@@ -122,6 +123,10 @@ class FollowersController {
 
       const queryOptions = {
         attributes: ['id', 'email'],
+        include: [{
+          model: models.Profile,
+          attributes: ['firstname', 'lastname', 'username']
+        }],
         joinTableAttributes: [],
       };
       if (routePath === 'followers') {
