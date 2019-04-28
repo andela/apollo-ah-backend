@@ -226,10 +226,10 @@ describe('GET: /api/v1/articles', () => {
       .get('/api/v1/articles')
       .query({ page: 100 })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
         done();
@@ -305,16 +305,16 @@ describe('GET: /api/v1/articles', () => {
       });
   });
 
-  it('Should not find any articles if title or discription does not match any record', (done) => {
+  it('Should not find any articles if title or description does not match any record', (done) => {
     chai
       .request(app)
       .get('/api/v1/articles')
       .query({ q: `${title} with extra text` })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
         done();
@@ -326,10 +326,10 @@ describe('GET: /api/v1/articles', () => {
       .get('/api/v1/articles')
       .query({ author: `${firstname} with extra text` })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
         done();
@@ -341,10 +341,10 @@ describe('GET: /api/v1/articles', () => {
       .get('/api/v1/articles')
       .query({ tag: `${tagName} with extra text` })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
         done();
@@ -356,10 +356,10 @@ describe('GET: /api/v1/articles', () => {
       .get('/api/v1/articles')
       .query({ categoryId: Number.MAX_SAFE_INTEGER })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.NOT_FOUND);
+        expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.NOT_FOUND);
-        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_NOT_FOUND);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
         expect(res.body).to.haveOwnProperty('status').to.equal(false);
         expect(res.body).to.haveOwnProperty('data').to.be.an('array');
         done();

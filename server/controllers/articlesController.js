@@ -1,14 +1,20 @@
 
 import models from '../models';
 import Response from '../helpers/responseHelper';
-import articleHelpers from '../helpers/articleHelpers';
+import articleHelpers, { squashClaps } from '../helpers/articleHelpers';
 import { STATUS } from '../helpers/constants';
 import Logger from '../helpers/logger';
 import statsHelper from '../helpers/statsHelper';
 import dataProvider from '../helpers/nestedDataProvider';
 
 
-const { Article, Bookmark } = models;
+const {
+  Article,
+  Bookmark,
+  User,
+  Profile,
+  ArticleCategory,
+} = models;
 
 /**
  * Wrapper class for sending article objects as response.
@@ -90,8 +96,19 @@ export default class ArticlesController {
         where: {
           ...titleQuery,
         },
-        include: dataProvider(categoryQuery, authorQuery, tagQuery),
+        include: [
+          ...dataProvider(categoryQuery, authorQuery, tagQuery),
+          {
+            model: models.ArticleClap,
+            as: 'claps',
+            attributes: ['userId', 'claps'],
+          }
+        ],
       });
+
+      // Squash article claps to total number of claps
+      articles.rows = squashClaps(articles.rows);
+
       const {
         code, data, message, status
       } = articleHelpers.getResourcesAsPages(req, articles);
@@ -115,13 +132,22 @@ export default class ArticlesController {
     const { userId } = res.locals;
     const { slug } = req.params;
     try {
-      const article = await models.Article.findOne({
+      const result = await models.Article.findOne({
         where: { slug: slug.trim() },
-        include: dataProvider(),
+        include: [
+          ...dataProvider(),
+          {
+            model: models.ArticleClap,
+            as: 'claps',
+            attributes: ['userId', 'claps']
+          }
+        ],
       });
-      if (!article) {
+      if (!result) {
         return Response.send(res, STATUS.NOT_FOUND, [], `no article with slug: ${slug} found`, false);
       }
+
+      const article = squashClaps(result.toJSON());
       if (userId) await statsHelper.confirmUser(userId, article.id, article.categoryId);
       return Response.send(res, STATUS.OK, article, 'article was successfully fetched', true);
     } catch (error) {
@@ -229,17 +255,39 @@ export default class ArticlesController {
   static async getBookmarkedArticles(req, res) {
     const userId = req.user.id;
     try {
-      const bookmarkedArticles = await Bookmark.findAll({
+      // TODO: Implement search algorithm here
+      const { offset, limit } = req.body;
+
+      const articles = await models.Bookmark.findAndCountAll({
         where: {
           userId
         },
         include: [{
           model: Article,
-        }]
+          include: [{
+            model: User,
+            include: [{
+              model: Profile,
+            }]
+          },
+          {
+            model: ArticleCategory,
+            as: 'articleCategory'
+          }
+          ]
+        }],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+        distinct: true,
       });
-      return Response.send(res, STATUS.OK, bookmarkedArticles, 'Bookmarked articles', true);
+      const {
+        code, data, message, status
+      } = articleHelpers.getResourcesAsPages(req, articles);
+      return Response.send(res, code, data, message, status);
     } catch (error) {
-      return Response.send(res, STATUS.SERVER_ERROR, error.message, 'something went wrong, try again later!', false);
+      Logger.log(error);
+      return Response.send(res, STATUS.BAD_REQUEST, error, '', false);
     }
   }
 }

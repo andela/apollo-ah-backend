@@ -8,6 +8,28 @@ const { Op } = models.Sequelize;
 
 let readTime;
 
+/**
+ * Squash article claps to total number of claps
+ *
+ * @param {object|Array} resource A list or object of article resource(s) to squash
+ * @returns {object|Array} A list or object of articles with squashed claps
+ */
+export const squashClaps = (resource) => {
+  const clapSum = (accumulator, currentValue) => accumulator + currentValue.claps;
+  let plainArticle;
+
+  if (Array.isArray(resource)) {
+    return resource.map((article) => {
+      plainArticle = article.get({ plain: true });
+      plainArticle.claps = plainArticle.claps.reduce(clapSum, 0);
+      return plainArticle;
+    });
+  }
+
+  resource.claps = resource.claps.reduce(clapSum, 0);
+  return resource;
+};
+
 export default {
   findArticleByAuthorId: async (authorId, title) => {
     try {
@@ -69,7 +91,7 @@ export default {
     const last = Math.ceil(articles.count / limit);
     const currentCount = articles.rows.length;
     let result = {
-      code: STATUS.NOT_FOUND, data: [], message: MESSAGE.ARTICLES_NOT_FOUND, status: false
+      code: STATUS.OK, data: [], message: MESSAGE.ARTICLES_FOUND, status: false
     };
     if (currentCount !== 0) {
       result = {
@@ -141,5 +163,5 @@ export default {
     return {
       categoryQuery, authorQuery, tagQuery, titleQuery
     };
-  },
+  }
 };

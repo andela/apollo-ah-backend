@@ -103,7 +103,7 @@ describe('/Bookmark articles', () => {
       .set({ Authorization: `Bearer ${dummyUser4.token}` })
       .end((err, res) => {
         expect(res).to.have.status(OK);
-        expect(res.body.message).to.be.equals('Bookmarked articles');
+        expect(res.body.message).to.be.equals('Articles successfully fetched');
         done();
       });
   });

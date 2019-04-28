@@ -20,7 +20,7 @@ export default class Response {
    * @returns {void}
    */
   static send(response, code = STATUS.OK, data = [], message = '', status = true) {
-    response.status(code).json({
+    return response.status(code).json({
       code, data, message, status
     });
   }

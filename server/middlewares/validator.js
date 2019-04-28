@@ -1,5 +1,10 @@
 import { body, query, param } from 'express-validator/check';
-import { MESSAGE, FIELD, PAGE_LIMIT } from '../helpers/constants';
+import {
+  MESSAGE,
+  FIELD,
+  PAGE_LIMIT,
+  CLAPS_LIMIT
+} from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
 /**
@@ -336,6 +341,39 @@ export default class Validator {
       param('roleId')
         .isInt()
         .withMessage('roleId parameter must be an integer'),
+    ];
+  }
+
+  /**
+   * Validates input data for claps
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateClaps() {
+    return [
+      body('claps')
+        .not().isEmpty()
+        .withMessage('Claps must not be empty')
+        .isInt()
+        .withMessage('Claps must be a valid integer')
+        .isInt({ max: CLAPS_LIMIT })
+        .withMessage(`Claps must not exceed ${CLAPS_LIMIT}`),
+    ];
+  }
+
+  /**
+   * Validates input data for claps using the userId
+   * @static
+   * @returns {array} The array of express validator chains
+   * @memberof Validator
+   */
+  static validateClapsByUser() {
+    return [
+      param('userId')
+        .not().isEmpty()
+        .isInt()
+        .withMessage('User Id must be a valid integer')
     ];
   }
 }
