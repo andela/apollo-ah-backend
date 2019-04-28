@@ -1,4 +1,4 @@
-export const PAGE_LIMIT = 500;
+export const PAGE_LIMIT = (2 ** 31) - 1;
 export const CLAPS_LIMIT = 100;
 
 export const STATUS = {
@@ -87,6 +87,7 @@ export const MESSAGE = {
   SUCCESS_MESSAGE: 'Operation was successful',
 
   CLAP_FORBIDDEN: 'Sorry you cannot clap an article created by you',
+  AUTHOR_ID_INVALID: 'Author Id must be a number'
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days

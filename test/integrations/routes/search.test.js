@@ -20,6 +20,7 @@ describe('GET: /api/v1/articles', () => {
   const firstname = faker.name.firstName();
   const tagName = faker.lorem.word();
   const categoryId = 1;
+  let authorId = 7;
   before(async () => {
     try {
       const { dataValues: { id } } = await models.User.create({
@@ -57,6 +58,7 @@ describe('GET: /api/v1/articles', () => {
         }
 
       );
+      authorId = id;
     } catch (error) {
       Logger.log(error);
     }
@@ -304,6 +306,24 @@ describe('GET: /api/v1/articles', () => {
         done();
       });
   });
+  it('Should find articles that match the authroId', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ authorId })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.ARTICLES_FOUND);
+        expect(res.body).to.haveOwnProperty('status').to.equal(true);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('object');
+        expect(res.body.data).to.haveOwnProperty('articles').to.be.an('array');
+        expect(res.body.data).to.haveOwnProperty('page').to.be.an('object');
+        done();
+      });
+  });
+
 
   it('Should not find any articles if title or description does not match any record', (done) => {
     chai
@@ -380,6 +400,25 @@ describe('GET: /api/v1/articles', () => {
           .to.deep.include({
             field: 'categoryId',
             message: MESSAGE.CATEGORY_INVALID,
+          });
+        done();
+      });
+  });
+  it('Should retun error is authorId is not a number', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles')
+      .query({ authorId: 'NOT_A_NUMBER' })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.BAD_REQUEST);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.BAD_REQUEST);
+        expect(res.body).to.haveOwnProperty('message').equal(MESSAGE.VALIDATE_ERROR);
+        expect(res.body).to.haveOwnProperty('status').to.equal(false);
+        expect(res.body).to.haveOwnProperty('data').to.be.an('array')
+          .to.deep.include({
+            field: 'authorId',
+            message: MESSAGE.AUTHOR_ID_INVALID,
           });
         done();
       });
