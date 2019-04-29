@@ -6,6 +6,7 @@ import app from '../../../server';
 import { STATUS, MESSAGE } from '../../../server/helpers/constants';
 import models from '../../../server/models';
 import { users } from '../../helpers/testData';
+import { auth } from '../../helpers';
 
 const { dummyUser2 } = users;
 
@@ -144,28 +145,104 @@ describe('Testing user profile feature', () => {
       });
   });
 });
-describe('POST /api/v1/profile/:username/follow', async () => {
+describe('POST /api/v1/profiles/:username/follow', async () => {
+  let user;
+  let userToken;
+  let follower;
+  let followerToken;
+  let followerUsername;
+
+  before(async () => {
+    let result;
+    result = await models.User.findOne({
+      include: [models.Profile]
+    });
+    user = result.get({ plain: true });
+    user.password = 'secret';
+    let response = await auth(user);
+    userToken = response.body.token;
+
+    result = await models.User.findByPk(2, {
+      include: [models.Profile]
+    });
+    follower = result.get({ plain: true });
+    follower.password = 'secret';
+    response = await auth(follower);
+    followerToken = response.body.token;
+    followerUsername = follower.Profile.username;
+  });
+
   it('should allow a user to follow another user', (done) => {
-    // let token;
-    models.User
-      .create({
-        email: 'faker37@email.com',
-        password: 'secret12345',
-      })
-      .then((user) => {
-        profile.userId = user.id;
-        profile.username = 'johnnybravo';
-        return models.Profile.create(profile);
-      })
-      .then(({ username }) => (
-        chai.request(app)
-          .post(`/api/v1/profiles/${username}/follow`)
-          .set('Authorization', `Bearer ${dummyUser3.token}`)
-      ))
-      .then((res) => {
+    chai
+      .request(app)
+      .post(`/api/v1/profiles/${followerUsername}/follow`)
+      .set({ Authorization: `Bearer ${userToken}` })
+      .end((err, res) => {
+        expect(err).to.be.null;
         expect(res).to.have.status(STATUS.OK);
+        expect(res.body)
+          .to.haveOwnProperty('message')
+          .to.equal(`Successfully followed ${followerUsername}`);
         done();
-      })
-      .catch(done);
+      });
+  });
+  it('should get a list of user (followedUser) followers', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/profiles/followers')
+      .set({ Authorization: `Bearer ${followerToken}` })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body)
+          .to.haveOwnProperty('data')
+          .to.be.an('array')
+          .lengthOf(1);
+        done();
+      });
+  });
+  it('should get a list of user following', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/profiles/following')
+      .set({ Authorization: `Bearer ${userToken}` })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body)
+          .to.haveOwnProperty('data')
+          .to.be.an('array')
+          .lengthOf(1);
+        done();
+      });
+  });
+  it('should allow a user to unfollow user', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/profiles/${followerUsername}/unfollow`)
+      .set({ Authorization: `Bearer ${userToken}` })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(STATUS.OK);
+        expect(res.body)
+          .to.haveOwnProperty('message')
+          .to.equal(`Successfully unfollowed ${followerUsername}`);
+        done();
+      });
+  });
+  it('should not allow a user to follow self', (done) => {
+    const { username } = user.Profile;
+    chai
+      .request(app)
+      .post(`/api/v1/profiles/${username}/follow`)
+      .set({ Authorization: `Bearer ${userToken}` })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(STATUS.BAD_REQUEST);
+        expect(res.body)
+          .to.haveOwnProperty('message')
+          .to.equal(MESSAGE.FOLLOW_ERROR);
+        done();
+      });
   });
 });
