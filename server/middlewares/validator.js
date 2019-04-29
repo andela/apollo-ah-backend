@@ -1,5 +1,7 @@
 import { body, query, param } from 'express-validator/check';
+import createError from 'http-errors';
 import {
+  STATUS,
   MESSAGE,
   FIELD,
   PAGE_LIMIT,
@@ -7,6 +9,8 @@ import {
 } from '../helpers/constants';
 import UsersController from '../controllers/usersController';
 import ProfileController from '../controllers/profileController';
+import models from '../models';
+
 /**
  * Used with express validator to validate input paramters
  * @export
@@ -380,5 +384,30 @@ export default class Validator {
         .isInt()
         .withMessage('User Id must be a valid integer')
     ];
+  }
+
+  /**
+   * Validate profile resource by username
+   *
+   * @static
+   * @param {object} request - Express Request object
+   * @param {object} response - Express Response object
+   * @param {NextFunction} next - Express nextFunction
+   * @returns {Function} call to next middleware
+   * @memberof AriclesMiddleware
+   */
+  static async validateUsernameResource(request, response, next) {
+    const { params: { username } } = request;
+
+    try {
+      const profile = await models.Profile.findOne({ where: { username } });
+      if (!profile) {
+        throw createError(STATUS.NOT_FOUND, MESSAGE.RESOURCE_NOT_FOUND);
+      }
+      response.locals.profile = profile;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
   }
 }

@@ -87,7 +87,9 @@ export const MESSAGE = {
   SUCCESS_MESSAGE: 'Operation was successful',
 
   CLAP_FORBIDDEN: 'Sorry you cannot clap an article created by you',
-  AUTHOR_ID_INVALID: 'Author Id must be a number'
+  AUTHOR_ID_INVALID: 'Author Id must be a number',
+
+  INACTIVE_ACCOUNT: 'User account has been deactivated',
 };
 
 export const TOKEN_VALIDITY = 604800; // 7 days
