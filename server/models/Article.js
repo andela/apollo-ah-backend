@@ -49,7 +49,10 @@ const Article = (sequelize, DataTypes) => {
       foreignKey: 'authorId'
     });
     ArticleSchema.hasMany(models.ArticleLike, { foreignKey: 'articleId' });
-    ArticleSchema.hasMany(models.Comment, { foreignKey: 'articleId' });
+    ArticleSchema.hasMany(models.Comment, {
+      foreignKey: 'articleId',
+      as: 'comments'
+    });
     ArticleSchema.belongsTo(models.ArticleCategory, {
       targetKey: 'id',
       as: 'articleCategory',

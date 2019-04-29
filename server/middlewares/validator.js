@@ -295,7 +295,12 @@ export default class Validator {
         .optional()
         .trim()
         .isFloat()
-        .withMessage(MESSAGE.CATEGORY_INVALID)
+        .withMessage(MESSAGE.CATEGORY_INVALID),
+      query('authorId')
+        .optional()
+        .trim()
+        .isFloat()
+        .withMessage(MESSAGE.AUTHOR_ID_INVALID)
     ];
   }
 
