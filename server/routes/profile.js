@@ -79,6 +79,44 @@ profileRouter.post(
   profileController.updateProfile,
 )
 
+  /**
+   * @swagger
+   * /api/v1/profiles/followers:
+   *   get:
+   *     tags:
+   *       - followers
+   *     description: Fetch all followers for authenticated user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Successful
+   */
+  .get(
+    '/profiles/followers',
+    middlewares.authenticate,
+    followersController.followers
+  )
+
+  /**
+   * @swagger
+   * /api/v1/profiles/followers:
+   *   get:
+   *     tags:
+   *       - followers
+   *     description: Fetch all the following users by authenticated user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Successful
+   */
+  .get(
+    '/profiles/following',
+    middlewares.authenticate,
+    followersController.followers
+  )
+
 /**
  * @swagger
  * /api/v1/profile:
@@ -141,6 +179,7 @@ profileRouter.post(
 profileRouter.post(
   '/profiles/:username/follow',
   middlewares.authenticate,
+  Validator.validateUsernameResource,
   followersController.follow
 );
 
@@ -162,45 +201,8 @@ profileRouter.post(
 profileRouter.post(
   '/profiles/:username/unfollow',
   middlewares.authenticate,
+  Validator.validateUsernameResource,
   followersController.unfollow
-);
-
-/**
- * @swagger
- * /api/v1/profiles/followers:
- *   get:
- *     tags:
- *       - followers
- *     description: Fetch all followers by authenticated user
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: Successful
- */
-profileRouter.get(
-  '/profiles/followers',
-  middlewares.authenticate,
-  followersController.followers
-);
-
-/**
- * @swagger
- * /api/v1/profiles/followers:
- *   get:
- *     tags:
- *       - followers
- *     description: Fetch all the following users by authenticated user
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: Successful
- */
-profileRouter.get(
-  '/profiles/following',
-  middlewares.authenticate,
-  followersController.followers
 );
 
 export default profileRouter;

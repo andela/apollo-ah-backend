@@ -100,7 +100,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('title cannot be empty');
+            expect(res.body.message).to.equal('The title of an article cannot be empty');
             done();
           });
       });
@@ -121,7 +121,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('description cannot be empty');
+            expect(res.body.message).to.equal('Please provide a short description for this article');
             done();
           });
       });
@@ -142,7 +142,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('body cannot be empty');
+            expect(res.body.message).to.equal('Please provide the details for this article');
             done();
           });
       });
@@ -163,7 +163,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('category cannot be empty');
+            expect(res.body.message).to.equal('You have not selected a category for this article');
             done();
           });
       });
@@ -204,7 +204,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('body must be a string');
+            expect(res.body.message).to.equal('The article detail cannot contain only numbers or spaces');
             done();
           });
       });
@@ -225,7 +225,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('title must be a string');
+            expect(res.body.message).to.equal('The title of an article cannot contain only numbers or spaces');
             done();
           });
       });
@@ -246,7 +246,7 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('description can only be 255 characters maximum');
+            expect(res.body.message).to.equal('Description cannot be more than 255 characters');
             done();
           });
       });
@@ -267,75 +267,13 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
             expect(res).to.have.status(BAD_REQUEST);
             expect(res.body).to.be.an('object');
             expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('description must be a string');
+            expect(res.body.message).to.equal('The description of this article cannot contain only numbers or spaces');
             done();
           });
       });
     });
   });
 
-  describe('POST: /api/v1/articles', () => {
-    describe('create an article with a body of empty string', () => {
-      it('Should return an error', (done) => {
-        const article = { ...dummyArticle };
-        article.body = '    ';
-        chai
-          .request(app)
-          .post('/api/v1/articles')
-          .send(article)
-          .set({ Authorization: `Bearer ${dummyUser.token}` })
-          .end((err, res) => {
-            expect(res).to.have.status(BAD_REQUEST);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('body cannot be empty');
-            done();
-          });
-      });
-    });
-  });
-
-  describe('POST: /api/v1/articles', () => {
-    describe('create an article with a title of empty string', () => {
-      it('Should return an error', (done) => {
-        const article = { ...dummyArticle };
-        article.title = '     ';
-        chai
-          .request(app)
-          .post('/api/v1/articles')
-          .send(article)
-          .set({ Authorization: `Bearer ${dummyUser.token}` })
-          .end((err, res) => {
-            expect(res).to.have.status(BAD_REQUEST);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('title cannot be empty');
-            done();
-          });
-      });
-    });
-  });
-
-  describe('POST: /api/v1/articles', () => {
-    describe('create an article with a description of empty string', () => {
-      it('Should return an error', (done) => {
-        const article = { ...dummyArticle };
-        article.description = '    ';
-        chai
-          .request(app)
-          .post('/api/v1/articles')
-          .send(article)
-          .set({ Authorization: `Bearer ${dummyUser.token}` })
-          .end((err, res) => {
-            expect(res).to.have.status(BAD_REQUEST);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
-            expect(res.body.message).to.equal('description cannot be empty');
-            done();
-          });
-      });
-    });
-  });
 
   describe('POST: /api/v1/articles', () => {
     describe('verify slugs are being created from the title', () => {
@@ -542,6 +480,68 @@ describe('API endpoint: /api/articles (Middleware test)', () => {
           expect(res.body.message).to.be.equal('you do not have the right to delete this article');
           done();
         });
+    });
+  });
+  describe('POST: /api/v1/articles', () => {
+    describe('create an article with a body of empty string', () => {
+      it('Should return an error', (done) => {
+        const article = { ...dummyArticle };
+        article.body = '    ';
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('The article detail cannot contain only numbers or spaces');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
+    describe('create an article with a title of empty string', () => {
+      it('Should return an error', (done) => {
+        const article = { ...dummyArticle };
+        article.title = '     ';
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('The title of an article cannot contain only numbers or spaces');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('POST: /api/v1/articles', () => {
+    describe('create an article with a description of empty string', () => {
+      it('Should return an error', (done) => {
+        const article = { ...dummyArticle };
+        article.description = '    ';
+        chai
+          .request(app)
+          .post('/api/v1/articles')
+          .send(article)
+          .set({ Authorization: `Bearer ${dummyUser.token}` })
+          .end((err, res) => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.haveOwnProperty('code').to.equal(BAD_REQUEST);
+            expect(res.body.message).to.equal('The description of this article cannot contain only numbers or spaces');
+            done();
+          });
+      });
     });
   });
 });

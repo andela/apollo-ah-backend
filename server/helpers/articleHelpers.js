@@ -22,6 +22,7 @@ export const squashClaps = (resource) => {
     return resource.map((article) => {
       plainArticle = article.get({ plain: true });
       plainArticle.claps = plainArticle.claps.reduce(clapSum, 0);
+      plainArticle.comments = plainArticle.comments.length;
       return plainArticle;
     });
   }
@@ -91,7 +92,7 @@ export default {
     const last = Math.ceil(articles.count / limit);
     const currentCount = articles.rows.length;
     let result = {
-      code: STATUS.NOT_FOUND, data: [], message: MESSAGE.ARTICLES_NOT_FOUND, status: false
+      code: STATUS.OK, data: [], message: MESSAGE.ARTICLES_FOUND, status: false
     };
     if (currentCount !== 0) {
       result = {
@@ -121,7 +122,7 @@ export default {
    */
   formatSearchQuery: (query) => {
     const {
-      author, tag, q, categoryId
+      author, tag, q, categoryId, authorId,
     } = query;
 
     const authorQuery = author ? {
@@ -160,8 +161,13 @@ export default {
         [Op.eq]: parseInt(categoryId, 10),
       }
     } : {};
+    const authorIdQuery = authorId ? {
+      authorId: {
+        [Op.eq]: parseInt(authorId, 10),
+      }
+    } : {};
     return {
-      categoryQuery, authorQuery, tagQuery, titleQuery
+      categoryQuery, authorQuery, tagQuery, titleQuery, authorIdQuery
     };
   }
 };
