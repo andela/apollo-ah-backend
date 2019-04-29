@@ -50,7 +50,7 @@ const commentsModelObj = {
  * @param {*} categoryQuery - category Id needed to query the database
  * @param {*} authorQuery - author name needed to query the DB
  * @param {*} tagQuery - tag name needed to query the DB
- * @param {*} clapsQuery - tag name needed to query the DB
+ * @param {*} clapsQuery - clap name needed to query the DB
  * @returns {Array} - An array of the user model, tags model, and ratings model
  */
 const dataProvider = (categoryQuery, authorQuery, tagQuery) => {
