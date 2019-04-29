@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import models from '../models';
 import Response from '../helpers/responseHelper';
-import { MESSAGE } from '../helpers/constants';
+import { STATUS, MESSAGE } from '../helpers/constants';
 
 /**
  * Class handling followers operation
@@ -20,12 +20,18 @@ class FollowersController {
    * @memberof FollowersController
    */
   static async follow(request, response, next) {
-    const { user, params: { username } } = request;
+    const { user } = request;
+    const { profile: { username } } = response.locals;
 
     try {
       const { followable, follower } = await FollowersController.validateFollowable(user, username);
       await followable.addFollower(follower);
-      return Response.send(response, 200, followable, `${MESSAGE.FOLLOW_SUCCESS} ${username}`);
+      return Response.send(
+        response,
+        STATUS.OK,
+        followable,
+        `${MESSAGE.FOLLOW_SUCCESS} ${username}`
+      );
     } catch (error) {
       next(error);
     }
@@ -42,17 +48,23 @@ class FollowersController {
    * @memberof FollowersController
    */
   static async unfollow(request, response, next) {
-    const { user, params: { username } } = request;
+    const { user } = request;
+    const { profile: { username } } = response.locals;
 
     try {
       const { followable, follower } = await FollowersController.validateFollowable(user, username);
       const existingFollower = await followable.hasFollowers(follower);
       if (!existingFollower) {
-        next(createError(400, MESSAGE.UNFOLLOW_ERROR));
+        next(createError(STATUS.BAD_REQUEST, MESSAGE.UNFOLLOW_ERROR));
       }
 
       await followable.removeFollower(follower);
-      return Response.send(response, 200, followable, `${MESSAGE.UNFOLLOW_SUCCESS} ${username}`);
+      return Response.send(
+        response,
+        STATUS.OK,
+        followable,
+        `${MESSAGE.UNFOLLOW_SUCCESS} ${username}`
+      );
     } catch (error) {
       next(error);
     }
@@ -70,16 +82,17 @@ class FollowersController {
   static async validateFollowable(user, username) {
     try {
       const follower = await models.User.findOne({
-        where: { id: user.id }
+        where: { id: user.id },
+        attributes: ['id', 'email']
       });
       const profile = await models.Profile.findOne({ where: { username } });
       if (follower.id === profile.userId) {
-        throw createError(400, MESSAGE.FOLLOW_ERROR);
+        throw createError(STATUS.BAD_REQUEST, MESSAGE.FOLLOW_ERROR);
       }
 
-      const followable = await profile.getUser();
+      const followable = await profile.getUser({ attributes: ['id', 'email', 'deletedAt'] });
       if (followable.deletedAt !== null) {
-        throw createError(404, MESSAGE.FOLLOW_ERROR);
+        throw createError(STATUS.NOT_FOUND, MESSAGE.INACTIVE_ACCOUNT);
       }
 
       return { followable, follower };
@@ -108,13 +121,21 @@ class FollowersController {
         where: { id: user.id }
       });
 
+      const queryOptions = {
+        attributes: ['id', 'email'],
+        include: [{
+          model: models.Profile,
+          attributes: ['firstname', 'lastname', 'username']
+        }],
+        joinTableAttributes: [],
+      };
       if (routePath === 'followers') {
-        followers = await authUser.getFollowers();
+        followers = await authUser.getFollowers(queryOptions);
       } else {
-        followers = await authUser.getFollowing();
+        followers = await authUser.getFollowing(queryOptions);
       }
 
-      return Response.send(response, 400, followers);
+      return Response.send(response, STATUS.OK, followers);
     } catch (error) {
       next(error);
     }
