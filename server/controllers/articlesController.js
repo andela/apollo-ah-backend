@@ -82,10 +82,9 @@ export default class ArticlesController {
    */
   static async getAllArticles(req, res, next) {
     try {
-      // TODO: Implement search algorithm here
       const { offset, limit } = req.body;
       const {
-        categoryQuery, titleQuery, authorQuery, tagQuery
+        categoryQuery, titleQuery, authorQuery, tagQuery, authorIdQuery
       } = articleHelpers.formatSearchQuery(req.query);
 
       const articles = await models.Article.findAndCountAll({
@@ -94,21 +93,15 @@ export default class ArticlesController {
         order: [['createdAt', 'DESC']],
         distinct: true,
         where: {
-          ...titleQuery,
+          ...titleQuery, ...authorIdQuery
         },
         include: [
           ...dataProvider(categoryQuery, authorQuery, tagQuery),
-          {
-            model: models.ArticleClap,
-            as: 'claps',
-            attributes: ['userId', 'claps'],
-          }
         ],
       });
 
       // Squash article claps to total number of claps
       articles.rows = squashClaps(articles.rows);
-
       const {
         code, data, message, status
       } = articleHelpers.getResourcesAsPages(req, articles);
@@ -136,11 +129,6 @@ export default class ArticlesController {
         where: { slug: slug.trim() },
         include: [
           ...dataProvider(),
-          {
-            model: models.ArticleClap,
-            as: 'claps',
-            attributes: ['userId', 'claps']
-          }
         ],
       });
       if (!result) {

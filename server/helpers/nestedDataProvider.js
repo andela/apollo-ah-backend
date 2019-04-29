@@ -33,12 +33,24 @@ const ratingsModelObj = {
   attributes: ['stars', 'userId']
 };
 
+const clapsModelObj = {
+  model: models.ArticleClap,
+  as: 'claps',
+  attributes: ['userId', 'claps'],
+};
+
+const commentsModelObj = {
+  model: models.Comment,
+  as: 'comments',
+};
+
 /**
  *
  *
  * @param {*} categoryQuery - category Id needed to query the database
  * @param {*} authorQuery - author name needed to query the DB
  * @param {*} tagQuery - tag name needed to query the DB
+ * @param {*} clapsQuery - clap name needed to query the DB
  * @returns {Array} - An array of the user model, tags model, and ratings model
  */
 const dataProvider = (categoryQuery, authorQuery, tagQuery) => {
@@ -48,8 +60,8 @@ const dataProvider = (categoryQuery, authorQuery, tagQuery) => {
     tagsModelObj.where = { ...tagQuery };
   }
   if (categoryQuery) articleCategoryModelObj.where = { ...categoryQuery };
-
-  return ([userModelObj, tagsModelObj, articleCategoryModelObj, ratingsModelObj]);
+  return ([userModelObj, tagsModelObj, articleCategoryModelObj,
+    ratingsModelObj, clapsModelObj, commentsModelObj]);
 };
 
 export default dataProvider;
