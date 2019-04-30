@@ -244,7 +244,7 @@ describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => 
       });
   });
 
-  it('Should dislike a comment', (done) => {
+  it('Should remove liked comment', (done) => {
     chai
       .request(app)
       .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/likes`)
@@ -253,6 +253,20 @@ describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => 
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body.message).to.equal('successfully removed like from comment');
+        done();
+      });
+  });
+
+  it('Should dislike a comment', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/dislikes`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('successfully disliked comment');
         done();
       });
@@ -264,13 +278,28 @@ describe('API endpoint: /api/articles/:slug/comments/:id/likes (Routes)', () => 
       .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/likes`)
       .set({ Authorization: `Bearer ${authToken}` })
       .end((err, res) => {
-        expect(res).to.have.status(STATUS.OK);
+        expect(res).to.have.status(STATUS.CREATED);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.OK);
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
         expect(res.body.message).to.equal('successfully liked comment');
         done();
       });
   });
+
+  it('Should dislike a comment if liked before', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/articles/${newSlug}/comments/${newCommentId}/dislikes`)
+      .set({ Authorization: `Bearer ${authToken}` })
+      .end((err, res) => {
+        expect(res).to.have.status(STATUS.CREATED);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.haveOwnProperty('code').to.equal(STATUS.CREATED);
+        expect(res.body.message).to.equal('successfully disliked comment');
+        done();
+      });
+  });
+
 
   it('Should get all likes', (done) => {
     chai

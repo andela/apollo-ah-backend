@@ -1,8 +1,9 @@
 import models from '../models';
 import Response from '../helpers/responseHelper';
 import { STATUS } from '../helpers/constants';
-import paginationHelper from '../helpers/articleHelpers';
+import paginationHelper, { squashLikesAndDislikes } from '../helpers/articleHelpers';
 import Logger from '../helpers/logger';
+// import squashLikesAndDislikes from '../helpers/articleHelpers';
 
 /**
  * Wrapper class for sending comments objects as response.
@@ -68,13 +69,17 @@ export default class CommentsController {
           },
           {
             model: models.CommentHistory,
-          }
+          },
+          {
+            model: models.CommentLike,
+          },
         ],
         attributes: {},
         limit,
         offset,
         order: [['createdAt']]
       });
+      comments.rows = squashLikesAndDislikes(comments.rows);
       const {
         code, data, status
       } = paginationHelper.getResourcesAsPages(req, comments);
