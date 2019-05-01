@@ -23,7 +23,6 @@ export default class StatisticsMiddleware {
     const stats = {};
 
     if (!Number(req.params.id)) return Response.send(res, STATUS.BAD_REQUEST, [], 'the provided params is invalid', false);
-
     if (userId !== Number(req.params.id)) return Response.send(res, STATUS.FORBIDDEN, [], 'You are not authorized to view this stat', false);
 
     const commentsResult = await models.Comment.findAndCountAll({ where: { authorId: userId } });
