@@ -31,6 +31,29 @@ export const squashClaps = (resource) => {
   return resource;
 };
 
+/**
+ * calculates the number of likes and dislikes for a single comment
+ *
+ * @param {*} resource - the comment object
+ * @returns {object} - returns either the like and dislike count or the initial comment object
+ */
+
+export const squashLikesAndDislikes = (resource) => {
+  let comment;
+
+  if (Array.isArray(resource)) {
+    return resource.map((singleComment) => {
+      const total = singleComment.CommentLikes.length;
+      comment = singleComment.get({ plain: true });
+      comment.likes = comment.CommentLikes.filter(post => post.like === true).length;
+      comment.dislikes = total - comment.likes;
+      delete comment.CommentLikes;
+      return comment;
+    });
+  }
+  return resource;
+};
+
 export default {
   findArticleByAuthorId: async (authorId, title) => {
     try {
