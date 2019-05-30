@@ -81,7 +81,7 @@ class UsersController {
     try {
       const { email } = request.body;
       const token = jwt.sign({ email }, env('APP_KEY'), { expiresIn: '1h' });
-      const link = `${env('API_DOMAIN')}/users/reset_password?token=${token}`;
+      const link = `${env('RESET_PASSWORD')}/users/reset_password?token=${token}`;
       const data = {
         email,
         subject: 'Reset your Password',
