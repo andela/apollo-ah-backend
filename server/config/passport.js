@@ -32,7 +32,7 @@ validateConfigVariable([
    * @memberof SocialAuthController
    */
 
-export const generateOrFindUser = async (accessToken, refreshToken, profile, done) => {
+export const generateOrFindUser = async (accessToken, refreshToken, profile) => {
   if (profile.emails[0]) {
     const email = profile.emails[0].value;
     try {
@@ -51,7 +51,7 @@ export const generateOrFindUser = async (accessToken, refreshToken, profile, don
           user.bio = '';
           user.username = email;
           await Profile.create(user);
-          done(null, user);
+          // done(null, user);
         });
     } catch (err) {
       logger.log(err);
