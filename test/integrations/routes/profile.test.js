@@ -6,7 +6,7 @@ import app from '../../../server';
 import { STATUS, MESSAGE } from '../../../server/helpers/constants';
 import models from '../../../server/models';
 import { users } from '../../helpers/testData';
-import { auth } from '../../helpers';
+import { generateToken } from '../../../server/helpers/utils';
 
 const { dummyUser2 } = users;
 
@@ -114,135 +114,68 @@ describe('Testing user profile feature', () => {
       });
   });
 
-  it('should fetch a user profile successfully', (done) => {
-    models.User.create(dummyUser2)
-      .then((user) => {
-        const userId = user.dataValues.id;
-        return userId;
-      })
-      .then((userId) => {
-        models.Profile.create({
-          firstname: '',
-          lastname: '',
-          bio: '',
-          image: '',
-          userId,
-          username: dummyUser2.username,
-        })
-          .then((newProfile) => {
-            const theUsername = newProfile.dataValues.username;
-            chai
-              .request(app)
-              .get(`/api/v1/profiles/${theUsername}`)
-              .set('Authorization', `Bearer ${dummyUser3.token}`)
-              .end((err, res) => {
-                expect(res).to.have.status(OK);
-                expect(res.body).to.have.property('message');
-                expect(res.body.message).to.be.equals('Successfully returned a user');
-                done();
-              });
-          });
-      });
+  it('should fetch a user profile successfully', async () => {
+    const usersToken = await generateToken({ email: 'user@user.com', id: 2, password: 'secret' });
+    const res = await chai.request(app)
+      .get('/api/v1/profiles/user')
+      .set('authorization', `Bearer ${usersToken}`);
+    expect(res).to.have.status(OK);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message).to.be.equals('Successfully returned a user');
   });
 });
 describe('POST /api/v1/profiles/:username/follow', async () => {
-  let user;
-  let userToken;
-  let follower;
-  let followerToken;
-  let followerUsername;
-
-  before(async () => {
-    let result;
-    result = await models.User.findOne({
-      include: [models.Profile]
-    });
-    user = result.get({ plain: true });
-    user.password = 'secret';
-    let response = await auth(user);
-    userToken = response.body.token;
-
-    result = await models.User.findByPk(2, {
-      include: [models.Profile]
-    });
-    follower = result.get({ plain: true });
-    follower.password = 'secret';
-    response = await auth(follower);
-    followerToken = response.body.token;
-    followerUsername = follower.Profile.username;
+  it('should allow a user to follow another user', async () => {
+    const usersToken = await generateToken({ email: 'user@user.com', id: 2, password: 'secret' });
+    const res = await chai.request(app)
+      .post('/api/v1/profiles/admin/follow')
+      .set('authorization', `Bearer ${usersToken}`);
+    expect(res).to.have.status(STATUS.OK);
+    expect(res.body)
+      .to.haveOwnProperty('message')
+      .to.equal('Successfully followed admin');
   });
-
-  it('should allow a user to follow another user', (done) => {
-    chai
-      .request(app)
-      .post(`/api/v1/profiles/${followerUsername}/follow`)
-      .set({ Authorization: `Bearer ${userToken}` })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(STATUS.OK);
-        expect(res.body)
-          .to.haveOwnProperty('message')
-          .to.equal(`Successfully followed ${followerUsername}`);
-        done();
-      });
-  });
-  it('should get a list of user (followedUser) followers', (done) => {
-    chai
+  it('should get a list of user (followedUser) followers', async () => {
+    const followerToken = await generateToken({ email: 'admin@admin.com', id: 1, password: 'secret' });
+    const res = await chai
       .request(app)
       .get('/api/v1/profiles/followers')
-      .set({ Authorization: `Bearer ${followerToken}` })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(STATUS.OK);
-        expect(res.body)
-          .to.haveOwnProperty('data')
-          .to.be.an('array')
-          .lengthOf(1);
-        done();
-      });
+      .set('authorization', `Bearer ${followerToken}`);
+    expect(res).to.have.status(STATUS.OK);
+    expect(res.body)
+      .to.haveOwnProperty('data')
+      .to.be.an('array')
+      .lengthOf(1);
   });
-  it('should get a list of user following', (done) => {
-    chai
-      .request(app)
+  it('should get a list of user following', async () => {
+    const usersToken = await generateToken({ email: 'user@user.com', id: 2, password: 'secret' });
+    const res = await chai.request(app)
       .get('/api/v1/profiles/following')
-      .set({ Authorization: `Bearer ${userToken}` })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(STATUS.OK);
-        expect(res.body)
-          .to.haveOwnProperty('data')
-          .to.be.an('array')
-          .lengthOf(1);
-        done();
-      });
+      .set('authorization', `Bearer ${usersToken}`);
+    expect(res).to.have.status(STATUS.OK);
+    expect(res.body)
+      .to.haveOwnProperty('data')
+      .to.be.an('array')
+      .lengthOf(1);
   });
-  it('should allow a user to unfollow user', (done) => {
-    chai
-      .request(app)
-      .post(`/api/v1/profiles/${followerUsername}/unfollow`)
-      .set({ Authorization: `Bearer ${userToken}` })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(STATUS.OK);
-        expect(res.body)
-          .to.haveOwnProperty('message')
-          .to.equal(`Successfully unfollowed ${followerUsername}`);
-        done();
-      });
+  it('should allow a user to unfollow user', async () => {
+    const usersToken = await generateToken({ email: 'user@user.com', id: 2, password: 'secret' });
+    const res = await chai.request(app)
+      .post('/api/v1/profiles/admin/unfollow')
+      .set('authorization', `Bearer ${usersToken}`);
+    expect(res).to.have.status(STATUS.OK);
+    expect(res.body)
+      .to.haveOwnProperty('message')
+      .to.equal('Successfully unfollowed admin');
   });
-  it('should not allow a user to follow self', (done) => {
-    const { username } = user.Profile;
-    chai
-      .request(app)
-      .post(`/api/v1/profiles/${username}/follow`)
-      .set({ Authorization: `Bearer ${userToken}` })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(STATUS.BAD_REQUEST);
-        expect(res.body)
-          .to.haveOwnProperty('message')
-          .to.equal(MESSAGE.FOLLOW_ERROR);
-        done();
-      });
+  it('should not allow a user to follow self', async () => {
+    const usersToken = await generateToken({ email: 'user@user.com', id: 2, password: 'secret' });
+    const res = await chai.request(app)
+      .post('/api/v1/profiles/user/follow')
+      .set('authorization', `Bearer ${usersToken}`);
+    expect(res).to.have.status(STATUS.BAD_REQUEST);
+    expect(res.body)
+      .to.haveOwnProperty('message')
+      .to.equal(MESSAGE.FOLLOW_ERROR);
   });
 });

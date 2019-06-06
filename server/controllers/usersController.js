@@ -1,8 +1,8 @@
 import createError from 'http-errors';
 import jwt from 'jsonwebtoken';
+import sgMail from '@sendgrid/mail';
 import models from '../models';
 import { env, generateToken } from '../helpers/utils';
-import Mail from '../helpers/sendMail';
 import Response from '../helpers/responseHelper';
 import { STATUS, MESSAGE } from '../helpers/constants';
 import logger from '../helpers/logger';
@@ -37,15 +37,23 @@ class UsersController {
       // generate confirm token
       const confirmationToken = await generateToken({ email: user.email });
       // generate confirm link
-      const confrimationLink = `${env('WEB_APP')}?token=${confirmationToken}`;
-      // send the user a mail
-      const data = {
-        email: user.email,
+      const confirmationLink = `${env('CONFIRM_ACCOUNT')}?token=${confirmationToken}`;
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      const msg = {
+        to: user.email,
+        from: 'authorshavenng@gmail.com',
         subject: 'Account confirmation',
-        mailContext: {
-          link: confrimationLink
-        },
-        template: 'signup'
+        html: `<div class="inner">
+        <div class="top">
+          <h2>Authors Haven</h2>
+          <h1>Confirm Account!</h1>
+          <p class="smaller">Hello,</p>
+          <p>Thank you for signing up, you can confirm your account with the link below.</p>
+          <div class="btn-wrapper">
+            <a href="${confirmationLink}">Confirm Account</a>
+          </div>
+        </div>
+      </div>`,
       };
       user.firstname = '';
       user.lastname = '';
@@ -60,7 +68,7 @@ class UsersController {
       dataValues.id = user.id;
       const token = await generateToken({ user: dataValues });
       Response.send(response, STATUS.CREATED, { token, id: user.id });
-      await Mail.sendMail(data);
+      await sgMail.send(msg);
       return;
     } catch (error) {
       return next(error);
@@ -81,17 +89,30 @@ class UsersController {
     try {
       const { email } = request.body;
       const token = jwt.sign({ email }, env('APP_KEY'), { expiresIn: '1h' });
-      const link = `${env('RESET_PASSWORD')}/users/reset_password?token=${token}`;
-      const data = {
-        email,
+      const link = `${env('RESET_PASSWORD')}/reset-password?token=${token}`;
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      const msg = {
+        to: email,
+        from: 'authorshavenng@gmail.com',
         subject: 'Reset your Password',
-        mailContext: {
-          link
-        },
-        template: 'password'
+        text: 'and easy to do anywhere, even with Node.js',
+        html: `<div class="inner">
+        <div class="top">
+          <h2>Authors Haven</h2>
+          <h1>Reset your password</h1>
+          <p class="smaller">Hello,</p>
+          <p class="smaller">We received a request to reset your password.</p>
+          <p>If you didn’t make this request, simply ignore this message. Otherwise, you can reset your password using this
+            link.</p>
+          <div class="btn-wrapper">
+            <a class="btn" href=${link}>Reset your password</a>
+          </div>
+          <p class="wrn">* Please note that this link will expire in 1 hour.</p>
+        </div>
+      </div>`,
       };
+      await sgMail.send(msg);
       Response.send(response, STATUS.OK, [], MESSAGE.PASSWORD_REQUEST_SUCCESSFUL);
-      await Mail.sendMail(data);
       return;
     } catch (error) {
       next(error);

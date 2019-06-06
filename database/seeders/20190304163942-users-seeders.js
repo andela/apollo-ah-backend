@@ -33,7 +33,7 @@ export default {
       .then(() => (
         queryInterface.bulkInsert('Profiles', [
           { ...profile, userId: 1, username: 'admin' },
-          { ...profile, userId: 2 }
+          { ...profile, userId: 2, username: 'user' }
         ])
       ))
       .catch(error => logger.log(error));
